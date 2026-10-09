@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 56 authored C++ reference solutions against 110 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 63 authored C++ reference solutions against 131 public and 80 hidden test cases, seven standalone Week 9 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
 
-Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 8.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 10–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -173,3 +173,11 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Local `pnpm test` passed (24 Vitest tests and 21 Node API tests); `pnpm lint` and `git diff --check` passed.
 - Commit `3dfd9f4` passed runner CI [37923379801](https://github.com/xero711/cpp-mastery/actions/runs/37923379801): Docker sandbox image build, runner API checks, real C++17/20/23 compile/run and isolation checks, static Pages export, Chromium browser grading/history/solution/debug flow, and the due-review progression E2E all passed.
 - This confirms the separate runner and complete browser-to-grade path on GitHub's isolated Linux CI VM using `runc`. The Windows PC still has no Docker CLI/engine or WSL Linux distribution, and production gVisor hosting remains unconfigured; those are still separate acceptance gaps.
+
+## 2026-10-09 — Week 9 daily lessons and GitHub Pages
+
+- Authored all seven Week 9 lessons on declarations and definitions, header use, include guards, compile versus link errors, internal linkage, translation units, and a small namespaced scoring API. The lessons explain that this site's current submission interface compiles one `.cpp` file; multi-file build roles are taught with explicit examples.
+- The curriculum now contains 63 lessons, 131 public tests, and 80 runner-only hidden tests. The curriculum availability message follows the actual authored lesson data, and a Chromium E2E opens Week 9 Day 1 through the project Pages base path.
+- `pnpm lint` passed. `pnpm test` passed (24 Vitest tests and 21 Node service/API tests). `pnpm verify:lessons` passed with Visual Studio C++: 63 reference solutions and all 131 public / 80 hidden cases, plus seven standalone Week 9 code examples and their output checks. `GITHUB_REPOSITORY=xero711/cpp-mastery pnpm build` produced all 743 static routes. `pnpm verify:public-bundle` scanned 904 Pages assets without finding private answers or hidden tests. `pnpm test:e2e` passed all three Chromium flows, including Week 9 lesson availability and rendering.
+- GitHub reports the repository is configured for workflow-based Pages publishing (`build_type=workflow`) at `http://xero-x.me/cpp-mastery/`. The validated changes are ready to publish from `main`; the Pages workflow is triggered by that push. The domain's HTTPS enforcement remains disabled while GitHub awaits a valid Pages certificate.
+- Still open: detailed daily lessons for Weeks 10–104, production gVisor runner hosting and a real public grading endpoint, Windows Docker/WSL runner setup, and custom-domain HTTPS eligibility. CI uses `runc` only on GitHub's isolated VM and does not establish production runner acceptance.

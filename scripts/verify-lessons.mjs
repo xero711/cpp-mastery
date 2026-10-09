@@ -21,6 +21,7 @@ if (!resolvedTempRoot.startsWith(allowedTempRoot)) throw new Error("Temporary wo
 
 const normalize = (value) => value.replace(/\r\n/g, "\n").trimEnd();
 const failures = [];
+let verifiedExamples = 0;
 
 try {
   for (const lesson of lessons) {
@@ -55,6 +56,39 @@ try {
         failures.push(`${lesson.id} test ${index + 1}: expected ${JSON.stringify(test.output)}, got ${JSON.stringify(run.stdout ?? "")}\n${run.stderr ?? run.error?.message ?? ""}`);
       }
     }
+
+    // Week 9 examples are complete standalone programs; earlier weeks also use illustrative snippets.
+    if (lesson.week === 9) {
+      if (/\b(system|popen|CreateProcess|WinExec|ShellExecute)\s*\(/i.test(lesson.example)) {
+        failures.push(`${lesson.id}: blocked unsafe example`);
+        continue;
+      }
+
+      const exampleSourcePath = join(tempRoot, `${lesson.id}-example.cpp`);
+      const exampleExecutablePath = join(tempRoot, `${lesson.id}-example.exe`);
+      writeFileSync(exampleSourcePath, lesson.example, "utf8");
+      const exampleCompile = spawnSync(
+        "cl.exe",
+        ["/nologo", "/std:c++17", "/EHsc", `/Fe:${exampleExecutablePath}`, exampleSourcePath],
+        { cwd: tempRoot, encoding: "utf8", timeout: 60_000, maxBuffer: 64_000, windowsHide: true },
+      );
+      if (exampleCompile.error || exampleCompile.status !== 0 || !existsSync(exampleExecutablePath)) {
+        failures.push(`${lesson.id} example: compile failed\n${exampleCompile.stderr ?? ""}${exampleCompile.stdout ?? ""}`);
+        continue;
+      }
+
+      const exampleRun = spawnSync(exampleExecutablePath, [], {
+        encoding: "utf8",
+        timeout: 3000,
+        maxBuffer: 32_000,
+        windowsHide: true,
+      });
+      if (exampleRun.error || exampleRun.status !== 0 || normalize(exampleRun.stdout ?? "") !== normalize(lesson.exampleOutput)) {
+        failures.push(`${lesson.id} example: expected ${JSON.stringify(lesson.exampleOutput)}, got ${JSON.stringify(exampleRun.stdout ?? "")}\n${exampleRun.stderr ?? exampleRun.error?.message ?? ""}`);
+      } else {
+        verifiedExamples += 1;
+      }
+    }
   }
 } finally {
   if (resolvedTempRoot.startsWith(allowedTempRoot)) rmSync(resolvedTempRoot, { recursive: true, force: true });
@@ -65,4 +99,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${lessons.length} reference solutions and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);
+console.log(`Verified ${lessons.length} reference solutions, ${verifiedExamples} standalone Week 9 examples, and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);

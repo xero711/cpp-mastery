@@ -1346,5 +1346,194 @@
         "output": "88"
       }
     ]
+  },
+  {
+    "id": "w9-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nint addBonus(int score, int bonus);\n\nint main() {\n    int score{};\n    int bonus{};\n    std::cin >> score >> bonus;\n    std::cout << \"score: \" << addBonus(score, bonus) << '\\n';\n    return 0;\n}\n\nint addBonus(int score, int bonus) {\n    return score + bonus;\n}",
+    "debugFix": "int doubleValue(int value);\nint main() { std::cout << doubleValue(4) << '\\n'; }\nint doubleValue(int value) { return value * 2; }",
+    "debugExplanation": "同じ関数を同一の翻訳単位で2回定義すると再定義エラーです。先頭はセミコロンで終わる宣言にし、本体を持つ定義は1つだけ置きます。",
+    "tests": [
+      {
+        "input": "120 30\n",
+        "output": "score: 150"
+      },
+      {
+        "input": "0 0\n",
+        "output": "score: 0"
+      },
+      {
+        "input": "-5 5\n",
+        "output": "score: 0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-8 3\n",
+        "output": "score: -5"
+      }
+    ]
+  },
+  {
+    "id": "w9-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nstd::string roomLabel(const std::string& room) {\n    return \"room: \" + room;\n}\n\nint main() {\n    std::string room;\n    std::cin >> room;\n    std::cout << roomLabel(room) << '\\n';\n    return 0;\n}",
+    "debugFix": "#include <iostream>\n#include <string>\nstd::string roomLabel(const std::string& room) { return room; }",
+    "debugExplanation": "std::string の宣言を使う翻訳単位には `<string>` をインクルードします。",
+    "tests": [
+      {
+        "input": "Boss\n",
+        "output": "room: Boss"
+      },
+      {
+        "input": "Lobby\n",
+        "output": "room: Lobby"
+      },
+      {
+        "input": "A\n",
+        "output": "room: A"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "FinalStage\n",
+        "output": "room: FinalStage"
+      }
+    ]
+  },
+  {
+    "id": "w9-d3",
+    "standard": "c++17",
+    "solution": "#ifndef STAGE_INFO_HPP\n#define STAGE_INFO_HPP\nstruct StageInfo { int number; };\n#endif\n\n#ifndef STAGE_INFO_HPP\n#define STAGE_INFO_HPP\nstruct StageInfo { int number; };\n#endif\n\n#include <iostream>\nint main() {\n    StageInfo stage{};\n    std::cin >> stage.number;\n    std::cout << \"stage: \" << stage.number << '\\n';\n    return 0;\n}",
+    "debugFix": "#ifndef PLAYER_HPP\n#define PLAYER_HPP\nstruct Player { int hp; };\n#endif\n#ifndef PLAYER_HPP\n#define PLAYER_HPP\nstruct Player { int hp; };\n#endif",
+    "debugExplanation": "条件付きブロックは対応する `#endif` で閉じます。ヘッダーガード全体を正しく閉じると、同じ定義の再取り込みを安全に無視できます。",
+    "tests": [
+      {
+        "input": "3\n",
+        "output": "stage: 3"
+      },
+      {
+        "input": "1\n",
+        "output": "stage: 1"
+      },
+      {
+        "input": "99\n",
+        "output": "stage: 99"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0\n",
+        "output": "stage: 0"
+      }
+    ]
+  },
+  {
+    "id": "w9-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nint heal(int hp, int amount);\n\nint main() {\n    int hp{};\n    int amount{};\n    std::cin >> hp >> amount;\n    std::cout << heal(hp, amount) << '\\n';\n    return 0;\n}\n\nint heal(int hp, int amount) {\n    return hp + amount;\n}",
+    "debugFix": "int heal(int hp, int amount);\nint main() { return heal(40, 5); }\nint heal(int hp, int amount) { return hp + amount; }",
+    "debugExplanation": "宣言だけでは処理本体がありません。リンク時に呼び出し先を解決できるよう、同じシグネチャの定義もリンク対象に必要です。",
+    "tests": [
+      {
+        "input": "40 15\n",
+        "output": "55"
+      },
+      {
+        "input": "0 0\n",
+        "output": "0"
+      },
+      {
+        "input": "100 20\n",
+        "output": "120"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-5 5\n",
+        "output": "0"
+      }
+    ]
+  },
+  {
+    "id": "w9-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nnamespace {\nint clampBonus(int bonus) {\n    if (bonus < 0) return 0;\n    if (bonus > 20) return 20;\n    return bonus;\n}\n}\n\nint finalScore(int base, int bonus) {\n    return base + clampBonus(bonus);\n}\n\nint main() {\n    int base{};\n    int bonus{};\n    std::cin >> base >> bonus;\n    std::cout << finalScore(base, bonus) << '\\n';\n    return 0;\n}",
+    "debugFix": "namespace { int helper(int x) { return x * 2; } }\nint publicValue(int x) { return helper(x); }",
+    "debugExplanation": "無名名前空間の helper と同じ名前の外部関数を定義すると、同じ翻訳単位内で名前が曖昧になり得ます。内部用の名前を重複させず、公開APIには別の名前を付けます。",
+    "tests": [
+      {
+        "input": "80 30\n",
+        "output": "100"
+      },
+      {
+        "input": "80 -5\n",
+        "output": "80"
+      },
+      {
+        "input": "10 12\n",
+        "output": "22"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "70 20\n",
+        "output": "90"
+      }
+    ]
+  },
+  {
+    "id": "w9-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nnamespace inventory {\nint remaining(int stock, int used);\n}\n\nint main() {\n    int stock{};\n    int used{};\n    std::cin >> stock >> used;\n    std::cout << inventory::remaining(stock, used) << '\\n';\n    return 0;\n}\n\nnamespace inventory {\nint remaining(int stock, int used) {\n    return stock > used ? stock - used : 0;\n}\n}",
+    "debugFix": "namespace game { int score(int hp); }\nint main() { return game::score(5); }\nnamespace game { int score(int hp) { return hp * 2; } }",
+    "debugExplanation": "宣言と定義の引数名は異なっても構いませんが、引数の型・順序と戻り値の型は一致させます。レビューで同じ名前にそろえると読みやすくなります。",
+    "tests": [
+      {
+        "input": "12 5\n",
+        "output": "7"
+      },
+      {
+        "input": "3 8\n",
+        "output": "0"
+      },
+      {
+        "input": "0 0\n",
+        "output": "0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "100 99\n",
+        "output": "1"
+      }
+    ]
+  },
+  {
+    "id": "w9-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nnamespace scoring {\nint total(int first, int second, int third);\nint average(int first, int second, int third);\n}\n\nint main() {\n    int first{};\n    int second{};\n    int third{};\n    std::cin >> first >> second >> third;\n    std::cout << \"total: \" << scoring::total(first, second, third) << '\\n';\n    std::cout << \"average: \" << scoring::average(first, second, third) << '\\n';\n    return 0;\n}\n\nnamespace scoring {\nint total(int first, int second, int third) {\n    return first + second + third;\n}\nint average(int first, int second, int third) {\n    return total(first, second, third) / 3;\n}\n}",
+    "debugFix": "namespace scoring { int average(int a, int b, int c); }\nnamespace scoring { int average(int a, int b, int c) { return (a + b + c) / 3; } }",
+    "debugExplanation": "宣言と定義の引数の数と型は一致させます。3科目の平均を求める仕様なので、3つの引数を合計して3で割ります。",
+    "tests": [
+      {
+        "input": "70 80 90\n",
+        "output": "total: 240\naverage: 80"
+      },
+      {
+        "input": "0 0 0\n",
+        "output": "total: 0\naverage: 0"
+      },
+      {
+        "input": "100 50 0\n",
+        "output": "total: 150\naverage: 50"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "99 100 98\n",
+        "output": "total: 297\naverage: 99"
+      }
+    ]
   }
 ]

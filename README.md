@@ -43,7 +43,7 @@ pnpm test:e2e:runner
 
 `pnpm build` は静的サイトを `out/` に出力します。GitHub Actionsもこの出力をPagesへ公開します。
 
-WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの56レッスン（Week 1〜8）の模範解答を実コンパイルし、110件の公開テストと73件のrunner専用テストを照合できます。教材データを編集したときは `pnpm generate:lessons` を先に実行してください。
+WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの63レッスン（Week 1〜9）の模範解答とWeek 9のコード例を実コンパイルし、131件の公開テストと80件のrunner専用テストを照合できます。教材データを編集したときは `pnpm generate:lessons` を先に実行してください。
 
 ```powershell
 pnpm verify:lessons
@@ -81,4 +81,4 @@ AI講師は別プロセスのサービスとして動き、OpenAI Responses API�
 
 ## 実装状況
 
-現在の機能・未実装項目・検証結果は [進捗](docs/PROGRESS.md) と [次の作業](docs/NEXT_STEPS.md) に記録しています。Week 1〜8 の日別教材が使えます。Week 9〜104 は週単位の計画と日別の学習枠があり、詳細教材は未制作です。
+現在の機能・未実装項目・検証結果は [進捗](docs/PROGRESS.md) と [次の作業](docs/NEXT_STEPS.md) に記録しています。Week 1〜9 の日別教材が使えます。Week 10〜104 は週単位の計画と日別の学習枠があり、詳細教材は未制作です。

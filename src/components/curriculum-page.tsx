@@ -4,7 +4,10 @@ import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, Circle, LockKeyhole, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { curriculumWeeks, totalLearningDays } from "@/lib/curriculum";
+import { lessons } from "@/lib/lessons";
 import { readLearnerState, type LearnerState } from "@/lib/browser-store";
+
+const authoredWeeks = new Set(lessons.map((lesson) => lesson.week));
 
 export function CurriculumPage() {
   const [state, setState] = useState<LearnerState | null>(null);
@@ -57,7 +60,7 @@ export function CurriculumPage() {
                     const lessonHref = `/learn/${week.week}/${day.day}/`;
                     return <Link className={`day-card ${record?.completedAt ? "day-complete" : ""}`} key={id} href={lessonHref}><span className="day-card-number">DAY {day.day}{record?.completedAt ? <Check size={13} /> : null}</span><strong>{day.label}</strong><small>{day.focus.split(" — ")[1]}</small><span className="day-card-link">{record?.completedAt ? "見直す" : "内容を見る"}<ArrowRight size={12} /></span></Link>;
                   })}</div>
-                  <p className="lesson-availability">{week.week <= 4 ? "この週は学習教材・例題・課題を利用できます。" : "この週の目標と日程を公開中です。日別の詳細教材は順次制作します。"}</p>
+                  <p className="lesson-availability">{authoredWeeks.has(week.week) ? "この週は学習教材・例題・課題を利用できます。" : "この週の目標と日程を公開中です。日別の詳細教材は順次制作します。"}</p>
                 </div>
               </details>
             );
