@@ -10,6 +10,7 @@ import { week13LessonSeeds } from "./lesson-seeds/week-13.ts";
 import { week14LessonSeeds } from "./lesson-seeds/week-14.ts";
 import { week15LessonSeeds } from "./lesson-seeds/week-15.ts";
 import { week16LessonSeeds } from "./lesson-seeds/week-16.ts";
+import { week17LessonSeeds } from "./lesson-seeds/week-17.ts";
 
 export type Lesson = {
   id: string;
@@ -67,6 +68,7 @@ const weekNames = [
   "オブジェクト指向設計",
   "継承・仮想関数・ポリモーフィズム",
   "合成と継承の使い分け",
+  "RAIIとリソース管理",
 ];
 
 const starter = `#include <iostream>
@@ -125,6 +127,7 @@ const lessonSeeds: LessonSeed[][] = [
   week14LessonSeeds,
   week15LessonSeeds,
   week16LessonSeeds,
+  week17LessonSeeds,
 ];
 
 const hiddenTestsByLesson: Record<string, { input: string; output: string }[]> = {

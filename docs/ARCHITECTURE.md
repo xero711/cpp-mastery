@@ -10,7 +10,7 @@ GitHub Pages cannot run a Node.js API, database, compiler, or secret-bearing AI 
 
 - `src/app`: statically exported Japanese routes and application shell.
 - `src/lib/curriculum.ts`: canonical 104-week plan (8 phases, 728 learning days).
-- `src/lib/lessons.ts` and `src/lib/lessons.public.json`: browser-safe payload for the 112 authored Week 1–16 lessons.
+- `src/lib/lessons.ts` and `src/lib/lessons.public.json`: browser-safe payload for the 119 authored Week 1–17 lessons.
 - `services/runner/data/lesson-source.ts`: authoring source for private answers and test definitions; `pnpm generate:lessons` emits the browser-safe JSON and runner registry separately.
 - `src/lib/browser-store.ts`: IndexedDB-backed learner settings, drafts, answers, and evidence.
 - `src/lib/runner-client.ts`: browser client for an optional isolated runner; it never compiles on the Pages host and validates browser-local endpoint overrides.

@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 112 authored C++ reference solutions against 278 public and 132 hidden test cases, 56 standalone Week 9–16 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
+Verified: static export, lint, current automated tests, 119 authored C++ reference solutions against 299 public and 140 hidden test cases, 63 standalone Week 9–17 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
 
-Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 17–104.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 18–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -237,3 +237,10 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - The course now contains 112 daily lessons and reference solutions, 278 public grading cases, and 132 runner-only hidden cases. The Chromium curriculum E2E checks authored lessons through Week 16.
 - `pnpm verify:lessons` passed with Visual Studio C++ for all 112 reference solutions, 56 standalone Week 9–16 examples, 278 public cases, and 132 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production build generated 743 static routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed.
 - GitHub Pages publication succeeded in [run 37937694165](https://github.com/xero711/cpp-mastery/actions/runs/37937694165), and isolated runner CI succeeded in [run 37937693823](https://github.com/xero711/cpp-mastery/actions/runs/37937693823). Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 17–104.
+
+## 2026-10-09 — Week 17 RAII and resource management
+
+- Authored seven detailed lessons on owning a real temporary-file handle, scope-based release, early returns, exception unwinding, composed owners, standard-library memory ownership, and preventing unsafe copies of a single-owner wrapper.
+- The course now contains 119 daily lessons and reference solutions, 299 public grading cases, and 140 runner-only hidden cases. Chromium curriculum E2E includes authored lesson pages through Week 17.
+- `pnpm verify:lessons` passed with Visual Studio C++ for all 119 reference solutions, 63 standalone Week 9–17 examples, and all 299 public plus 140 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production static build generated 743 routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed.
+- GitHub Pages publication and runner CI for Week 17 are pending. Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 18–104.

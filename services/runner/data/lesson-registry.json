@@ -2870,5 +2870,198 @@
         "output": "invalid"
       }
     ]
+  },
+  {
+    "id": "w17-d1",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <string>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nint main() {\n    std::string label;\n    std::string text;\n    if (!(std::cin >> label >> text)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    TempFile file{label};\n    if (!file.valid()) {\n        std::cout << \"unavailable\\n\";\n        return 0;\n    }\n    if (!file.write(text)) {\n        std::cout << \"write error\\n\";\n        return 0;\n    }\n    std::cout << \"saved: \" << text << '\\n';\n    return 0;\n}",
+    "debugFix": "TempFile::~TempFile() { if (file_) std::fclose(file_); }",
+    "debugExplanation": "TempFileがFILE*を所有するなら、そのデストラクターにfclose()を置いて解放責任を一か所へ集めます。",
+    "tests": [
+      {
+        "input": "save hello\n",
+        "output": "opened: save\nsaved: hello\nclosed: save"
+      },
+      {
+        "input": "backup ready\n",
+        "output": "opened: backup\nsaved: ready\nclosed: backup"
+      },
+      {
+        "input": "draft done\n",
+        "output": "opened: draft\nsaved: done\nclosed: draft"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "checkpoint stored\n",
+        "output": "opened: checkpoint\nsaved: stored\nclosed: checkpoint"
+      }
+    ]
+  },
+  {
+    "id": "w17-d2",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <string>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nint main() {\n    std::string label;\n    if (!(std::cin >> label)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::cout << \"before\\n\";\n    {\n        TempFile file{label};\n        if (!file.valid()) {\n            std::cout << \"unavailable\\n\";\n            return 0;\n        }\n        std::cout << \"inside\\n\";\n    }\n    std::cout << \"after\\n\";\n    return 0;\n}",
+    "debugFix": "{ TempFile file{label}; }\nstd::cout << \"after\\n\";",
+    "debugExplanation": "使い終わる位置を内側のブロックの終わりにすれば、所有する資源をそこですぐ解放できます。",
+    "tests": [
+      {
+        "input": "report\n",
+        "output": "before\nopened: report\ninside\nclosed: report\nafter"
+      },
+      {
+        "input": "cache\n",
+        "output": "before\nopened: cache\ninside\nclosed: cache\nafter"
+      },
+      {
+        "input": "level\n",
+        "output": "before\nopened: level\ninside\nclosed: level\nafter"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "temporary\n",
+        "output": "before\nopened: temporary\ninside\nclosed: temporary\nafter"
+      }
+    ]
+  },
+  {
+    "id": "w17-d3",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <string>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nvoid process(bool stop) {\n    TempFile file{\"job\"};\n    if (!file.valid()) {\n        std::cout << \"unavailable\\n\";\n        return;\n    }\n    std::cout << \"work\\n\";\n    if (stop) {\n        std::cout << \"early return\\n\";\n        return;\n    }\n    std::cout << \"continue\\n\";\n}\n\nint main() {\n    int stop{};\n    if (!(std::cin >> stop) || (stop != 0 && stop != 1)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    process(stop == 1);\n    return 0;\n}",
+    "debugFix": "if (stop) return; // TempFileのデストラクターが閉じる",
+    "debugExplanation": "所有者が解放を担当する設計では、呼び出し側で手動のfclose()を重ねません。",
+    "tests": [
+      {
+        "input": "1\n",
+        "output": "opened: job\nwork\nearly return\nclosed: job"
+      },
+      {
+        "input": "0\n",
+        "output": "opened: job\nwork\ncontinue\nclosed: job"
+      },
+      {
+        "input": "2\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-1\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w17-d4",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <stdexcept>\n#include <string>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nvoid run(bool fail) {\n    TempFile file{\"task\"};\n    if (!file.valid()) {\n        std::cout << \"unavailable\\n\";\n        return;\n    }\n    std::cout << \"work\\n\";\n    if (fail) throw std::runtime_error{\"failed\"};\n    std::cout << \"done\\n\";\n}\n\nint main() {\n    int fail{};\n    if (!(std::cin >> fail) || (fail != 0 && fail != 1)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    try {\n        run(fail == 1);\n    } catch (const std::runtime_error&) {\n        std::cout << \"caught\\n\";\n    }\n    return 0;\n}",
+    "debugFix": "try { run(); } catch (...) { /* run内のTempFileが解放済み */ }",
+    "debugExplanation": "catchへ到達する前のスタック巻き戻しで、例外を投げた関数のTempFileが解放を済ませます。",
+    "tests": [
+      {
+        "input": "1\n",
+        "output": "opened: task\nwork\nclosed: task\ncaught"
+      },
+      {
+        "input": "0\n",
+        "output": "opened: task\nwork\ndone\nclosed: task"
+      },
+      {
+        "input": "3\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-1\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w17-d5",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <string>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nclass Archive {\npublic:\n    Archive(const std::string& primary, const std::string& backup)\n        : primary_{primary}, backup_{backup} {}\n    bool ready() const { return primary_.valid() && backup_.valid(); }\nprivate:\n    TempFile primary_;\n    TempFile backup_;\n};\n\nint main() {\n    std::string primary;\n    std::string backup;\n    if (!(std::cin >> primary >> backup)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    Archive archive{primary, backup};\n    if (!archive.ready()) {\n        std::cout << \"unavailable\\n\";\n        return 0;\n    }\n    std::cout << \"archive ready\\n\";\n    return 0;\n}",
+    "debugFix": "class Archive { TempFile primary_; TempFile backup_; };",
+    "debugExplanation": "資源所有者をメンバーに持てば、メンバーのデストラクターがそれぞれ解放します。外側で同じ資源を二重解放しません。",
+    "tests": [
+      {
+        "input": "primary backup\n",
+        "output": "opened: primary\nopened: backup\narchive ready\nclosed: backup\nclosed: primary"
+      },
+      {
+        "input": "save copy\n",
+        "output": "opened: save\nopened: copy\narchive ready\nclosed: copy\nclosed: save"
+      },
+      {
+        "input": "world local\n",
+        "output": "opened: world\nopened: local\narchive ready\nclosed: local\nclosed: world"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "main mirror\n",
+        "output": "opened: main\nopened: mirror\narchive ready\nclosed: mirror\nclosed: main"
+      }
+    ]
+  },
+  {
+    "id": "w17-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n#include <vector>\n\nint main() {\n    int count{};\n    if (!(std::cin >> count) || count < 0 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::vector<std::string> words;\n    for (int i = 0; i < count; ++i) {\n        std::string word;\n        if (!(std::cin >> word)) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        words.push_back(word);\n    }\n    std::cout << \"items: \" << words.size() << '\\n';\n    for (std::size_t i = 0; i < words.size(); ++i) {\n        if (i > 0) std::cout << ' ';\n        std::cout << words[i];\n    }\n    std::cout << '\\n';\n    return 0;\n}",
+    "debugFix": "std::vector<int> values(2, 0);\nvalues[0] = 1;\nvalues[1] = 2;",
+    "debugExplanation": "data()はvector所有の領域を指します。利用側がdeleteすると、vector破棄時にも解放されて二重解放になります。vectorに値を保持させ、明示的な解放をしません。",
+    "tests": [
+      {
+        "input": "3 red blue green\n",
+        "output": "items: 3\nred blue green"
+      },
+      {
+        "input": "1 amber\n",
+        "output": "items: 1\namber"
+      },
+      {
+        "input": "0\n",
+        "output": "items: 0\n"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 a b c d e\n",
+        "output": "items: 5\na b c d e"
+      },
+      {
+        "input": "6 a b c d e f\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w17-d7",
+    "standard": "c++17",
+    "solution": "#include <cstdio>\n#include <iostream>\n#include <string>\n#include <type_traits>\n\nclass TempFile {\npublic:\n    explicit TempFile(const std::string& label)\n        : label_{label}, file_{std::tmpfile()} {\n        if (file_ != nullptr) std::cout << \"opened: \" << label_ << '\\n';\n    }\n    ~TempFile() {\n        if (file_ != nullptr) {\n            std::fclose(file_);\n            std::cout << \"closed: \" << label_ << '\\n';\n        }\n    }\n    TempFile(const TempFile&) = delete;\n    TempFile& operator=(const TempFile&) = delete;\n    bool valid() const { return file_ != nullptr; }\n    bool write(const std::string& text) {\n        return file_ != nullptr && std::fwrite(text.data(), 1, text.size(), file_) == text.size();\n    }\nprivate:\n    std::string label_;\n    std::FILE* file_{};\n};\n\nstatic_assert(!std::is_copy_constructible_v<TempFile>);\n\nclass SaveSession {\npublic:\n    explicit SaveSession(const std::string& label) : file_{label} {}\n    bool ready() const { return file_.valid(); }\n    bool save(const std::string& text) { return file_.write(text); }\nprivate:\n    TempFile file_;\n};\n\nint main() {\n    std::string label;\n    std::string text;\n    if (!(std::cin >> label >> text)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    SaveSession session{label};\n    if (!session.ready()) {\n        std::cout << \"unavailable\\n\";\n        return 0;\n    }\n    if (!session.save(text)) {\n        std::cout << \"write error\\n\";\n        return 0;\n    }\n    std::cout << \"saved\\n\";\n    return 0;\n}",
+    "debugFix": "= delete;",
+    "debugExplanation": "単一所有のFILE*をコピーすると複数のデストラクターが同じハンドルを閉じるため、この段階ではコピーを禁止します。",
+    "tests": [
+      {
+        "input": "slot data\n",
+        "output": "opened: slot\nsaved\nclosed: slot"
+      },
+      {
+        "input": "profile state\n",
+        "output": "opened: profile\nsaved\nclosed: profile"
+      },
+      {
+        "input": "checkpoint ready\n",
+        "output": "opened: checkpoint\nsaved\nclosed: checkpoint"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "backup snapshot\n",
+        "output": "opened: backup\nsaved\nclosed: backup"
+      }
+    ]
   }
 ]
