@@ -9,12 +9,16 @@ on:
       - "e2e/runner-integration.e2e.ts"
       - "playwright.runner.config.ts"
       - "playwright.config.ts"
+      - "next.config.ts"
+      - "scripts/serve-static.mjs"
       - "package.json"
       - "pnpm-lock.yaml"
       - "src/lib/runner-client.ts"
       - "src/components/settings-page.tsx"
       - "src/components/workspace-page.tsx"
       - "src/components/code-editor-panel.tsx"
+      - "src/app/**"
+      - "src/lib/**"
   workflow_dispatch:
 
 permissions:
@@ -47,6 +51,11 @@ jobs:
         run: node services/runner/test/integration.mjs
         env:
           RUNNER_DOCKER_RUNTIME: runc
+      - name: Build static Pages export for browser E2E
+        run: pnpm build
+        env:
+          GITHUB_REPOSITORY: xero711/cpp-mastery
+          NEXT_TELEMETRY_DISABLED: 1
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
       - name: Grade a browser submission through the isolated runner

@@ -41,13 +41,13 @@ jobs:
         run: pnpm test
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
-      - name: Test browser backup and restore flow
-        run: pnpm test:e2e
       - name: Build static export
         run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_CPP_RUNNER_URL: ${{ vars.CPP_RUNNER_URL }}
+      - name: Test browser backup and restore flow against the static export
+        run: pnpm test:e2e
       - name: Verify private data is absent from Pages assets
         run: pnpm verify:public-bundle
       - name: Add Pages marker

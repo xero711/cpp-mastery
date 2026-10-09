@@ -35,6 +35,8 @@ pnpm test:e2e
 
 ```powershell
 $env:GITHUB_REPOSITORY = 'xero711/cpp-mastery'
+$env:NEXT_TELEMETRY_DISABLED = '1'
+pnpm build
 $env:CPP_RUNNER_E2E_TOKEN = '<runner .env.private と同じトークン>'
 pnpm test:e2e:runner
 ```

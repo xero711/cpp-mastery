@@ -21,7 +21,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "pnpm dev --port 3008",
+    command: `node scripts/serve-static.mjs ${basePath}`.trim(),
     url: `${baseURL}dashboard/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

@@ -28,4 +28,12 @@ test("workspace submits C++ to the isolated runner and displays its server-side 
 
   await page.reload();
   await expect(page.locator(".problem-links")).toContainText("1 回提出済み");
+
+  await page.goto("learn/1/1/");
+  await page.getByRole("button", { name: "模範解答を見る" }).click();
+  await expect(page.locator(".solution-reveal")).toContainText("return 0;");
+
+  const debugging = page.locator(".debug-section");
+  await debugging.getByRole("button", { name: "解説を確認" }).click();
+  await expect(debugging.locator(".answer-reveal")).toContainText("std::cout");
 });
