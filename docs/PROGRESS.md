@@ -79,5 +79,5 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - The course now contains 56 complete daily lessons and reference solutions, with 110 public test cases. The week emphasizes named state, explicit enum mappings, namespace qualification, and value-return versus reference mutation.
 - `pnpm test`: passed (4 Vitest files / 14 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 56 reference programs and checked all 110 public cases.
 - Local browser review confirmed the Week 8 Day 7 Japanese lesson, typed quiz, debugging task, integrated combat exercise, and editor rendered. The practice page listed Week 8 and filtering it showed seven tasks.
-- Week 8 Pages deployment verification is still pending.
+- Commit `e9bc15f` deployed successfully to GitHub Pages in [run 37907927815](https://github.com/xero711/cpp-mastery/actions/runs/37907927815); lint, application/API tests, static export, artifact upload, and deployment all passed.
 - Weeks 9–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed; current GitHub Actions variables and secrets are empty.
