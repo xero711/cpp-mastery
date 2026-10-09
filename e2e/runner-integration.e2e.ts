@@ -5,10 +5,10 @@ const runnerToken = process.env.CPP_RUNNER_E2E_TOKEN ?? "ci-runner-token-0123456
 async function configureRunner(page: Page) {
   await page.goto("settings/");
   await page.getByLabel("実行ワーカーのURL").fill("http://127.0.0.1:8081");
-  await page.getByRole("button", { name: "URLを保存" }).click();
+  await page.getByRole("button", { name: "URLを保存", exact: true }).click();
   await expect(page.getByText("実行ワーカーURLをこのブラウザーに保存しました。")).toBeVisible();
   await page.getByLabel("実行ワーカーのアクセストークン").fill(runnerToken);
-  await page.getByRole("button", { name: "トークンを保存" }).click();
+  await page.getByRole("button", { name: "トークンを保存", exact: true }).click();
   await expect(page.getByText("実行ワーカーのトークンをこのブラウザーへ保存しました。")).toBeVisible();
 }
 
