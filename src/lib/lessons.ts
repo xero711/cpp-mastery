@@ -1,6 +1,7 @@
 import { week5LessonSeeds } from "./lesson-seeds/week-05.ts";
 import { week6LessonSeeds } from "./lesson-seeds/week-06.ts";
 import { week7LessonSeeds } from "./lesson-seeds/week-07.ts";
+import { week8LessonSeeds } from "./lesson-seeds/week-08.ts";
 
 export type Lesson = {
   id: string;
@@ -47,6 +48,7 @@ const weekNames = [
   "関数・引数・戻り値",
   "配列・文字列・ポインタ",
   "参照・const・引数の渡し方",
+  "構造体・列挙型・名前空間",
 ];
 
 const starter = `#include <iostream>
@@ -96,6 +98,7 @@ const lessonSeeds: LessonSeed[][] = [
   week5LessonSeeds,
   week6LessonSeeds,
   week7LessonSeeds,
+  week8LessonSeeds,
 ];
 
 const exerciseOutputs = [
@@ -106,6 +109,7 @@ const exerciseOutputs = [
   "ready", "damage: 18", "11", "alive", "45", "HP: 37\nalive", "80",
   "7", "16", "Hello, Ada", "text: Hello C++", "42", "4 7 9", "16",
   "15", "21", "name: Ada", "10", "15", "80", "75",
+  "3 4", "name: Ada\nhp: 80", "pause", "100", "alive", "3 4", "18",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>

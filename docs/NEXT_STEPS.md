@@ -7,11 +7,11 @@
 3. Deploy the runner and verify its public HTTPS URL, origin allowlist, bearer authentication, rate limits, sandbox image digest, and real cross-origin compile/run before setting the repository variable `CPP_RUNNER_URL`.
 4. Configure the frontend build and enter the per-user token in Settings only after the service is reachable. The token is stored separately in browser IndexedDB and is excluded from learning backups.
 
-The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI, or cloud credentials. The API and sandbox image are implemented; Docker-backed execution is not yet verified on this PC or deployed. A provider/account and its billing boundary must be available before a public runner can be created.
+The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI, or cloud credentials. The GitHub repository currently has no Actions variables or secrets, including `CPP_RUNNER_URL`. The API and sandbox image are implemented; Docker-backed execution is not yet verified on this PC or deployed. A provider/account and its billing boundary must be available before a public runner can be created.
 
 ## Learning platform
 
-1. Author and review detailed daily lessons beyond Week 7. Week 8–104 currently provides the weekly plan and daily templates.
+1. Author and review detailed daily lessons beyond Week 8. Week 9–104 currently provides the weekly plan and daily templates.
 2. Add adaptive planning, a skill map, projects, portfolio export, and richer measured analytics. The browser-local review schedule now advances only after a correct quiz and passing test.
 3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
 4. Expand browser E2E coverage for learner progress, backup/restore, code submission, review sessions, and error handling; Docker-backed runner integration already runs in CI.

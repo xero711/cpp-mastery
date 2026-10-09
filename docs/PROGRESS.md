@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 49 authored C++ reference solutions against 89 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 56 authored C++ reference solutions against 110 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
 
-Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 7.
+Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 8.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -71,4 +71,13 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Local browser review confirmed the Week 7 Day 1 Japanese lesson, code example, quiz, debugging task, exercise, public-test count, and editor loaded. The practice page offered Week 7 and filtering it displayed exactly seven tasks.
 - The site continues to publish through GitHub Pages. Commit `a988ed9` deployed successfully in [run 37906719970](https://github.com/xero711/cpp-mastery/actions/runs/37906719970); lint, application/API tests, static export, artifact upload, and deployment all passed.
 - A fresh browser check of `https://xero711.github.io/cpp-mastery/` redirected to the custom domain and displayed Cloudflare's security challenge, so the deployed lesson content could not be inspected in this environment. GitHub reports `https_enforced=false`.
-- Weeks 8–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed.
+- At this Week 7 checkpoint, Weeks 8–104 still had weekly topics and daily templates, not authored daily lessons. No production gVisor runner was deployed.
+
+## 2026-10-09 — Week 8 daily lessons
+
+- Authored seven lessons on `struct` members and aggregate initialization, `enum class`, namespaces, deriving a typed state from a struct, returning a small struct by value, and combining the types in a game combat example.
+- The course now contains 56 complete daily lessons and reference solutions, with 110 public test cases. The week emphasizes named state, explicit enum mappings, namespace qualification, and value-return versus reference mutation.
+- `pnpm test`: passed (4 Vitest files / 14 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 56 reference programs and checked all 110 public cases.
+- Local browser review confirmed the Week 8 Day 7 Japanese lesson, typed quiz, debugging task, integrated combat exercise, and editor rendered. The practice page listed Week 8 and filtering it showed seven tasks.
+- Week 8 Pages deployment verification is still pending.
+- Weeks 9–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed; current GitHub Actions variables and secrets are empty.

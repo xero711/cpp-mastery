@@ -9,10 +9,10 @@ describe("curriculum and authored lesson set", () => {
     expect(curriculumWeeks.every((week) => week.days.length === 7)).toBe(true);
   });
 
-  it("provides complete lesson records for each of the first 49 days", () => {
-    expect(lessons).toHaveLength(49);
+  it("provides complete lesson records for each of the first 56 days", () => {
+    expect(lessons).toHaveLength(56);
     expect(lessons.map((lesson) => lesson.id)).toEqual(
-      Array.from({ length: 49 }, (_, index) => "w" + (Math.floor(index / 7) + 1) + "-d" + ((index % 7) + 1)),
+      Array.from({ length: 56 }, (_, index) => "w" + (Math.floor(index / 7) + 1) + "-d" + ((index % 7) + 1)),
     );
     for (const lesson of lessons) {
       expect(lesson.explanation.trim()).not.toBe("");
