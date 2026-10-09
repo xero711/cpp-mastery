@@ -40,8 +40,8 @@ try {
       standard,
       tests: [{ stdin: "21\n" }, { stdin: "7\n" }],
     });
-    assert.equal(result.response.status, 200);
-    assert.equal(result.body.status, "ok");
+    assert.equal(result.response.status, 200, JSON.stringify(result.body));
+    assert.equal(result.body.status, "ok", JSON.stringify(result.body));
     assert.deepEqual(result.body.cases.map((test) => test.stdout), ["42\n", "14\n"]);
     assert.ok(result.body.cases.every((test) => test.exitCode === 0 && !test.timedOut));
   }

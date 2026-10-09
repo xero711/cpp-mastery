@@ -317,6 +317,12 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
     } catch (error) {
       if (!response.writableEnded && !abortController.signal.aborted) {
         const reason = error instanceof Error ? error.message : "unknown";
+        const category = /^sandbox-[a-z0-9-]+/.exec(reason)?.[0] ?? "unknown";
+        console.error("C++ sandbox infrastructure failure", {
+          name: error instanceof Error ? error.name : "UnknownError",
+          code: isRecord(error) && typeof error.code === "string" ? error.code : "UNKNOWN",
+          category,
+        });
         const message = reason === "sandbox-timeout"
           ? "実行ワーカーの制限時間を超えました。"
           : "隔離実行環境でエラーが発生しました。解答の正誤とは分けて確認してください。";
