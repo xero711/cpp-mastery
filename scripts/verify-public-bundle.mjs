@@ -19,7 +19,7 @@ async function walk(directory) {
 await walk(outputRoot);
 const publicJson = await readFile(join(root, "src", "lib", "lessons.public.json"), "utf8");
 const publicLessons = JSON.parse(publicJson);
-const payload = (await Promise.all(assets.map((path) => readFile(path, "utf8")))).join("\n");
+const assetContents = await Promise.all(assets.map(async (path) => [path, await readFile(path, "utf8")]));
 
 assert.equal(publicLessons.length, lessons.length);
 for (const lesson of publicLessons) {
@@ -36,11 +36,15 @@ for (const lesson of publicLessons) {
 for (const lesson of lessons) {
   for (const secret of [lesson.exercise.solution, lesson.debug.fix]) {
     const encoded = JSON.stringify(secret).slice(1, -1);
-    if (secret.length >= 24) assert.equal(payload.includes(secret) || payload.includes(encoded), false, `${lesson.id} private answer leaked into GitHub Pages assets`);
+    if (secret.length >= 24) {
+      const leakedAsset = assetContents.find(([, content]) => content.includes(secret) || content.includes(encoded));
+      assert.equal(leakedAsset, undefined, `${lesson.id} private answer leaked into GitHub Pages asset ${leakedAsset?.[0]}`);
+    }
   }
   for (const test of lesson.exercise.hiddenTests) {
     const encodedCase = JSON.stringify(test);
-    assert.equal(payload.includes(encodedCase), false, `${lesson.id} hidden test leaked into GitHub Pages assets`);
+    const leakedAsset = assetContents.find(([, content]) => content.includes(encodedCase));
+    assert.equal(leakedAsset, undefined, `${lesson.id} hidden test leaked into GitHub Pages asset ${leakedAsset?.[0]}`);
   }
 }
 

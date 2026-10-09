@@ -2102,5 +2102,194 @@
         "output": "words: C++ C++ STL vector\nmatches: 2"
       }
     ]
+  },
+  {
+    "id": "w13-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::string query;\n    std::getline(std::cin, text);\n    std::getline(std::cin, query);\n\n    const std::size_t position = text.find(query);\n    std::cout << \"length: \" << text.size() << std::endl;\n    if (position == std::string::npos) {\n        std::cout << \"missing\" << std::endl;\n    } else {\n        std::cout << \"found at: \" << position << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "if (text.find(query) != std::string::npos) std::cout << \"found\";",
+    "debugExplanation": "位置0はfalseのように扱われ、nposは非0です。真偽値にせずnposと比べます。",
+    "tests": [
+      {
+        "input": "C++ practice\npractice\n",
+        "output": "length: 12\nfound at: 4"
+      },
+      {
+        "input": "learn C++\nC++\n",
+        "output": "length: 9\nfound at: 6"
+      },
+      {
+        "input": "game dev\nC++\n",
+        "output": "length: 8\nmissing"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "\n\n",
+        "output": "length: 0\nfound at: 0"
+      }
+    ]
+  },
+  {
+    "id": "w13-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n\n    int sum{};\n    int positiveCount{};\n    for (const int value : values) {\n        sum += value;\n        if (value > 0) ++positiveCount;\n    }\n    std::cout << \"sum: \" << sum << std::endl;\n    std::cout << \"positive: \" << positiveCount << std::endl;\n    return 0;\n}",
+    "debugFix": "positiveCount += (value > 0 ? 1 : 0);",
+    "debugExplanation": "0は正の値ではないため、0より大きい場合だけ個数へ加えます。",
+    "tests": [
+      {
+        "input": "5\n3 -2 0 7 4\n",
+        "output": "sum: 12\npositive: 3"
+      },
+      {
+        "input": "0\n",
+        "output": "sum: 0\npositive: 0"
+      },
+      {
+        "input": "4\n5 5 -10 0\n",
+        "output": "sum: 0\npositive: 2"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "3\n-1 -2 -3\n",
+        "output": "sum: -6\npositive: 0"
+      }
+    ]
+  },
+  {
+    "id": "w13-d3",
+    "standard": "c++17",
+    "solution": "#include <algorithm>\n#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n    int target{};\n    std::cin >> target;\n\n    std::sort(values.begin(), values.end());\n    const auto found = std::find(values.begin(), values.end(), target);\n    std::cout << \"sorted:\";\n    for (const int value : values) std::cout << ' ' << value;\n    std::cout << std::endl;\n    std::cout << \"contains: \" << (found != values.end() ? \"yes\" : \"no\") << std::endl;\n    return 0;\n}",
+    "debugFix": "if (found != values.end()) std::cout << *found;",
+    "debugExplanation": "end()は末尾の次を表し、逆参照できません。見つけた位置foundを使います。",
+    "tests": [
+      {
+        "input": "4\n5 1 4 2\n4\n",
+        "output": "sorted: 1 2 4 5\ncontains: yes"
+      },
+      {
+        "input": "3\n9 3 7\n4\n",
+        "output": "sorted: 3 7 9\ncontains: no"
+      },
+      {
+        "input": "5\n2 2 1 2 1\n2\n",
+        "output": "sorted: 1 1 2 2 2\ncontains: yes"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0\n6\n",
+        "output": "sorted:\ncontains: no"
+      }
+    ]
+  },
+  {
+    "id": "w13-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n    int index{};\n    std::cin >> index;\n\n    if (index < 0 || static_cast<std::size_t>(index) >= values.size()) {\n        std::cout << \"out of range\" << std::endl;\n    } else {\n        std::cout << \"value: \" << values[static_cast<std::size_t>(index)] << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "for (std::size_t i = 0; i < values.size(); ++i) std::cout << values[i];",
+    "debugExplanation": "size()と同じ添字は末尾の次です。条件はi < size()です。",
+    "tests": [
+      {
+        "input": "3\n11 22 33\n2\n",
+        "output": "value: 33"
+      },
+      {
+        "input": "3\n11 22 33\n-1\n",
+        "output": "out of range"
+      },
+      {
+        "input": "3\n11 22 33\n3\n",
+        "output": "out of range"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0\n0\n",
+        "output": "out of range"
+      }
+    ]
+  },
+  {
+    "id": "w13-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n    if (values.empty()) {\n        std::cout << \"empty\" << std::endl;\n        return 0;\n    }\n\n    int minimum = values.front();\n    int maximum = values.front();\n    for (const int value : values) {\n        if (value < minimum) minimum = value;\n        if (value > maximum) maximum = value;\n    }\n    std::cout << \"min: \" << minimum << std::endl;\n    std::cout << \"max: \" << maximum << std::endl;\n    return 0;\n}",
+    "debugFix": "if (values.empty()) { std::cout << \"empty\\n\"; return 0; }\nint minimum = values.front();",
+    "debugExplanation": "空のvectorにfront()を呼べません。要素があることを先に確かめます。",
+    "tests": [
+      {
+        "input": "5\n8 -4 3 8 0\n",
+        "output": "min: -4\nmax: 8"
+      },
+      {
+        "input": "1\n-7\n",
+        "output": "min: -7\nmax: -7"
+      },
+      {
+        "input": "4\n6 6 6 6\n",
+        "output": "min: 6\nmax: 6"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0\n",
+        "output": "empty"
+      }
+    ]
+  },
+  {
+    "id": "w13-d6",
+    "standard": "c++17",
+    "solution": "#include <algorithm>\n#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> scores;\n    for (int i = 0; i < count; ++i) {\n        int score{};\n        std::cin >> score;\n        if (score < 0 || score > 100) {\n            std::cout << \"invalid\" << std::endl;\n            return 0;\n        }\n        scores.push_back(score);\n    }\n    int threshold{};\n    std::cin >> threshold;\n    if (threshold < 0 || threshold > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::sort(scores.begin(), scores.end());\n    int qualified{};\n    for (const int score : scores) {\n        if (score >= threshold) ++qualified;\n    }\n    std::cout << \"scores:\";\n    for (const int score : scores) std::cout << ' ' << score;\n    std::cout << std::endl;\n    std::cout << \"at least: \" << qualified << std::endl;\n    return 0;\n}",
+    "debugFix": "qualified += (score >= threshold ? 1 : 0);",
+    "debugExplanation": "しきい値以上なので、同じ値も集計に含めます。",
+    "tests": [
+      {
+        "input": "4\n80 50 100 50\n60\n",
+        "output": "scores: 50 50 80 100\nat least: 2"
+      },
+      {
+        "input": "0\n100\n",
+        "output": "scores:\nat least: 0"
+      },
+      {
+        "input": "3\n0 50 100\n50\n",
+        "output": "scores: 0 50 100\nat least: 2"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "2\n100 100\n100\n",
+        "output": "scores: 100 100\nat least: 2"
+      }
+    ]
+  },
+  {
+    "id": "w13-d7",
+    "standard": "c++17",
+    "solution": "#include <algorithm>\n#include <iostream>\n#include <string>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<std::string> words;\n    for (int i = 0; i < count; ++i) {\n        std::string word;\n        std::cin >> word;\n        words.push_back(word);\n    }\n    std::string query;\n    std::cin >> query;\n\n    std::sort(words.begin(), words.end());\n    int matches{};\n    for (const std::string& word : words) {\n        if (word.find(query) != std::string::npos) ++matches;\n    }\n    std::cout << \"words:\";\n    for (const std::string& word : words) std::cout << ' ' << word;\n    std::cout << std::endl;\n    std::cout << \"matches: \" << matches << std::endl;\n    return 0;\n}",
+    "debugFix": "matches += (word.find(query) != std::string::npos ? 1 : 0);",
+    "debugExplanation": "findは位置0やnposを返すため、真偽値のようには判定できません。",
+    "tests": [
+      {
+        "input": "3\nred blue red\nre\n",
+        "output": "words: blue red red\nmatches: 2"
+      },
+      {
+        "input": "4\napple banana apricot berry\nap\n",
+        "output": "words: apple apricot banana berry\nmatches: 2"
+      },
+      {
+        "input": "1\nGame\ngame\n",
+        "output": "words: Game\nmatches: 0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0\nx\n",
+        "output": "words:\nmatches: 0"
+      }
+    ]
   }
 ]
