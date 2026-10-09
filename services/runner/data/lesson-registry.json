@@ -1913,5 +1913,194 @@
         "output": "name: Gem\nremaining: 0\nclose Gem"
       }
     ]
+  },
+  {
+    "id": "w12-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::cin >> text;\n    std::cout << \"text: \" << text << std::endl;\n    std::cout << \"length: \" << text.size() << std::endl;\n    return 0;\n}",
+    "debugFix": "if (!text.empty()) std::cout << text[text.size() - 1];",
+    "debugExplanation": "size() は末尾の次の位置です。最後の文字は size()-1 ですが、空ならその位置もありません。",
+    "tests": [
+      {
+        "input": "hello\n",
+        "output": "text: hello\nlength: 5"
+      },
+      {
+        "input": "CPlusPlus\n",
+        "output": "text: CPlusPlus\nlength: 9"
+      },
+      {
+        "input": "game\n",
+        "output": "text: game\nlength: 4"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "x\n",
+        "output": "text: x\nlength: 1"
+      }
+    ]
+  },
+  {
+    "id": "w12-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::string query;\n    std::getline(std::cin, text);\n    std::getline(std::cin, query);\n    const std::size_t position = text.find(query);\n    if (position == std::string::npos) {\n        std::cout << \"missing\" << std::endl;\n    } else {\n        std::cout << \"found at: \" << position << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "if (text.find(query) != std::string::npos) std::cout << \"found\";",
+    "debugExplanation": "位置0はfalseのように扱われ、未発見のnposは真になります。nposと明示比較します。",
+    "tests": [
+      {
+        "input": "learn C++ strings\nC++\n",
+        "output": "found at: 6"
+      },
+      {
+        "input": "C++ is useful\nC++\n",
+        "output": "found at: 0"
+      },
+      {
+        "input": "string search\nvector\n",
+        "output": "missing"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "empty query\n\n",
+        "output": "found at: 0"
+      }
+    ]
+  },
+  {
+    "id": "w12-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n\n    std::cout << \"size: \" << values.size() << std::endl;\n    std::cout << \"values:\";\n    for (const int value : values) std::cout << \" \" << value;\n    std::cout << std::endl;\n    return 0;\n}",
+    "debugFix": "std::vector<int> values; values.push_back(value);",
+    "debugExplanation": "vector<int>(100)は100個の要素を持つvectorを作ります。空から追加するなら引数なしで作ります。",
+    "tests": [
+      {
+        "input": "3\n5 8 -2\n",
+        "output": "size: 3\nvalues: 5 8 -2"
+      },
+      {
+        "input": "0\n",
+        "output": "size: 0\nvalues:"
+      },
+      {
+        "input": "2\n9 1\n",
+        "output": "size: 2\nvalues: 9 1"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-1\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w12-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 1 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n\n    int index{};\n    std::cin >> index;\n    if (index < 0 || static_cast<std::size_t>(index) >= values.size()) {\n        std::cout << \"out of range\" << std::endl;\n    } else {\n        std::cout << \"value: \" << values[index] << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "if (index < 0 || static_cast<std::size_t>(index) >= values.size()) std::cout << \"out of range\"; else std::cout << values[index];",
+    "debugExplanation": "負の値もsize()と同じ位置も範囲外です。アクセス前に両方を確認します。",
+    "tests": [
+      {
+        "input": "4\n8 5 12 3\n2\n",
+        "output": "value: 12"
+      },
+      {
+        "input": "2\n4 7\n-1\n",
+        "output": "out of range"
+      },
+      {
+        "input": "2\n4 7\n2\n",
+        "output": "out of range"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "1\n9\n0\n",
+        "output": "value: 9"
+      }
+    ]
+  },
+  {
+    "id": "w12-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<std::string> names;\n    for (int i = 0; i < count; ++i) {\n        std::string name;\n        std::cin >> name;\n        names.push_back(name);\n    }\n\n    std::cout << \"count: \" << names.size() << std::endl;\n    int number{1};\n    for (const std::string& name : names) {\n        std::cout << number << \": \" << name << std::endl;\n        ++number;\n    }\n    return 0;\n}",
+    "debugFix": "for (const std::string& name : names) std::cout << name << std::endl;",
+    "debugExplanation": "値コピーへ追加しても元の要素は変わりません。この課題は読み取りなのでconst参照を表示に使います。",
+    "tests": [
+      {
+        "input": "3\nMira Ren Kai\n",
+        "output": "count: 3\n1: Mira\n2: Ren\n3: Kai"
+      },
+      {
+        "input": "0\n",
+        "output": "count: 0"
+      },
+      {
+        "input": "2\nA B\n",
+        "output": "count: 2\n1: A\n2: B"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "1\nSolo\n",
+        "output": "count: 1\n1: Solo"
+      }
+    ]
+  },
+  {
+    "id": "w12-d6",
+    "standard": "c++17",
+    "solution": "#include <algorithm>\n#include <iostream>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<int> values;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        std::cin >> value;\n        values.push_back(value);\n    }\n    int target{};\n    std::cin >> target;\n\n    std::sort(values.begin(), values.end());\n    std::cout << \"sorted:\";\n    for (const int value : values) std::cout << \" \" << value;\n    std::cout << std::endl;\n\n    const auto found = std::find(values.begin(), values.end(), target);\n    std::cout << \"result: \" << (found == values.end() ? \"missing\" : \"found\") << std::endl;\n    return 0;\n}",
+    "debugFix": "const auto first = values.begin();\nconst auto last = values.end();\nstd::sort(first, last);",
+    "debugExplanation": "end()は範囲の末尾の次を表すため、終端iteratorをそのまま渡します。",
+    "tests": [
+      {
+        "input": "5\n8 2 8 1 4\n8\n",
+        "output": "sorted: 1 2 4 8 8\nresult: found"
+      },
+      {
+        "input": "4\n6 3 9 1\n7\n",
+        "output": "sorted: 1 3 6 9\nresult: missing"
+      },
+      {
+        "input": "0\n5\n",
+        "output": "sorted:\nresult: missing"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "3\n-4 0 2\n-4\n",
+        "output": "sorted: -4 0 2\nresult: found"
+      }
+    ]
+  },
+  {
+    "id": "w12-d7",
+    "standard": "c++17",
+    "solution": "#include <algorithm>\n#include <iostream>\n#include <string>\n#include <vector>\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n\n    std::vector<std::string> words;\n    for (int i = 0; i < count; ++i) {\n        std::string word;\n        std::cin >> word;\n        words.push_back(word);\n    }\n    std::string query;\n    std::cin >> query;\n\n    std::sort(words.begin(), words.end());\n    std::cout << \"words:\";\n    for (const std::string& word : words) std::cout << \" \" << word;\n    std::cout << std::endl;\n    std::cout << \"matches: \" << std::count(words.begin(), words.end(), query) << std::endl;\n    return 0;\n}",
+    "debugFix": "std::sort(words.begin(), words.end());\nstd::cout << std::count(words.begin(), words.end(), query);",
+    "debugExplanation": "数える処理だけでは出力順は整いません。表示前にsortも呼びます。",
+    "tests": [
+      {
+        "input": "3\nred blue red\nred\n",
+        "output": "words: blue red red\nmatches: 2"
+      },
+      {
+        "input": "2\nkiwi apple\norange\n",
+        "output": "words: apple kiwi\nmatches: 0"
+      },
+      {
+        "input": "0\nanything\n",
+        "output": "words:\nmatches: 0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "4\nC++ STL C++ vector\nC++\n",
+        "output": "words: C++ C++ STL vector\nmatches: 2"
+      }
+    ]
   }
 ]

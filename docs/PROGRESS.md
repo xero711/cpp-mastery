@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 77 authored C++ reference solutions against 173 public and 94 hidden test cases, 21 standalone Week 9–11 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The current static-bundle scan checks 904 assets and rejects private answers or hidden grading cases.
+Verified: static export, lint, current automated tests, 84 authored C++ reference solutions against 194 public and 101 hidden test cases, 28 standalone Week 9–12 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The current static-bundle scan checks 904 assets and rejects private answers or hidden grading cases.
 
-Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 12–104.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 13–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -200,3 +200,11 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Commit `4ddbf6d` is live on GitHub Pages after [run 37929173420](https://github.com/xero711/cpp-mastery/actions/runs/37929173420); build, browser backup/restore E2E, private-data scan, and deployment all passed. Runner CI [37929173459](https://github.com/xero711/cpp-mastery/actions/runs/37929173459) passed Docker isolation and browser-to-runner compile/grade.
 - Current infrastructure check: Docker CLI is missing, WSL has no installed distribution, and the repository has no Actions variables or secrets. GitHub Pages remains workflow-hosted at `http://xero-x.me/cpp-mastery/` with HTTPS enforcement disabled. CI's `runc` success is not production gVisor hosting evidence.
 - Still open: production gVisor runner hosting and a public grading endpoint, Docker/WSL setup on this Windows PC, custom-domain HTTPS eligibility, and detailed daily lessons for Weeks 12–104.
+
+## 2026-10-09 — Week 12 daily lessons
+
+- Authored seven lessons on `std::string` length and safe indexing, `find`/`npos`, vector growth and bounds, range-based loops, sorting/searching, and a combined word-list exercise. The curriculum now exposes the full Week 12 lesson set.
+- The course now contains 84 daily lessons and reference solutions, 194 public grading cases, and 101 runner-only hidden cases. The Chromium curriculum E2E checks Weeks 9–12.
+- `pnpm verify:lessons` passed with Visual Studio C++: all 84 reference solutions and all public/hidden cases, plus 28 standalone Week 9–12 examples. `pnpm test` passed (24 Vitest tests and 21 Node service/API tests); `pnpm lint` passed; the production build generated all 743 static routes; `pnpm verify:public-bundle` scanned 904 GitHub Pages assets and found no private answers or hidden tests; `pnpm test:e2e` passed all three Chromium flows; `git diff --check` passed.
+- GitHub Pages deployment for this Week 12 change is pending. The previously recorded deployment and runner infrastructure limits remain: the Pages API reports `https_enforced=false` for `http://xero-x.me/cpp-mastery/`; this PC lacks Docker and an installed WSL distribution, the repository has no Actions variables or secrets, and CI `runc` checks do not establish a production gVisor runner.
+- Still open: production gVisor runner hosting and a public grading endpoint, custom-domain HTTPS eligibility and live public-page inspection beyond the Cloudflare challenge, and detailed daily lessons for Weeks 13–104.

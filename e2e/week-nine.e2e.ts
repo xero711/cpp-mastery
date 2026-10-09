@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-test("Weeks 9 through 11 lessons are available from the curriculum and render authored content", async ({ page }) => {
-  for (const [week, title] of [[9, "宣言と定義を見分ける"], [10, "classで状態と操作をまとめる"], [11, "デストラクタとスコープの寿命"]] as const) {
+test("Weeks 9 through 12 lessons are available from the curriculum and render authored content", async ({ page }) => {
+  for (const [week, title] of [[9, "宣言と定義を見分ける"], [10, "classで状態と操作をまとめる"], [11, "デストラクタとスコープの寿命"], [12, "std::stringの長さと文字アクセス"]] as const) {
     await page.goto("curriculum/");
     const weekLabel = "W" + String(week).padStart(2, "0");
     const row = page.locator(".week-row").filter({ has: page.getByText(weekLabel, { exact: true }) });

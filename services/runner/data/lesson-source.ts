@@ -5,6 +5,7 @@ import { week8LessonSeeds } from "./lesson-seeds/week-08.ts";
 import { week9LessonSeeds } from "./lesson-seeds/week-09.ts";
 import { week10LessonSeeds } from "./lesson-seeds/week-10.ts";
 import { week11LessonSeeds } from "./lesson-seeds/week-11.ts";
+import { week12LessonSeeds } from "./lesson-seeds/week-12.ts";
 
 export type Lesson = {
   id: string;
@@ -57,6 +58,7 @@ const weekNames = [
   "ヘッダー・翻訳単位・リンケージ",
   "クラス・コンストラクター・アクセス制御",
   "デストラクタ・オブジェクト寿命",
+  "std::string・std::vector・基本STL",
 ];
 
 const starter = `#include <iostream>
@@ -110,6 +112,7 @@ const lessonSeeds: LessonSeed[][] = [
   week9LessonSeeds,
   week10LessonSeeds,
   week11LessonSeeds,
+  week12LessonSeeds,
 ];
 
 const hiddenTestsByLesson: Record<string, { input: string; output: string }[]> = {
@@ -185,6 +188,8 @@ const exerciseOutputs = [
   "start compile\nwork compile\nfinish compile", "body\ndestroy beta\ndestroy alpha", "drive\nvehicle\npart rubber\npart motor",
   "saved: resource closed", "original: Mira 88\ncopy: Mira 88", "create named\ncreate temporary\ndestroy temporary\nafter\ndestroy named",
   "name: Apples\nremaining: 5\nclose Apples",
+  "text: hello\nlength: 5", "found at: 6", "size: 3\nvalues: 5 8 -2", "value: 12",
+  "count: 3\n1: Mira\n2: Ren\n3: Kai", "sorted: 1 2 4 8 8\nresult: found", "words: blue red red\nmatches: 2",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>
