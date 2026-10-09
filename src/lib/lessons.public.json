@@ -5254,5 +5254,397 @@
     "debug": {
       "code": "if (items_.size() > static_cast<std::size_t>(capacity_)) return false;"
     }
+  },
+  {
+    "id": "w15-d1",
+    "version": 1,
+    "week": 15,
+    "day": 1,
+    "title": "public継承で共通の役割を受け継ぐ",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "基底クラスと派生クラスを作り、共有する状態と追加する状態を分ける。",
+    "minutes": 40,
+    "explanation": "継承では、既存クラスを基底クラスとして、その公開された操作を利用する新しい派生クラスを定義できます。PlayerがCharacterの一種として扱える設計なら、public継承を使う理由があります。単にコードを短くするために継承するのではなく、「派生型は基底型として扱えるか」を考えます。\n\nCharacterはHPの保存と問い合わせを担当し、Playerは名前を追加します。Playerのコンストラクター初期化子にあるCharacter{hp}が先に呼ばれ、その後name_が初期化されます。基底クラスのprivateメンバーは派生クラスから直接読めませんが、公開操作hp()を通して利用できます。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Character {\npublic:\n    explicit Character(int hp) : hp_{hp} {}\n    int hp() const { return hp_; }\nprivate:\n    int hp_{};\n};\n\nclass Player : public Character {\npublic:\n    Player(std::string name, int hp) : Character{hp}, name_{name} {}\n    const std::string& name() const { return name_; }\nprivate:\n    std::string name_;\n};\n\nint main() {\n    const Player player{\"Aoi\", 80};\n    std::cout << player.name() << \" hp: \" << player.hp() << std::endl;\n}",
+    "exampleOutput": "Aoi hp: 80",
+    "commonMistake": "public継承を、共通部分を省略するだけの道具として使う。派生型を基底型として安全に扱える関係かを先に確かめます。基底クラスのprivate状態を派生クラスから直接触ろうとせず、公開された操作を使います。",
+    "quiz": {
+      "question": "PlayerをCharacterからpublic継承する設計に最も近い説明はどれ？",
+      "choices": [
+        "PlayerはCharacterとして扱える",
+        "PlayerはCharacterの全private変数を直接変更できる",
+        "Playerを作ると基底部分は初期化されない"
+      ],
+      "answer": 0,
+      "explanation": "public継承は、派生型が基底型の公開された役割を保つ関係を表します。privateメンバーが派生型から直接見えるようになるわけではありません。"
+    },
+    "exercise": {
+      "prompt": "Character基底クラスとPlayer派生クラスを作ります。CharacterはHPをprivateで保持し、hp() constで返します。Playerは名前を追加し、CharacterのコンストラクターへHPを渡します。名前とHPを読み、HPが0〜1000なら name: <名前> と hp: <HP> の2行を表示し、範囲外なら invalid と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Mira 80\n",
+      "expectedOutput": "name: Mira\nhp: 80",
+      "tests": [
+        {
+          "input": "Mira 80\n",
+          "output": "name: Mira\nhp: 80"
+        },
+        {
+          "input": "Ren 0\n",
+          "output": "name: Ren\nhp: 0"
+        },
+        {
+          "input": "Kai 1001\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Characterに共通するHPとhp()を置き、Playerに固有の名前を置きます。",
+        "Playerの宣言をclass Player : public Characterとし、初期化子でCharacterへHPを渡します。",
+        "HPの範囲を確認してからPlayerを作り、名前と継承したhp()を表示します。"
+      ]
+    },
+    "debug": {
+      "code": "class Player : Character"
+    }
+  },
+  {
+    "id": "w15-d2",
+    "version": 1,
+    "week": 15,
+    "day": 2,
+    "title": "overrideで上書きの意図をコンパイラへ伝える",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "基底クラスのvirtual関数を派生クラスで正確にオーバーライドする。",
+    "minutes": 40,
+    "explanation": "派生クラスは基底クラスの関数を同じ名前で宣言できます。実行時に基底型経由でも派生側の実装を選ぶ仕組みを使うには、基底側の関数をvirtualにします。派生側の宣言末尾へoverrideを付けると、基底のvirtual関数を本当に上書きしているかコンパイラが検査します。\n\n関数名だけでなく、引数とconst修飾も一致させます。たとえば基底が std::string action() const なら、派生側も戻り値・引数・constを合わせます。overrideを付ける習慣は、意図しない別関数の宣言をコンパイル時に発見する助けになります。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Actor {\npublic:\n    virtual std::string action() const { return \"wait\"; }\n};\n\nclass Archer : public Actor {\npublic:\n    std::string action() const override { return \"shoot\"; }\n};\n\nint main() {\n    const Archer archer;\n    std::cout << \"action: \" << archer.action() << std::endl;\n}",
+    "exampleOutput": "action: shoot",
+    "commonMistake": "overrideを書かず、関数のconstや引数を間違えて別の関数を追加する。overrideを付ければ、基底関数との不一致をコンパイラが診断します。",
+    "quiz": {
+      "question": "overrideの主な役割はどれ？",
+      "choices": [
+        "基底のvirtual関数を正しく上書きしているか検査する",
+        "基底クラスのprivate状態を公開する",
+        "関数を自動的にinline化する"
+      ],
+      "answer": 0,
+      "explanation": "overrideは上書きの意図を示し、対応する基底virtual関数がなければコンパイルエラーにします。"
+    },
+    "exercise": {
+      "prompt": "Actor基底クラスにvirtualなaction() constを作り、派生クラスArcherとMageでそれぞれ shoot と cast を返してください。入力はAまたはMです。対応する派生オブジェクトを作り、action: <動作> を表示します。別の文字なら invalid を表示してください。派生側はoverrideを使います。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "A\n",
+      "expectedOutput": "action: shoot",
+      "tests": [
+        {
+          "input": "A\n",
+          "output": "action: shoot"
+        },
+        {
+          "input": "M\n",
+          "output": "action: cast"
+        },
+        {
+          "input": "X\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Actor側でaction()をvirtualにします。",
+        "ArcherとMageは戻り値とconstを含めて同じ宣言にし、末尾にoverrideを付けます。",
+        "入力を検査し、選んだ派生オブジェクトのaction()を呼びます。"
+      ]
+    },
+    "debug": {
+      "code": "std::string action() const { return \"shoot\"; }"
+    }
+  },
+  {
+    "id": "w15-d3",
+    "version": 1,
+    "week": 15,
+    "day": 3,
+    "title": "基底クラス参照から実際の型の関数を呼ぶ",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "基底クラス参照を受け取る関数からvirtual関数を呼び、実際の派生型の処理を選ぶ。",
+    "minutes": 40,
+    "explanation": "ポリモーフィズム（多態性）は、共通の基底型として受け取ったオブジェクトに同じ操作を依頼しながら、実際の型に応じた処理を選ぶ仕組みです。virtual関数を基底クラス参照から呼ぶと、参照先の実際のオブジェクト型に対応するオーバーライドが実行されます。\n\nshowDamageの引数はconst Attack&です。参照なので派生オブジェクトをコピーせず、constなので状態を変更しません。引数の型をAttackに固定しても、virtual関数の呼び出し先は派生型に合わせて選ばれます。これは共有インターフェースへ依存する関数を作る基本形です。",
+    "example": "#include <iostream>\n\nclass Attack {\npublic:\n    virtual int damage() const { return 0; }\n};\n\nclass FireAttack : public Attack {\npublic:\n    int damage() const override { return 15; }\n};\n\nvoid showDamage(const Attack& attack) {\n    std::cout << \"damage: \" << attack.damage() << std::endl;\n}\n\nint main() {\n    const FireAttack fire;\n    showDamage(fire);\n}",
+    "exampleOutput": "damage: 15",
+    "commonMistake": "基底クラス参照なら基底クラスの実装だけが呼ばれると思い込む。virtual呼び出しは参照先オブジェクトの実際の型に基づいて派生実装を選びます。",
+    "quiz": {
+      "question": "showDamage(const Attack&)へFireAttackを渡し、damage()がvirtualならどの実装が呼ばれる？",
+      "choices": [
+        "FireAttackのdamage()",
+        "常にAttackのdamage()",
+        "引数が参照なので呼び出せない"
+      ],
+      "answer": 0,
+      "explanation": "参照先の実際のオブジェクトはFireAttackなので、virtual dispatchがFireAttackのオーバーライドを選びます。"
+    },
+    "exercise": {
+      "prompt": "Attack基底クラスにvirtualなdamage() constを作り、FireAttackは15、IceAttackは9を返すようoverrideしてください。showDamage(const Attack&)は damage: <値> を表示します。入力FまたはIに応じて派生オブジェクトを作りshowDamageへ渡してください。それ以外なら invalid を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "F\n",
+      "expectedOutput": "damage: 15",
+      "tests": [
+        {
+          "input": "F\n",
+          "output": "damage: 15"
+        },
+        {
+          "input": "I\n",
+          "output": "damage: 9"
+        },
+        {
+          "input": "X\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "共通の操作damage()をAttackに宣言します。",
+        "showDamageの引数をconst Attack&にすると、両方の派生型を同じ関数で受け取れます。",
+        "入力に合わせた派生オブジェクトを作り、そのままshowDamageへ渡します。"
+      ]
+    },
+    "debug": {
+      "code": "int damage() const { return 0; }"
+    }
+  },
+  {
+    "id": "w15-d4",
+    "version": 1,
+    "week": 15,
+    "day": 4,
+    "title": "基底型への値コピーで起きるオブジェクトスライシング",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "派生オブジェクトを基底型の値としてコピーする問題を見つけ、参照で受け取る。",
+    "minutes": 40,
+    "explanation": "派生オブジェクトには基底部分と派生クラス固有部分があります。派生オブジェクトを基底クラスの値へコピーすると、保存先に派生部分がなく、基底部分だけの別オブジェクトが作られます。これをオブジェクトスライシングと呼びます。\n\n値渡しの関数showByValueは、引数をActorとして新しくコピーします。そのコピーはPlayerではないため、virtual関数を呼んでもActorの実装が動きます。const Actor&で受け取るshowByReferenceなら元のPlayerをコピーせず、実際の型の情報を保ったまま処理できます。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Actor {\npublic:\n    virtual std::string role() const { return \"actor\"; }\n};\n\nclass Player : public Actor {\npublic:\n    std::string role() const override { return \"player\"; }\n};\n\nvoid showByValue(Actor actor) {\n    std::cout << \"value: \" << actor.role() << std::endl;\n}\n\nvoid showByReference(const Actor& actor) {\n    std::cout << \"reference: \" << actor.role() << std::endl;\n}\n\nint main() {\n    const Player player;\n    showByValue(player);\n    showByReference(player);\n}",
+    "exampleOutput": "value: actor\nreference: player",
+    "commonMistake": "値渡しの関数に派生型を渡しても、派生クラス固有の部分まで保存されると思う。基底型の値へコピーするとオブジェクトスライシングが起きます。",
+    "quiz": {
+      "question": "派生オブジェクトの実際の型を保ち、コピーも避けて受け取る方法は？",
+      "choices": [
+        "基底クラスへのconst参照",
+        "基底クラスの値",
+        "intへの変換"
+      ],
+      "answer": 0,
+      "explanation": "基底クラスへのconst参照は派生オブジェクトをそのまま参照し、virtual呼び出しで派生側の処理を選べます。"
+    },
+    "exercise": {
+      "prompt": "Actorのrole()はactor、Playerのrole()はplayerを返すvirtual関数です。Playerを作り、Actorを値で受け取る関数とconst Actor&で受け取る関数へ順に渡してください。結果は value: actor と reference: player の2行になります。コピー時に派生部分が失われる違いを確認してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "value: actor\nreference: player",
+      "tests": [
+        {
+          "input": "",
+          "output": "value: actor\nreference: player"
+        },
+        {
+          "input": "\n",
+          "output": "value: actor\nreference: player"
+        },
+        {
+          "input": "ignored\n",
+          "output": "value: actor\nreference: player"
+        }
+      ],
+      "hints": [
+        "基底型Actorの値を受け取る関数は、新しいActorオブジェクトを作ります。",
+        "コピーされたオブジェクトにPlayer固有の部分が残るかを考えます。",
+        "派生型のvirtual関数を保つ引数はconst Actor&です。"
+      ]
+    },
+    "debug": {
+      "code": "void display(Actor actor)"
+    }
+  },
+  {
+    "id": "w15-d5",
+    "version": 1,
+    "week": 15,
+    "day": 5,
+    "title": "純粋仮想関数で共通インターフェースを作る",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "純粋仮想関数を使った抽象クラスで、派生クラスに必要な操作を要求する。",
+    "minutes": 45,
+    "explanation": "基底クラスで意味のある共通実装を用意できず、派生クラスごとに必ず実装してほしい操作は純粋仮想関数にできます。宣言末尾に = 0 を付けると、そのクラスは抽象クラスになり、直接インスタンス化できません。\n\nCommandはlabel()の存在だけを約束し、SaveCommandとLoadCommandがそれぞれの表示名を返します。抽象クラスは「何をできるか」という契約を表します。実装を忘れた派生クラスも抽象のままなので、オブジェクトを作ろうとした箇所でコンパイルエラーになります。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Command {\npublic:\n    virtual std::string label() const = 0;\n    virtual ~Command() = default;\n};\n\nclass SaveCommand : public Command {\npublic:\n    std::string label() const override { return \"save\"; }\n};\n\nint main() {\n    const SaveCommand command;\n    std::cout << \"command: \" << command.label() << std::endl;\n}",
+    "exampleOutput": "command: save",
+    "commonMistake": "純粋仮想関数を持つ抽象クラスを通常クラスと同じように直接生成する。抽象クラスは共通の契約であり、実装を持つ派生型を生成します。",
+    "quiz": {
+      "question": "関数宣言の末尾に = 0 を付けたvirtual関数があるクラスは？",
+      "choices": [
+        "抽象クラスになり、直接生成できない",
+        "必ず整数0を返す",
+        "すべての派生クラスを自動生成する"
+      ],
+      "answer": 0,
+      "explanation": "純粋仮想関数を持つクラスは抽象クラスとなり、その操作を実装した具象派生クラスを作る必要があります。"
+    },
+    "exercise": {
+      "prompt": "Commandを抽象基底クラスとして作り、純粋仮想関数label() constを宣言してください。SaveCommandはsave、LoadCommandはloadを返し、入力SまたはLで選んだコマンドのラベルを command: <名前> と表示します。異なる入力は invalid としてください。派生クラスの実装にはoverrideを付けます。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "S\n",
+      "expectedOutput": "command: save",
+      "tests": [
+        {
+          "input": "S\n",
+          "output": "command: save"
+        },
+        {
+          "input": "L\n",
+          "output": "command: load"
+        },
+        {
+          "input": "X\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Commandには共通のlabel()宣言だけを置きます。",
+        "label()の末尾へ= 0を付けると純粋仮想関数になります。",
+        "SaveCommandとLoadCommandを作り、どちらもlabel()をoverrideします。"
+      ]
+    },
+    "debug": {
+      "code": "Command command;"
+    }
+  },
+  {
+    "id": "w15-d6",
+    "version": 1,
+    "week": 15,
+    "day": 6,
+    "title": "基底型から破棄するときはvirtualデストラクターを用意する",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "基底クラスのポインターから派生オブジェクトをdeleteする場合のデストラクター要件を説明する。",
+    "minutes": 45,
+    "explanation": "派生オブジェクトを基底クラスのポインター経由でdeleteする可能性があるなら、基底クラスのデストラクターはvirtualにします。そうしないと、基底クラス型のポインターから派生オブジェクトをdeleteする処理は未定義動作です。派生クラスの資源解放が呼ばれないだけ、という安全な動作を期待してはいけません。\n\nこの短い例では、動的なオブジェクトを一度だけ作って基底ポインターから破棄し、派生側と基底側の後始末が両方実行されることを確認します。ここでは規則の説明のためにnew/deleteを見せています。通常の所有権管理では、次週以降に学ぶRAIIとスマートポインターを優先し、手動のnew/deleteを一般的な設計として使わないでください。",
+    "example": "#include <iostream>\n\nclass Task {\npublic:\n    virtual ~Task() { std::cout << \"base cleanup\" << std::endl; }\n    virtual void run() const = 0;\n};\n\nclass SoundTask : public Task {\npublic:\n    ~SoundTask() override { std::cout << \"sound cleanup\" << std::endl; }\n    void run() const override { std::cout << \"play sound\" << std::endl; }\n};\n\nint main() {\n    Task* task = new SoundTask{};\n    task->run();\n    delete task;\n}",
+    "exampleOutput": "play sound\nsound cleanup\nbase cleanup",
+    "commonMistake": "基底クラスのデストラクターをvirtualにせず、基底ポインターから派生オブジェクトをdeleteしてよいと思う。この条件でのdeleteは未定義動作です。所有権を表す仕組みや破棄経路も併せて確認します。",
+    "quiz": {
+      "question": "派生オブジェクトを基底クラスのポインターからdeleteする場合、基底デストラクターはどうする？",
+      "choices": [
+        "virtualにする",
+        "privateにして呼び出しを隠す",
+        "必ず空の本文にする"
+      ],
+      "answer": 0,
+      "explanation": "virtualデストラクターによって、実際の派生型から順に正しく破棄できます。virtualでない基底ポインター経由のdeleteは未定義動作です。"
+    },
+    "exercise": {
+      "prompt": "Task基底クラスとSoundTask派生クラスを作ります。入力された音量が0〜100ならSoundTaskを生成し、Taskポインターから play: <音量> を表示してdeleteします。SoundTaskのデストラクターは sound cleanup、基底デストラクターは base cleanup を表示してください。範囲外なら invalid と表示します。基底デストラクターはvirtualにします。この課題は破棄規則を確認する小さなデモです。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "70\n",
+      "expectedOutput": "play: 70\nsound cleanup\nbase cleanup",
+      "tests": [
+        {
+          "input": "70\n",
+          "output": "play: 70\nsound cleanup\nbase cleanup"
+        },
+        {
+          "input": "0\n",
+          "output": "play: 0\nsound cleanup\nbase cleanup"
+        },
+        {
+          "input": "101\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Taskポインターからdeleteするとき、どのデストラクターが呼ばれるべきか整理します。",
+        "基底クラスのデストラクターへvirtualを付けます。",
+        "派生側で先に後始末を表示し、その後に基底側の後始末が呼ばれることをテストします。"
+      ]
+    },
+    "debug": {
+      "code": "class Task { public: ~Task() {} };"
+    }
+  },
+  {
+    "id": "w15-d7",
+    "version": 1,
+    "week": 15,
+    "day": 7,
+    "title": "総合：抽象インターフェースで複数の行動を実行する",
+    "subject": "継承・仮想関数・ポリモーフィズム",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 14の内容"
+    ],
+    "goal": "抽象基底クラス、派生型のoverride、基底参照への動的ディスパッチをまとめて使う。",
+    "minutes": 55,
+    "explanation": "抽象基底クラスで共有する操作を決め、派生クラスに具体的な処理を実装させると、呼び出し側は個々の型に依存しない関数を書けます。ここではActionが名前と威力の取得を要求し、SlashとSpellが値を提供します。showActionはActionへのconst参照だけを知っています。\n\nmainは入力された記号から具体的な行動を作り、同じshowActionへ渡します。派生オブジェクトはその呼び出し中も生存しているため、参照は有効です。入力記号をvectorへ保存してから1つずつ処理することで、数とコマンドの検査も分けています。実際のゲームでは多数の行動を所有するコンテナが必要になり、その設計は所有権とスマートポインターを学んでから扱います。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Action {\npublic:\n    virtual std::string name() const = 0;\n    virtual int power() const = 0;\n    virtual ~Action() = default;\n};\n\nclass Slash : public Action {\npublic:\n    std::string name() const override { return \"slash\"; }\n    int power() const override { return 8; }\n};\n\nvoid showAction(const Action& action) {\n    std::cout << action.name() << \" power: \" << action.power() << std::endl;\n}\n\nint main() {\n    const Slash slash;\n    showAction(slash);\n}",
+    "exampleOutput": "slash power: 8",
+    "commonMistake": "共通関数の中で派生型ごとの名前をif文で判定する。各型の動作をoverrideに任せ、呼び出し側は抽象インターフェースを通して操作します。",
+    "quiz": {
+      "question": "showActionがActionへのconst参照だけを使う利点は？",
+      "choices": [
+        "各派生型に同じ関数を使える",
+        "すべての派生オブジェクトがコピーされる",
+        "派生側の実装を呼べなくなる"
+      ],
+      "answer": 0,
+      "explanation": "抽象基底型への参照とvirtual関数により、呼び出し側が派生型を個別に分岐せず処理できます。"
+    },
+    "exercise": {
+      "prompt": "抽象基底Actionに純粋仮想関数name() constとpower() constを用意します。Slashはslashと8、Spellはspellと12を返します。showAction(const Action&)は <名前> power: <威力> を表示してください。件数n（0〜20）とn個の記号（SまたはM）を読み、対応する派生オブジェクトを作って順番にshowActionへ渡します。記号または件数が不正なら invalid を表示します。所有ポインターの配列は使わず、各派生オブジェクトは呼び出し中に生存させてください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "3\nS M S\n",
+      "expectedOutput": "slash power: 8\nspell power: 12\nslash power: 8",
+      "tests": [
+        {
+          "input": "3\nS M S\n",
+          "output": "slash power: 8\nspell power: 12\nslash power: 8"
+        },
+        {
+          "input": "0\n",
+          "output": ""
+        },
+        {
+          "input": "2\nM X\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Actionは共通の名前と威力を要求する抽象クラスにします。",
+        "showActionは派生型ではなくconst Action&を受け取ります。",
+        "コマンドをすべて検査した後、各分岐でSlashまたはSpellを作り、同じ関数へ渡します。"
+      ]
+    },
+    "debug": {
+      "code": "void showAction(const Slash& action)"
+    }
   }
 ]

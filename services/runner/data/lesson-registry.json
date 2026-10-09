@@ -2480,5 +2480,194 @@
         "output": "stored: 1\ncontains: no\nrejected: 2"
       }
     ]
+  },
+  {
+    "id": "w15-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Character {\npublic:\n    explicit Character(int hp) : hp_{hp} {}\n    int hp() const { return hp_; }\nprivate:\n    int hp_{};\n};\n\nclass Player : public Character {\npublic:\n    Player(std::string name, int hp) : Character{hp}, name_{name} {}\n    const std::string& name() const { return name_; }\nprivate:\n    std::string name_;\n};\n\nint main() {\n    std::string name;\n    int hp{};\n    std::cin >> name >> hp;\n    if (hp < 0 || hp > 1000) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    const Player player{name, hp};\n    std::cout << \"name: \" << player.name() << std::endl;\n    std::cout << \"hp: \" << player.hp() << std::endl;\n    return 0;\n}",
+    "debugFix": "public Character",
+    "debugExplanation": "classの継承アクセスを省略するとprivateになります。利用側から基底型の公開APIを使う設計ならpublic継承を明示します。",
+    "tests": [
+      {
+        "input": "Mira 80\n",
+        "output": "name: Mira\nhp: 80"
+      },
+      {
+        "input": "Ren 0\n",
+        "output": "name: Ren\nhp: 0"
+      },
+      {
+        "input": "Kai 1001\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Aoi 1000\n",
+        "output": "name: Aoi\nhp: 1000"
+      }
+    ]
+  },
+  {
+    "id": "w15-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Actor {\npublic:\n    virtual std::string action() const { return \"wait\"; }\n};\n\nclass Archer : public Actor {\npublic:\n    std::string action() const override { return \"shoot\"; }\n};\n\nclass Mage : public Actor {\npublic:\n    std::string action() const override { return \"cast\"; }\n};\n\nint main() {\n    char type{};\n    std::cin >> type;\n    if (type == 'A') {\n        const Archer actor;\n        std::cout << \"action: \" << actor.action() << std::endl;\n    } else if (type == 'M') {\n        const Mage actor;\n        std::cout << \"action: \" << actor.action() << std::endl;\n    } else {\n        std::cout << \"invalid\" << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "override",
+    "debugExplanation": "派生側の宣言末尾にoverrideを付けると、基底関数とのシグネチャのずれをコンパイラが検出できます。",
+    "tests": [
+      {
+        "input": "A\n",
+        "output": "action: shoot"
+      },
+      {
+        "input": "M\n",
+        "output": "action: cast"
+      },
+      {
+        "input": "X\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "m\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w15-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Attack {\npublic:\n    virtual int damage() const { return 0; }\n};\n\nclass FireAttack : public Attack {\npublic:\n    int damage() const override { return 15; }\n};\n\nclass IceAttack : public Attack {\npublic:\n    int damage() const override { return 9; }\n};\n\nvoid showDamage(const Attack& attack) {\n    std::cout << \"damage: \" << attack.damage() << std::endl;\n}\n\nint main() {\n    char type{};\n    std::cin >> type;\n    if (type == 'F') {\n        const FireAttack attack;\n        showDamage(attack);\n    } else if (type == 'I') {\n        const IceAttack attack;\n        showDamage(attack);\n    } else {\n        std::cout << \"invalid\" << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "virtual",
+    "debugExplanation": "基底関数にvirtualを付けないと、基底型参照から呼んだとき派生クラスの実装へ動的に切り替わりません。",
+    "tests": [
+      {
+        "input": "F\n",
+        "output": "damage: 15"
+      },
+      {
+        "input": "I\n",
+        "output": "damage: 9"
+      },
+      {
+        "input": "X\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "i\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w15-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Actor {\npublic:\n    virtual std::string role() const { return \"actor\"; }\n};\n\nclass Player : public Actor {\npublic:\n    std::string role() const override { return \"player\"; }\n};\n\nvoid showByValue(Actor actor) {\n    std::cout << \"value: \" << actor.role() << std::endl;\n}\n\nvoid showByReference(const Actor& actor) {\n    std::cout << \"reference: \" << actor.role() << std::endl;\n}\n\nint main() {\n    const Player player;\n    showByValue(player);\n    showByReference(player);\n    return 0;\n}",
+    "debugFix": "const Actor& actor",
+    "debugExplanation": "値渡しは基底型のコピーを作り、派生部分を切り落とします。基底型参照で受け取れば元の派生オブジェクトが保たれます。",
+    "tests": [
+      {
+        "input": "",
+        "output": "value: actor\nreference: player"
+      },
+      {
+        "input": "\n",
+        "output": "value: actor\nreference: player"
+      },
+      {
+        "input": "ignored\n",
+        "output": "value: actor\nreference: player"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "extra input\n",
+        "output": "value: actor\nreference: player"
+      }
+    ]
+  },
+  {
+    "id": "w15-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Command {\npublic:\n    virtual std::string label() const = 0;\n    virtual ~Command() = default;\n};\n\nclass SaveCommand : public Command {\npublic:\n    std::string label() const override { return \"save\"; }\n};\n\nclass LoadCommand : public Command {\npublic:\n    std::string label() const override { return \"load\"; }\n};\n\nint main() {\n    char type{};\n    std::cin >> type;\n    if (type == 'S') {\n        const SaveCommand command;\n        std::cout << \"command: \" << command.label() << std::endl;\n    } else if (type == 'L') {\n        const LoadCommand command;\n        std::cout << \"command: \" << command.label() << std::endl;\n    } else {\n        std::cout << \"invalid\" << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "= 0;",
+    "debugExplanation": "Commandを直接生成する必要がないなら、必要な操作を純粋仮想関数にして抽象クラスにします。実際に生成するのはそれを実装した派生クラスです。",
+    "tests": [
+      {
+        "input": "S\n",
+        "output": "command: save"
+      },
+      {
+        "input": "L\n",
+        "output": "command: load"
+      },
+      {
+        "input": "X\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "s\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w15-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Task {\npublic:\n    virtual ~Task() { std::cout << \"base cleanup\" << std::endl; }\n    virtual void play() const = 0;\n};\n\nclass SoundTask : public Task {\npublic:\n    explicit SoundTask(int volume) : volume_{volume} {}\n    ~SoundTask() override { std::cout << \"sound cleanup\" << std::endl; }\n    void play() const override { std::cout << \"play: \" << volume_ << std::endl; }\nprivate:\n    int volume_{};\n};\n\nint main() {\n    int volume{};\n    std::cin >> volume;\n    if (volume < 0 || volume > 100) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    Task* task = new SoundTask{volume};\n    task->play();\n    delete task;\n    return 0;\n}",
+    "debugFix": "virtual ~Task(){}",
+    "debugExplanation": "基底クラスのデストラクターをvirtualにすると、基底ポインターから派生型をdeleteした際に派生側から順にデストラクターが呼ばれます。",
+    "tests": [
+      {
+        "input": "70\n",
+        "output": "play: 70\nsound cleanup\nbase cleanup"
+      },
+      {
+        "input": "0\n",
+        "output": "play: 0\nsound cleanup\nbase cleanup"
+      },
+      {
+        "input": "101\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "100\n",
+        "output": "play: 100\nsound cleanup\nbase cleanup"
+      }
+    ]
+  },
+  {
+    "id": "w15-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n#include <vector>\n\nclass Action {\npublic:\n    virtual std::string name() const = 0;\n    virtual int power() const = 0;\n    virtual ~Action() = default;\n};\n\nclass Slash : public Action {\npublic:\n    std::string name() const override { return \"slash\"; }\n    int power() const override { return 8; }\n};\n\nclass Spell : public Action {\npublic:\n    std::string name() const override { return \"spell\"; }\n    int power() const override { return 12; }\n};\n\nvoid showAction(const Action& action) {\n    std::cout << action.name() << \" power: \" << action.power() << std::endl;\n}\n\nint main() {\n    int count{};\n    std::cin >> count;\n    if (count < 0 || count > 20) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    std::vector<char> commands(static_cast<std::size_t>(count));\n    for (char& command : commands) {\n        std::cin >> command;\n        if (command != 'S' && command != 'M') {\n            std::cout << \"invalid\" << std::endl;\n            return 0;\n        }\n    }\n    for (char command : commands) {\n        if (command == 'S') {\n            const Slash action;\n            showAction(action);\n        } else {\n            const Spell action;\n            showAction(action);\n        }\n    }\n    return 0;\n}",
+    "debugFix": "const Action& action",
+    "debugExplanation": "具体的なSlashだけを受け取るとSpellで再利用できません。共有契約であるActionへの参照を受け取ります。",
+    "tests": [
+      {
+        "input": "3\nS M S\n",
+        "output": "slash power: 8\nspell power: 12\nslash power: 8"
+      },
+      {
+        "input": "0\n",
+        "output": ""
+      },
+      {
+        "input": "2\nM X\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "1\nM\n",
+        "output": "spell power: 12"
+      }
+    ]
   }
 ]

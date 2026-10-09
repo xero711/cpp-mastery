@@ -1,8 +1,16 @@
 import { defineConfig } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 const [owner, repository] = (process.env.GITHUB_REPOSITORY ?? "").split("/");
 const isUserOrOrganizationSite = repository === `${owner}.github.io`;
-const basePath = repository && !isUserOrOrganizationSite ? `/${repository}` : "";
+const environmentBasePath = repository && !isUserOrOrganizationSite ? `/${repository}` : "";
+let basePath = environmentBasePath;
+try {
+  const manifest = JSON.parse(readFileSync(".next/routes-manifest.json", "utf8")) as { basePath?: unknown };
+  if (typeof manifest.basePath === "string") basePath = manifest.basePath;
+} catch {
+  // A build manifest is optional when the test runner is used outside a built checkout.
+}
 const baseURL = `http://localhost:3008${basePath}/`;
 
 export default defineConfig({
@@ -22,7 +30,7 @@ export default defineConfig({
   webServer: {
     command: `node scripts/serve-static.mjs ${basePath}`.trim(),
     url: `${baseURL}settings/`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });
