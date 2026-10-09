@@ -25,7 +25,7 @@ pnpm build
 
 `pnpm build` は静的サイトを `out/` に出力します。GitHub Actionsもこの出力をPagesへ公開します。
 
-WindowsでVisual Studio C++ Build Toolsが使える場合は、最初の28レッスンの模範解答を実コンパイルし、公開テストの入出力と照合できます。
+WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの49レッスン（Week 1〜7）の模範解答を実コンパイルし、89件の公開テスト入出力と照合できます。
 
 ```powershell
 pnpm verify:lessons
@@ -55,4 +55,4 @@ GitHub PagesはHTML/CSS/JavaScriptを配信するため、C++コンパイラや�
 
 ## 実装状況
 
-現在の機能・未実装項目・検証結果は [進捗](docs/PROGRESS.md) と [次の作業](docs/NEXT_STEPS.md) に記録しています。最初の4週間の教材が使えます。Week 5以降は週単位の計画を表示し、日別の詳細教材は未制作です。
+現在の機能・未実装項目・検証結果は [進捗](docs/PROGRESS.md) と [次の作業](docs/NEXT_STEPS.md) に記録しています。Week 1〜7 の日別教材が使えます。Week 8〜104 は週単位の計画と日別の学習枠があり、詳細教材は未制作です。
