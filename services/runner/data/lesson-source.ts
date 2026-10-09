@@ -4,6 +4,7 @@ import { week7LessonSeeds } from "./lesson-seeds/week-07.ts";
 import { week8LessonSeeds } from "./lesson-seeds/week-08.ts";
 import { week9LessonSeeds } from "./lesson-seeds/week-09.ts";
 import { week10LessonSeeds } from "./lesson-seeds/week-10.ts";
+import { week11LessonSeeds } from "./lesson-seeds/week-11.ts";
 
 export type Lesson = {
   id: string;
@@ -55,6 +56,7 @@ const weekNames = [
   "構造体・列挙型・名前空間",
   "ヘッダー・翻訳単位・リンケージ",
   "クラス・コンストラクター・アクセス制御",
+  "デストラクタ・オブジェクト寿命",
 ];
 
 const starter = `#include <iostream>
@@ -107,6 +109,7 @@ const lessonSeeds: LessonSeed[][] = [
   week8LessonSeeds,
   week9LessonSeeds,
   week10LessonSeeds,
+  week11LessonSeeds,
 ];
 
 const hiddenTestsByLesson: Record<string, { input: string; output: string }[]> = {
@@ -179,6 +182,9 @@ const exerciseOutputs = [
   "3 4", "name: Ada\nhp: 80", "pause", "100", "alive", "3 4", "18",
   "score: 150", "room: Boss", "stage: 3", "55", "100", "7", "total: 240\naverage: 80",
   "score: 42", "first: 15\nsecond: 17", "weapon: Bronze\nattack: 9", "ok 7", "Mira: alive", "Potion: 20", "name: Mira\nhp: 60/100",
+  "start compile\nwork compile\nfinish compile", "body\ndestroy beta\ndestroy alpha", "drive\nvehicle\npart rubber\npart motor",
+  "saved: resource closed", "original: Mira 88\ncopy: Mira 88", "create named\ncreate temporary\ndestroy temporary\nafter\ndestroy named",
+  "name: Apples\nremaining: 5\nclose Apples",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>

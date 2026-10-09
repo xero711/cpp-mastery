@@ -25,7 +25,7 @@ Before public AI use, provision an HTTPS host/reverse proxy, per-user auth, budg
 
 ## Learning platform
 
-1. Author and review detailed daily lessons beyond Week 10. Week 11–104 currently provides the weekly plan and daily templates.
+1. Author and review detailed daily lessons beyond Week 11. Week 12–104 currently provides the weekly plan and daily templates.
 2. Add adaptive planning, a skill map, projects, portfolio export, and richer measured analytics. The browser-local review schedule now advances only after a correct quiz and passing test.
 3. Deploy the implemented AI mentor through a separate secret-bearing service. It still needs a working provider runtime, HTTPS hosting, per-user authorization, budget controls, monitoring, and an abuse-response plan before public use.
 4. Extend review E2E coverage for a missed review attempt and backup-restored review state. CI now verifies due-date presentation, a correct quiz plus passing isolated C++ submission advancing the interval, and persistence after reload. The separate Chromium backup/restore E2E confirms the runner token stays out of backup JSON.

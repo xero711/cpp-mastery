@@ -46,6 +46,7 @@ try {
     const tests = [...lesson.exercise.tests, ...lesson.exercise.hiddenTests];
     for (const [index, test] of tests.entries()) {
       const run = spawnSync(executablePath, [], {
+        cwd: tempRoot,
         input: test.input,
         encoding: "utf8",
         timeout: 3000,
@@ -78,6 +79,7 @@ try {
       }
 
       const exampleRun = spawnSync(exampleExecutablePath, [], {
+        cwd: tempRoot,
         encoding: "utf8",
         timeout: 3000,
         maxBuffer: 32_000,
@@ -99,4 +101,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${lessons.length} reference solutions, ${verifiedExamples} standalone Week 9–10 examples, and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);
+console.log(`Verified ${lessons.length} reference solutions, ${verifiedExamples} standalone Week 9–11 examples, and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);

@@ -1724,5 +1724,194 @@
         "output": "name: Ghost\nhp: 0/30"
       }
     ]
+  },
+  {
+    "id": "w11-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Guard {\npublic:\n    explicit Guard(const std::string& name) : name_(name) {\n        std::cout << \"start \" << name_ << std::endl;\n    }\n\n    ~Guard() {\n        std::cout << \"finish \" << name_ << std::endl;\n    }\n\n    const std::string& name() const { return name_; }\n\nprivate:\n    std::string name_;\n};\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    Guard guard{name};\n    std::cout << \"work \" << guard.name() << std::endl;\n    return 0;\n}",
+    "debugFix": "~Guard() { std::cout << \"finish \" << name_ << std::endl; }",
+    "debugExplanation": "破棄の順序は合っています。表示形式を課題の指定どおりに整えます。",
+    "tests": [
+      {
+        "input": "compile\n",
+        "output": "start compile\nwork compile\nfinish compile"
+      },
+      {
+        "input": "lesson\n",
+        "output": "start lesson\nwork lesson\nfinish lesson"
+      },
+      {
+        "input": "session\n",
+        "output": "start session\nwork session\nfinish session"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "scope\n",
+        "output": "start scope\nwork scope\nfinish scope"
+      }
+    ]
+  },
+  {
+    "id": "w11-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Log {\npublic:\n    explicit Log(const std::string& name) : name_(name) {}\n    ~Log() { std::cout << \"destroy \" << name_ << std::endl; }\n\nprivate:\n    std::string name_;\n};\n\nint main() {\n    std::string firstName;\n    std::string secondName;\n    std::cin >> firstName >> secondName;\n    Log first{firstName};\n    Log second{secondName};\n    std::cout << \"body\" << std::endl;\n    return 0;\n}",
+    "debugFix": "~Log() { std::cout << \"destroy \" << name_ << std::endl; }",
+    "debugExplanation": "破棄順は逆順になります。各メッセージに `destroy ` の接頭辞も付けます。",
+    "tests": [
+      {
+        "input": "alpha beta\n",
+        "output": "body\ndestroy beta\ndestroy alpha"
+      },
+      {
+        "input": "outer inner\n",
+        "output": "body\ndestroy inner\ndestroy outer"
+      },
+      {
+        "input": "one two\n",
+        "output": "body\ndestroy two\ndestroy one"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "first last\n",
+        "output": "body\ndestroy last\ndestroy first"
+      }
+    ]
+  },
+  {
+    "id": "w11-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Part {\npublic:\n    explicit Part(const std::string& name) : name_(name) {}\n    ~Part() { std::cout << \"part \" << name_ << std::endl; }\n\nprivate:\n    std::string name_;\n};\n\nclass Vehicle {\npublic:\n    Vehicle(const std::string& engine, const std::string& wheel)\n        : engine_(engine), wheel_(wheel) {}\n    ~Vehicle() { std::cout << \"vehicle\" << std::endl; }\n\nprivate:\n    Part engine_;\n    Part wheel_;\n};\n\nint main() {\n    std::string engine;\n    std::string wheel;\n    std::cin >> engine >> wheel;\n    Vehicle vehicle{engine, wheel};\n    std::cout << \"drive\" << std::endl;\n    return 0;\n}",
+    "debugFix": "~Vehicle() { std::cout << \"vehicle\" << std::endl; }",
+    "debugExplanation": "メンバーの破棄はVehicle自身が手作業で行いません。デストラクタ本体の後に自動で逆順に破棄されます。",
+    "tests": [
+      {
+        "input": "motor rubber\n",
+        "output": "drive\nvehicle\npart rubber\npart motor"
+      },
+      {
+        "input": "electric tire\n",
+        "output": "drive\nvehicle\npart tire\npart electric"
+      },
+      {
+        "input": "engine wheel\n",
+        "output": "drive\nvehicle\npart wheel\npart engine"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "core outer\n",
+        "output": "drive\nvehicle\npart outer\npart core"
+      }
+    ]
+  },
+  {
+    "id": "w11-d4",
+    "standard": "c++17",
+    "solution": "#include <fstream>\n#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::getline(std::cin, text);\n    {\n        std::ofstream output{\"note.txt\"};\n        if (!output) return 1;\n        output << text;\n    }\n\n    std::ifstream input{\"note.txt\"};\n    if (!input) return 1;\n    std::string saved;\n    std::getline(input, saved);\n    std::cout << \"saved: \" << saved << std::endl;\n    return 0;\n}",
+    "debugFix": "{ std::ofstream output{\"note.txt\"}; output << text; } std::ifstream input{\"note.txt\"};",
+    "debugExplanation": "書き込み用ストリームを内側のスコープで閉じてから、読み込み用ストリームを開きます。",
+    "tests": [
+      {
+        "input": "resource closed\n",
+        "output": "saved: resource closed"
+      },
+      {
+        "input": "file lifetime\n",
+        "output": "saved: file lifetime"
+      },
+      {
+        "input": "RAII works\n",
+        "output": "saved: RAII works"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "scope exit\n",
+        "output": "saved: scope exit"
+      }
+    ]
+  },
+  {
+    "id": "w11-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Record {\npublic:\n    Record(const std::string& name, int score) : name_(name), score_(score) {}\n    const std::string& name() const { return name_; }\n    int score() const { return score_; }\n\nprivate:\n    std::string name_;\n    int score_{};\n};\n\nint main() {\n    std::string name;\n    int score{};\n    std::cin >> name >> score;\n    Record original{name, score};\n    Record copy = original;\n    std::cout << \"original: \" << original.name() << \" \" << original.score() << std::endl;\n    std::cout << \"copy: \" << copy.name() << \" \" << copy.score() << std::endl;\n    return 0;\n}",
+    "debugFix": "class Record { std::string name_; int score_{}; };",
+    "debugExplanation": "std::string は自分の寿命終了時に内部資源を解放します。手動で変更するデストラクタは不要です。",
+    "tests": [
+      {
+        "input": "Mira 88\n",
+        "output": "original: Mira 88\ncopy: Mira 88"
+      },
+      {
+        "input": "Rin 0\n",
+        "output": "original: Rin 0\ncopy: Rin 0"
+      },
+      {
+        "input": "Kai -4\n",
+        "output": "original: Kai -4\ncopy: Kai -4"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Unit 100\n",
+        "output": "original: Unit 100\ncopy: Unit 100"
+      }
+    ]
+  },
+  {
+    "id": "w11-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Trace {\npublic:\n    explicit Trace(const std::string& name) : name_(name) {\n        std::cout << \"create \" << name_ << std::endl;\n    }\n    ~Trace() { std::cout << \"destroy \" << name_ << std::endl; }\n\nprivate:\n    std::string name_;\n};\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    Trace named{name};\n    Trace{\"temporary\"};\n    std::cout << \"after\" << std::endl;\n    return 0;\n}",
+    "debugFix": "Trace{\"temporary\"};",
+    "debugExplanation": "変数名を付けると一時オブジェクトではなく名前付きオブジェクトになり、スコープ末尾まで残ります。",
+    "tests": [
+      {
+        "input": "named\n",
+        "output": "create named\ncreate temporary\ndestroy temporary\nafter\ndestroy named"
+      },
+      {
+        "input": "outer\n",
+        "output": "create outer\ncreate temporary\ndestroy temporary\nafter\ndestroy outer"
+      },
+      {
+        "input": "object\n",
+        "output": "create object\ncreate temporary\ndestroy temporary\nafter\ndestroy object"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "scope\n",
+        "output": "create scope\ncreate temporary\ndestroy temporary\nafter\ndestroy scope"
+      }
+    ]
+  },
+  {
+    "id": "w11-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Ticket {\npublic:\n    Ticket(const std::string& name, int count)\n        : name_(name), remaining_(count > 0 ? count : 0) {}\n    ~Ticket() { std::cout << \"close \" << name_ << std::endl; }\n\n    void use(int count) {\n        if (count > 0) remaining_ = count >= remaining_ ? 0 : remaining_ - count;\n    }\n\n    const std::string& name() const { return name_; }\n    int remaining() const { return remaining_; }\n\nprivate:\n    std::string name_;\n    int remaining_{};\n};\n\nint main() {\n    std::string name;\n    int initial{};\n    int used{};\n    std::cin >> name >> initial >> used;\n    Ticket ticket{name, initial};\n    ticket.use(used);\n    std::cout << \"name: \" << ticket.name() << std::endl;\n    std::cout << \"remaining: \" << ticket.remaining() << std::endl;\n    return 0;\n}",
+    "debugFix": "void use(int n) { if (n > 0) remaining_ = n >= remaining_ ? 0 : remaining_ - n; }",
+    "debugExplanation": "負の使用数は無視し、残りより大きい使用数では0に止めます。",
+    "tests": [
+      {
+        "input": "Apples 8 3\n",
+        "output": "name: Apples\nremaining: 5\nclose Apples"
+      },
+      {
+        "input": "Token 4 8\n",
+        "output": "name: Token\nremaining: 0\nclose Token"
+      },
+      {
+        "input": "Card -2 -3\n",
+        "output": "name: Card\nremaining: 0\nclose Card"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Gem 0 0\n",
+        "output": "name: Gem\nremaining: 0\nclose Gem"
+      }
+    ]
   }
 ]
