@@ -38,6 +38,14 @@ Not yet accepted: learner code compiled and graded through an isolated service, 
 
 Acceptance evidence for this implementation: local browser rendering of the runner credential controls, frontend and API unit tests, lint, static build, production-configuration rejection tests, successful GitHub Docker integration, and a successful Pages deployment. Pending: a production gVisor deployment, end-to-end C++ execution through the hosted site, HTTPS enforcement for the custom-domain Pages URL, and live public-page inspection beyond the Cloudflare challenge.
 
+## 2026-10-09 — browser-local spaced review
+
+- Added a persisted review schedule for failed understanding checks and failed/compile-error submissions. Initial misses are due the next day. After the due date, the schedule advances only when a fresh quiz answer is correct and a public test submission passes; successful intervals are 1, 3, 7, 14, 30, and 60 days, while a miss resets the interval to one day.
+- The Review Center now shows due and upcoming items, the next review date, interval, recent compiler/test evidence, and a link back to the lesson. The dashboard count uses the same due queue. Old backup records remain valid because review data is optional; new review schedules round-trip through existing exports.
+- `pnpm test`: passed (4 Vitest files / 14 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `git diff --check`: passed.
+- Local browser review confirmed that answering Week 6 Day 1 incorrectly saves a next-day review and renders it as an upcoming item in Review Center. Unit tests confirmed both quiz and passed exercise are required to advance the interval, a miss resets it, queue items are deduplicated, and legacy failures stay due until reviewed.
+- Browser-local scheduling is implemented. Full multi-day E2E replay and independent user accounts are not yet verified; state remains local to each browser profile.
+
 ## 2026-10-09 — Week 5 daily lessons
 
 - Authored all seven Week 5 lessons on function declarations, arguments, return values, boolean predicates, local scope, combined functions, and a short review challenge. Each lesson includes Japanese instruction, worked code/output, a quiz, a coding task and solution, hints, and a debugging task. Public test cases cover representative inputs; the review score is capped at 100.

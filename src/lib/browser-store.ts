@@ -1,3 +1,6 @@
+import { dateInJapan } from "./calendar";
+import { createInitialReviewSchedule, isReviewSchedule, recordReviewEvidence, type ReviewSchedule } from "./review-schedule";
+
 export type ThemePreference = "dark" | "light";
 
 export type LearnerSettings = {
@@ -21,6 +24,7 @@ export type LessonRecord = {
   lastAttemptAt?: string;
   attempts: number;
   bestScore?: number;
+  reviewSchedule?: ReviewSchedule;
 };
 
 export type SubmissionRecord = {
@@ -212,20 +216,33 @@ export async function saveLessonDraft(lessonId: string, draft: string) {
 }
 
 export async function saveQuizChoice(lessonId: string, quizChoice: number, quizCorrect: boolean) {
-  return updateLearnerState((state) => ({
-    ...state,
-    lessons: {
-      ...state.lessons,
-      [lessonId]: {
-        ...(state.lessons[lessonId] ?? { lessonId, draft: "", attempts: 0 }),
-        quizChoice,
-        quizCorrect,
-        ...(quizCorrect && state.submissions.some((submission) => submission.lessonId === lessonId && submission.status === "passed")
-          ? { completedAt: state.lessons[lessonId]?.completedAt ?? new Date().toISOString() }
-          : {}),
+  return updateLearnerState((state) => {
+    const previous = state.lessons[lessonId] ?? { lessonId, draft: "", attempts: 0 };
+    let reviewSchedule = previous.reviewSchedule;
+    if (!quizCorrect) {
+      reviewSchedule = recordReviewEvidence(reviewSchedule, { kind: "quiz", correct: false }, dateInJapan());
+    } else if (reviewSchedule) {
+      reviewSchedule = recordReviewEvidence(reviewSchedule, { kind: "quiz", correct: true }, dateInJapan());
+    } else if (state.submissions.some((submission) => submission.lessonId === lessonId && submission.status === "passed")) {
+      reviewSchedule = createInitialReviewSchedule(dateInJapan());
+    }
+
+    return {
+      ...state,
+      lessons: {
+        ...state.lessons,
+        [lessonId]: {
+          ...previous,
+          quizChoice,
+          quizCorrect,
+          ...(reviewSchedule ? { reviewSchedule } : {}),
+          ...(quizCorrect && state.submissions.some((submission) => submission.lessonId === lessonId && submission.status === "passed")
+            ? { completedAt: previous.completedAt ?? new Date().toISOString() }
+            : {}),
+        },
       },
-    },
-  }));
+    };
+  });
 }
 
 export async function saveLessonAnswer(lessonId: string, values: Partial<Pick<LessonRecord, "debugAnswer" | "debugRevealed" | "solutionRevealed" | "reflection" | "hintsUsed">>) {
@@ -242,6 +259,15 @@ export async function recordSubmission(submission: SubmissionRecord) {
   return updateLearnerState((state) => {
     const previous = state.lessons[submission.lessonId] ?? { lessonId: submission.lessonId, draft: submission.source, attempts: 0 };
     const passed = submission.status === "passed";
+    const submissionDay = dateInJapan(new Date(submission.submittedAt));
+    let reviewSchedule = previous.reviewSchedule;
+    if (passed) {
+      reviewSchedule = reviewSchedule
+        ? recordReviewEvidence(reviewSchedule, { kind: "exercise", correct: true }, submissionDay)
+        : previous.quizCorrect ? createInitialReviewSchedule(submissionDay) : undefined;
+    } else if (submission.status === "failed" || submission.status === "compile_error") {
+      reviewSchedule = recordReviewEvidence(reviewSchedule, { kind: "exercise", correct: false }, submissionDay);
+    }
     return {
       ...state,
       lessons: {
@@ -252,6 +278,7 @@ export async function recordSubmission(submission: SubmissionRecord) {
           attempts: previous.attempts + 1,
           lastAttemptAt: submission.submittedAt,
           bestScore: Math.max(previous.bestScore ?? 0, submission.score ?? 0),
+          ...(reviewSchedule ? { reviewSchedule } : {}),
           ...(passed && previous.quizCorrect ? { completedAt: previous.completedAt ?? submission.submittedAt } : {}),
         },
       },
@@ -343,7 +370,8 @@ function isLessonRecord(key: string, value: unknown): value is LessonRecord {
     && isOptional(value.hintsUsed, (item) => Number.isInteger(item) && Number(item) >= 0 && Number(item) <= 3)
     && isOptional(value.completedAt, isValidDate)
     && isOptional(value.lastAttemptAt, isValidDate)
-    && isOptional(value.bestScore, (item) => typeof item === "number" && Number.isFinite(item) && item >= 0 && item <= 100);
+    && isOptional(value.bestScore, (item) => typeof item === "number" && Number.isFinite(item) && item >= 0 && item <= 100)
+    && isOptional(value.reviewSchedule, isReviewSchedule);
 }
 
 export function isLearnerState(value: unknown): value is LearnerState {

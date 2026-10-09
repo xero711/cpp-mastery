@@ -8,6 +8,7 @@ import { dateInJapan, formatJapaneseDate, lessonSlotForDate } from "@/lib/calend
 import { readLearnerState, type LearnerState } from "@/lib/browser-store";
 import { findLesson } from "@/lib/lessons";
 import { hasConfiguredRunner } from "@/lib/runner-client";
+import { buildReviewQueue } from "@/lib/review-schedule";
 
 function streakFromDates(dates: string[], today: string) {
   const set = new Set(dates);
@@ -51,7 +52,8 @@ export function DashboardPage() {
       .map((date) => date.slice(0, 10));
     const currentWeek = curriculumWeeks[slot.week - 1];
     const currentLesson = findLesson(slot.week, slot.day);
-    const needsReview = state.submissions.filter((item) => item.status === "failed" || item.status === "compile_error").length;
+    const reviewQueue = buildReviewQueue(state.lessons, state.submissions, today);
+    const needsReview = reviewQueue.filter((item) => item.dueOn <= today).length;
     return {
       slot,
       completed,
@@ -99,7 +101,7 @@ export function DashboardPage() {
             <article className="stat-card"><div className="stat-top"><span className="stat-icon purple"><BookOpenCheck size={18} /></span><span className="stat-kicker">LEARNING</span></div><strong className="stat-value">{snapshot.completed}<small> / {totalLearningDays}</small></strong><span className="stat-label">完了した学習日</span><div className="stat-foot"><span>カリキュラム全体</span><span>{snapshot.progress}%</span></div><div className="thin-track"><span style={{ width: `${Math.max(snapshot.progress, 1)}%` }} /></div></article>
             <article className="stat-card"><div className="stat-top"><span className="stat-icon cyan"><Code2 size={18} /></span><span className="stat-kicker">PRACTICE</span></div><strong className="stat-value">{snapshot.attempts}<small> 回</small></strong><span className="stat-label">保存されたコード提出</span><div className="stat-foot"><span>採点は実行結果に基づく</span><span>{hasConfiguredRunner() ? "RUNNER URL SET" : "RUNNER OFF"}</span></div><div className={`thin-track ${hasConfiguredRunner() ? "track-cyan" : "track-muted"}`}><span style={{ width: hasConfiguredRunner() ? "100%" : "16%" }} /></div></article>
             <article className="stat-card"><div className="stat-top"><span className="stat-icon orange"><Flame size={18} /></span><span className="stat-kicker">CONSISTENCY</span></div><strong className="stat-value">{snapshot.streak}<small> 日</small></strong><span className="stat-label">記録が続いている日数</span><div className="stat-foot"><span>学習記録のある日から算出</span><span><ArrowUpRight size={13} /></span></div></article>
-            <article className="stat-card"><div className="stat-top"><span className="stat-icon green"><Sparkles size={18} /></span><span className="stat-kicker">REVIEW</span></div><strong className="stat-value">{snapshot.needsReview}<small> 件</small></strong><span className="stat-label">見直し候補</span><div className="stat-foot"><span>不正解・コンパイルエラー</span><Link href="/review/">復習へ <ArrowRight size={12} /></Link></div></article>
+            <article className="stat-card"><div className="stat-top"><span className="stat-icon green"><Sparkles size={18} /></span><span className="stat-kicker">REVIEW</span></div><strong className="stat-value">{snapshot.needsReview}<small> 件</small></strong><span className="stat-label">期限を迎えた復習</span><div className="stat-foot"><span>理解チェックと提出結果から算出</span><Link href="/review/">復習へ <ArrowRight size={12} /></Link></div></article>
           </section>
 
           <div className="dashboard-columns">
@@ -114,8 +116,8 @@ export function DashboardPage() {
 
             <section className="panel next-panel">
               <div className="panel-heading"><div><span className="section-kicker">KEEP MOVING</span><h2>次のアクション</h2></div><span className="action-count">{snapshot.needsReview ? "復習あり" : "学習中"}</span></div>
-              {snapshot.needsReview > 0 ? <Link href="/review/" className="action-card action-review"><span className="action-icon"><ArrowDownRight size={17} /></span><span><strong>{snapshot.needsReview}件の課題を見直す</strong><small>間違えた箇所からもう一度</small></span><MoveRight size={16} /></Link> : <div className="empty-action"><span className="empty-ring"><BookOpenCheck size={19} /></span><strong>復習候補はありません</strong><small>提出結果から自動で見つけます</small></div>}
-              <Link href="/practice/" className="action-card"><span className="action-icon action-cyan"><Code2 size={17} /></span><span><strong>コード演習を探す</strong><small>最初の4週間から出題</small></span><MoveRight size={16} /></Link>
+              {snapshot.needsReview > 0 ? <Link href="/review/" className="action-card action-review"><span className="action-icon"><ArrowDownRight size={17} /></span><span><strong>{snapshot.needsReview}件の復習期限です</strong><small>クイズと公開テストで再確認</small></span><MoveRight size={16} /></Link> : <Link href="/review/" className="empty-action"><span className="empty-ring"><BookOpenCheck size={19} /></span><strong>今日が期限の復習はありません</strong><small>次回の予定を確認する</small></Link>}
+              <Link href="/practice/" className="action-card"><span className="action-icon action-cyan"><Code2 size={17} /></span><span><strong>コード演習を探す</strong><small>収録教材から出題</small></span><MoveRight size={16} /></Link>
               <div className={`runner-callout ${hasConfiguredRunner() ? "runner-ready" : ""}`}><span className="runner-indicator" /><div><strong>{hasConfiguredRunner() ? "C++実行ワーカーURL設定済み" : "C++実行ワーカー未設定"}</strong><small>{hasConfiguredRunner() ? "利用には接続用トークンとサービス稼働が必要です" : "Pagesには実行サーバーが含まれていません"}</small></div><Link href="/settings/" aria-label="設定を見る"><ArrowRight size={15} /></Link></div>
             </section>
           </div>

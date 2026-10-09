@@ -12,7 +12,7 @@ The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI
 ## Learning platform
 
 1. Author and review detailed daily lessons beyond Week 6. Week 7–104 currently provides the weekly plan and daily templates.
-2. Add assessments, review scheduling, adaptive planning, projects, portfolio export, and real-evidence analytics from the product brief.
+2. Add adaptive planning, a skill map, projects, portfolio export, and richer measured analytics. The browser-local review schedule now advances only after a correct quiz and passing test.
 3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
-4. Expand browser E2E coverage for learner progress, backup/restore, code submission, and error handling; Docker-backed runner integration already runs in CI.
+4. Expand browser E2E coverage for learner progress, backup/restore, code submission, review sessions, and error handling; Docker-backed runner integration already runs in CI.
 5. Continue route-by-route accessibility and responsive review on the deployed Pages site. The custom domain currently presents a Cloudflare browser challenge to this automated review environment.
