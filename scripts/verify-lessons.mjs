@@ -1,0 +1,67 @@
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve, sep } from "node:path";
+import { lessons } from "../src/lib/lessons.ts";
+
+if (process.platform !== "win32") {
+  console.error("This check requires Windows and Visual Studio C++ Build Tools.");
+  process.exit(2);
+}
+
+if (!process.env.VCToolsInstallDir) {
+  console.error("The Visual Studio developer environment was not initialized.");
+  process.exit(2);
+}
+
+const tempRoot = mkdtempSync(join(tmpdir(), "cpp-mastery-lesson-check-"));
+const resolvedTempRoot = resolve(tempRoot);
+const allowedTempRoot = `${resolve(tmpdir())}${sep}`;
+if (!resolvedTempRoot.startsWith(allowedTempRoot)) throw new Error("Temporary workspace escaped the OS temp directory.");
+
+const normalize = (value) => value.replace(/\r\n/g, "\n").trimEnd();
+const failures = [];
+
+try {
+  for (const lesson of lessons) {
+    if (/\b(system|popen|CreateProcess|WinExec|ShellExecute)\s*\(/i.test(lesson.exercise.solution)) {
+      failures.push(`${lesson.id}: blocked unsafe reference solution`);
+      continue;
+    }
+
+    const sourcePath = join(tempRoot, `${lesson.id}.cpp`);
+    const executablePath = join(tempRoot, `${lesson.id}.exe`);
+    writeFileSync(sourcePath, lesson.exercise.solution, "utf8");
+    const compile = spawnSync(
+      "cl.exe",
+      ["/nologo", "/std:c++17", "/EHsc", `/Fe:${executablePath}`, sourcePath],
+      { cwd: tempRoot, encoding: "utf8", timeout: 60_000, maxBuffer: 64_000, windowsHide: true },
+    );
+    if (compile.error || compile.status !== 0 || !existsSync(executablePath)) {
+      failures.push(`${lesson.id}: compile failed\n${compile.stderr ?? ""}${compile.stdout ?? ""}`);
+      continue;
+    }
+
+    for (const [index, test] of lesson.exercise.tests.entries()) {
+      const run = spawnSync(executablePath, [], {
+        input: test.input,
+        encoding: "utf8",
+        timeout: 3000,
+        maxBuffer: 32_000,
+        windowsHide: true,
+      });
+      if (run.error || run.status !== 0 || normalize(run.stdout ?? "") !== normalize(test.output)) {
+        failures.push(`${lesson.id} test ${index + 1}: expected ${JSON.stringify(test.output)}, got ${JSON.stringify(run.stdout ?? "")}\n${run.stderr ?? run.error?.message ?? ""}`);
+      }
+    }
+  }
+} finally {
+  if (resolvedTempRoot.startsWith(allowedTempRoot)) rmSync(resolvedTempRoot, { recursive: true, force: true });
+}
+
+if (failures.length) {
+  console.error(failures.join("\n\n"));
+  process.exit(1);
+}
+
+console.log(`Verified ${lessons.length} C++ reference solutions and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public test cases with Visual Studio C++.`);
