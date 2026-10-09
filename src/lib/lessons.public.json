@@ -1,0 +1,3727 @@
+[
+  {
+    "title": "コンパイラに最初の指示を出す",
+    "goal": "コンパイラと実行プログラムの役割を区別し、最小のC++プログラムを作る。",
+    "minutes": 35,
+    "explanation": "C++のソースコードは人が書くテキストです。コンパイラはそれを機械が実行できる形式へ変換します。ソースファイルを保存しただけでは、プログラムはまだ動きません。",
+    "example": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, C++!\\n\";\n}",
+    "exampleOutput": "Hello, C++!",
+    "commonMistake": "ファイルの拡張子を .cpp で保存しただけで、コンパイル済みだと思ってしまう。",
+    "prompt": "画面に Hello, C++! と1行で表示するプログラムを書いてください。",
+    "solution": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, C++!\\n\";\n    return 0;\n}",
+    "hints": [
+      "出力には標準ライブラリの <iostream> を使います。",
+      "std::cout に表示したい文字列を << で渡します。",
+      "文字列の末尾に \\n を入れると改行されます。"
+    ],
+    "id": "w1-d1",
+    "version": 1,
+    "week": 1,
+    "day": 1,
+    "subject": "環境・プログラムの形",
+    "difficulty": "入門",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "C++ソースコードを実行可能なプログラムへ変換する役目はどれ？",
+      "choices": [
+        "コンパイラ",
+        "キーボード",
+        "テキストエディタ"
+      ],
+      "explanation": "コンパイラがソースを翻訳し、実行可能な形式を作ります。"
+    },
+    "exercise": {
+      "prompt": "画面に Hello, C++! と1行で表示するプログラムを書いてください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "Hello, C++!",
+      "tests": [
+        {
+          "input": "",
+          "output": "Hello, C++!"
+        }
+      ],
+      "hints": [
+        "出力には標準ライブラリの <iostream> を使います。",
+        "std::cout に表示したい文字列を << で渡します。",
+        "文字列の末尾に \\n を入れると改行されます。"
+      ]
+    },
+    "debug": {
+      "code": "#include <iostream>\nint main() {\n    std::cout << \"Hello, C++!\"\n}"
+    }
+  },
+  {
+    "title": "main と文の終わり",
+    "goal": "main 関数、波括弧、文末のセミコロンを読み取る。",
+    "minutes": 30,
+    "explanation": "C++の実行は main 関数から始まります。波括弧は関数本体を囲み、通常の文はセミコロンで終わります。",
+    "example": "#include <iostream>\nint main() {\n    std::cout << \"start\\n\";\n    std::cout << \"end\\n\";\n}",
+    "exampleOutput": "start\nend",
+    "commonMistake": "波括弧と丸括弧を同じ役割だと思い、main の境界を間違える。",
+    "prompt": "start と end をそれぞれ別の行に表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    std::cout << \"start\\n\";\n    std::cout << \"end\\n\";\n    return 0;\n}",
+    "hints": [
+      "出力する文を2つ用意します。",
+      "各文はセミコロンで終わります。",
+      "文字列の末尾に \\n を入れます。"
+    ],
+    "id": "w1-d2",
+    "version": 1,
+    "week": 1,
+    "day": 2,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "プログラムの実行が始まる関数は？",
+      "choices": [
+        "start",
+        "main",
+        "cout"
+      ],
+      "explanation": "C++プログラムの開始点は main 関数です。"
+    },
+    "exercise": {
+      "prompt": "start と end をそれぞれ別の行に表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "start\nend",
+      "tests": [
+        {
+          "input": "",
+          "output": "start\nend"
+        }
+      ],
+      "hints": [
+        "出力する文を2つ用意します。",
+        "各文はセミコロンで終わります。",
+        "文字列の末尾に \\n を入れます。"
+      ]
+    },
+    "debug": {
+      "code": "int main() {\n    std::cout << \"ready\\n\";\n    return 0;\n}"
+    }
+  },
+  {
+    "title": "標準出力と改行",
+    "goal": "複数の値を出力し、空白と改行を意図どおりに扱う。",
+    "minutes": 30,
+    "explanation": "std::cout は標準出力へ左から順番に値を書き出します。<< を続けて使うと、文字列や数値を組み合わせられます。",
+    "example": "#include <iostream>\nint main() {\n    std::cout << \"score: \" << 42 << '\\n';\n}",
+    "exampleOutput": "score: 42",
+    "commonMistake": "表示したい空白を文字列に入れ忘れ、値同士がつながる。",
+    "prompt": "name: Ada と level: 3 を2行で表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    std::cout << \"name: Ada\\n\";\n    std::cout << \"level: 3\\n\";\n    return 0;\n}",
+    "hints": [
+      "各行は別々に出力できます。",
+      "文字列の中に表示内容を入れます。",
+      "1行目の文字列の末尾へ \\n を入れます。"
+    ],
+    "id": "w1-d3",
+    "version": 1,
+    "week": 1,
+    "day": 3,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "std::cout << \"HP \" << 10; の出力は？",
+      "choices": [
+        "HP 10",
+        "10 HP",
+        "コンパイルエラー"
+      ],
+      "explanation": "<< の左から順に、文字列の後へ整数10が出力されます。"
+    },
+    "exercise": {
+      "prompt": "name: Ada と level: 3 を2行で表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "name: Ada\nlevel: 3",
+      "tests": [
+        {
+          "input": "",
+          "output": "name: Ada\nlevel: 3"
+        }
+      ],
+      "hints": [
+        "各行は別々に出力できます。",
+        "文字列の中に表示内容を入れます。",
+        "1行目の文字列の末尾へ \\n を入れます。"
+      ]
+    },
+    "debug": {
+      "code": "std::cout << \"HP\" << 10;"
+    }
+  },
+  {
+    "title": "コンパイルと実行の区別",
+    "goal": "ビルドの結果とプログラムの標準出力を別々に確認する。",
+    "minutes": 35,
+    "explanation": "コンパイル時には構文・型などを調べて実行ファイルを作ります。その後の実行時に、プログラムが画面へ出力します。コンパイル成功は、期待した動作の証明ではありません。",
+    "example": "int main() {\n    return 0;\n}",
+    "exampleOutput": "出力なしで正常終了",
+    "commonMistake": "エラーが出なかっただけで、出力や動作も正しいと判断する。",
+    "prompt": "Ready と表示し、正常終了するプログラムを作ってください。",
+    "solution": "#include <iostream>\nint main() {\n    std::cout << \"Ready\\n\";\n    return 0;\n}",
+    "hints": [
+      "戻り値0は通常の終了を表します。",
+      "出力文を return 0; より前に置きます。",
+      "<iostream> と std::cout を使います。"
+    ],
+    "id": "w1-d4",
+    "version": 1,
+    "week": 1,
+    "day": 4,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "画面へ文字を出す処理を実際に行うのはいつ？",
+      "choices": [
+        "編集時",
+        "実行時",
+        "ファイル名変更時"
+      ],
+      "explanation": "プログラムの出力文は、実行時に評価されます。"
+    },
+    "exercise": {
+      "prompt": "Ready と表示し、正常終了するプログラムを作ってください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "Ready",
+      "tests": [
+        {
+          "input": "",
+          "output": "Ready"
+        }
+      ],
+      "hints": [
+        "戻り値0は通常の終了を表します。",
+        "出力文を return 0; より前に置きます。",
+        "<iostream> と std::cout を使います。"
+      ]
+    },
+    "debug": {
+      "code": "int main() {\n    std::cout << \"Ready\\n\";\n    return 1;\n}"
+    }
+  },
+  {
+    "title": "コメントで意図を残す",
+    "goal": "コメントと実行されるコードを区別し、意味のあるコメントを書く。",
+    "minutes": 25,
+    "explanation": "// 以降は行末まで、/* と */ の間はコメントです。コメントは説明用で、実行結果を変えません。コードをそのまま言い換えるだけでなく、理由を書くと役立ちます。",
+    "example": "int main() {\n    // 初回起動時の表示\n    std::cout << \"Welcome\\n\";\n}",
+    "exampleOutput": "Welcome",
+    "commonMistake": "コメントの中のコードも実行されると思い込む。",
+    "prompt": "画面に Training と表示し、その文の目的をコメントで説明してください。",
+    "solution": "#include <iostream>\nint main() {\n    // 学習開始時の状態を表示する\n    std::cout << \"Training\\n\";\n    return 0;\n}",
+    "hints": [
+      "コメントは // で書けます。",
+      "説明したい文の直前にコメントを置きます。",
+      "プログラムの目的を書くと読み手に伝わります。"
+    ],
+    "id": "w1-d5",
+    "version": 1,
+    "week": 1,
+    "day": 5,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "// で始まるテキストは通常どう扱われる？",
+      "choices": [
+        "コメントとして無視される",
+        "整数に変換される",
+        "必ず画面へ表示される"
+      ],
+      "explanation": "単一行コメントはコンパイラに実行される文として扱われません。"
+    },
+    "exercise": {
+      "prompt": "画面に Training と表示し、その文の目的をコメントで説明してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "Training",
+      "tests": [
+        {
+          "input": "",
+          "output": "Training"
+        }
+      ],
+      "hints": [
+        "コメントは // で書けます。",
+        "説明したい文の直前にコメントを置きます。",
+        "プログラムの目的を書くと読み手に伝わります。"
+      ]
+    },
+    "debug": {
+      "code": "// std::cout << \"Start\\n\";"
+    }
+  },
+  {
+    "title": "エラーを小さく切り分ける",
+    "goal": "診断メッセージのファイル・行・原因候補を探し、1つずつ直す。",
+    "minutes": 40,
+    "explanation": "コンパイラ診断は、最初のエラーから読むと原因を追いやすくなります。1度に多くの箇所を変えるより、ひとつ修正して再ビルドすると、原因と結果を結び付けられます。",
+    "example": "#include <iostream>\nint main() {\n    std::cout << \"Build\\n\";\n    return 0;\n}",
+    "exampleOutput": "Build",
+    "commonMistake": "最初のエラーを無視し、後続のエラーを個別に直そうとする。",
+    "prompt": "Build OK と表示するプログラムを完成させ、終了コード0を返してください。",
+    "solution": "#include <iostream>\nint main() {\n    std::cout << \"Build OK\\n\";\n    return 0;\n}",
+    "hints": [
+      "#include と main を確認します。",
+      "出力文の句読点を確認します。",
+      "return 0; の後で main を閉じます。"
+    ],
+    "id": "w1-d6",
+    "version": 1,
+    "week": 1,
+    "day": 6,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "診断が複数ある場合、最初に確認するのは？",
+      "choices": [
+        "最後の警告",
+        "最初に報告されたエラー",
+        "実行時間"
+      ],
+      "explanation": "最初の構文ミスが後続の診断を引き起こしていることがあります。"
+    },
+    "exercise": {
+      "prompt": "Build OK と表示するプログラムを完成させ、終了コード0を返してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "Build OK",
+      "tests": [
+        {
+          "input": "",
+          "output": "Build OK"
+        }
+      ],
+      "hints": [
+        "#include と main を確認します。",
+        "出力文の句読点を確認します。",
+        "return 0; の後で main を閉じます。"
+      ]
+    },
+    "debug": {
+      "code": "#include <iostream>\nint main() {\n    std::cout << \"Build OK\\n\"\n    return 0;\n}"
+    }
+  },
+  {
+    "title": "1週間の統合：起動メッセージ",
+    "goal": "環境確認からビルド、実行、出力確認までを自分で通す。",
+    "minutes": 45,
+    "explanation": "小さなプログラムでも、保存・ビルド・実行・結果確認までが開発の一連の流れです。画面に表示された文字と終了状態をそれぞれ確かめます。",
+    "example": "#include <iostream>\nint main() {\n    std::cout << \"Game Start\\n\";\n    std::cout << \"Ready\\n\";\n}",
+    "exampleOutput": "Game Start\nReady",
+    "commonMistake": "エディタ上のコードだけで満足し、実際にビルド・実行しない。",
+    "prompt": "Game Start、Player ready の順に2行で表示するプログラムを作ってください。",
+    "solution": "#include <iostream>\nint main() {\n    std::cout << \"Game Start\\n\";\n    std::cout << \"Player ready\\n\";\n    return 0;\n}",
+    "hints": [
+      "出力文を2つに分けます。",
+      "それぞれ末尾で改行します。",
+      "文字と空白を課題どおりに確認します。"
+    ],
+    "id": "w1-d7",
+    "version": 1,
+    "week": 1,
+    "day": 7,
+    "subject": "環境・プログラムの形",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "なし。C言語経験があれば対応する構文を比較する。"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "動作を確認したと言える証拠は？",
+      "choices": [
+        "ソースを保存した",
+        "ビルドし、実行結果を確かめた",
+        "コメントを書いた"
+      ],
+      "explanation": "実行まで行い、出力と終了状態を確認して初めて動作の証拠になります。"
+    },
+    "exercise": {
+      "prompt": "Game Start、Player ready の順に2行で表示するプログラムを作ってください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "Game Start\nPlayer ready",
+      "tests": [
+        {
+          "input": "",
+          "output": "Game Start\nPlayer ready"
+        }
+      ],
+      "hints": [
+        "出力文を2つに分けます。",
+        "それぞれ末尾で改行します。",
+        "文字と空白を課題どおりに確認します。"
+      ]
+    },
+    "debug": {
+      "code": "std::cout << \"Game Start\\nPlayer ready\";"
+    }
+  },
+  {
+    "title": "変数に値を保存する",
+    "goal": "名前付きの値を宣言し、代入後に使う。",
+    "minutes": 35,
+    "explanation": "変数は型と名前を持つ記憶領域です。宣言時に初期値を与えると、意図しない値を読む危険を減らせます。",
+    "example": "int score = 120;\nstd::cout << score << '\\n';",
+    "exampleOutput": "120",
+    "commonMistake": "宣言しただけで初期値のある変数だと思い込む。",
+    "prompt": "int 型の lives を3で初期化し、lives: 3 と表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    int lives = 3;\n    std::cout << \"lives: \" << lives << '\\n';\n}",
+    "hints": [
+      "整数には int を使います。",
+      "宣言と初期化を同時に書きます。",
+      "std::cout にラベルと変数を順に渡します。"
+    ],
+    "id": "w2-d1",
+    "version": 1,
+    "week": 2,
+    "day": 1,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int score = 120; の初期値は？",
+      "choices": [
+        "0",
+        "120",
+        "未定義"
+      ],
+      "explanation": "初期化子 = 120 によって、宣言時に120が設定されます。"
+    },
+    "exercise": {
+      "prompt": "int 型の lives を3で初期化し、lives: 3 と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "lives: 3",
+      "tests": [
+        {
+          "input": "",
+          "output": "lives: 3"
+        }
+      ],
+      "hints": [
+        "整数には int を使います。",
+        "宣言と初期化を同時に書きます。",
+        "std::cout にラベルと変数を順に渡します。"
+      ]
+    },
+    "debug": {
+      "code": "int lives;\nstd::cout << lives;"
+    }
+  },
+  {
+    "title": "整数と浮動小数点数",
+    "goal": "整数型と小数を扱う型の違いを説明する。",
+    "minutes": 35,
+    "explanation": "int は整数を、double は小数を含む近似値を扱います。型によって表現できる値や演算結果が異なります。",
+    "example": "int count = 4;\ndouble ratio = 0.5;\nstd::cout << count * ratio << '\\n';",
+    "exampleOutput": "2",
+    "commonMistake": "double なら十進小数を常に完全な精度で保存できると考える。",
+    "prompt": "int 型の coins を8、double 型の bonus を1.5とし、積を表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    int coins = 8;\n    double bonus = 1.5;\n    std::cout << coins * bonus << '\\n';\n}",
+    "hints": [
+      "整数と小数はそれぞれ別の変数にします。",
+      "掛け算は * 演算子です。",
+      "出力前に変数名と型を確認します。"
+    ],
+    "id": "w2-d2",
+    "version": 1,
+    "week": 2,
+    "day": 2,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "0.5 のような小数を扱う型として基本的に適切なのは？",
+      "choices": [
+        "double",
+        "bool",
+        "char"
+      ],
+      "explanation": "double は浮動小数点数を表します。"
+    },
+    "exercise": {
+      "prompt": "int 型の coins を8、double 型の bonus を1.5とし、積を表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "12",
+      "tests": [
+        {
+          "input": "",
+          "output": "12"
+        }
+      ],
+      "hints": [
+        "整数と小数はそれぞれ別の変数にします。",
+        "掛け算は * 演算子です。",
+        "出力前に変数名と型を確認します。"
+      ]
+    },
+    "debug": {
+      "code": "int half = 5 / 2;\nstd::cout << half;"
+    }
+  },
+  {
+    "title": "初期化方法と const",
+    "goal": "初期値を与えてから使い、変わらない値を const にする。",
+    "minutes": 30,
+    "explanation": "C++には =、丸括弧、波括弧による初期化があります。波括弧初期化は値の縮小変換を防ぐため、初心者にも安全な選択です。const は値を後から変更できないことを表します。",
+    "example": "const int maxLives{3};\nint lives{maxLives};",
+    "exampleOutput": "値の表示なし",
+    "commonMistake": "const にした変数を後から変更しようとする。",
+    "prompt": "const int maxHp を100で初期化し、maxHp を1行で表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    const int maxHp{100};\n    std::cout << maxHp << '\\n';\n}",
+    "hints": [
+      "固定値を const で宣言します。",
+      "波括弧の中に初期値を置きます。",
+      "const は型の前に置きます。"
+    ],
+    "id": "w2-d3",
+    "version": 1,
+    "week": 2,
+    "day": 3,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "const int limit{10}; の後で limit = 20; を行うと？",
+      "choices": [
+        "正常に変更される",
+        "コンパイルエラー",
+        "limit が文字列になる"
+      ],
+      "explanation": "const オブジェクトは初期化後に変更できません。"
+    },
+    "exercise": {
+      "prompt": "const int maxHp を100で初期化し、maxHp を1行で表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "100",
+      "tests": [
+        {
+          "input": "",
+          "output": "100"
+        }
+      ],
+      "hints": [
+        "固定値を const で宣言します。",
+        "波括弧の中に初期値を置きます。",
+        "const は型の前に置きます。"
+      ]
+    },
+    "debug": {
+      "code": "const int stage{1};\nstage = 2;"
+    }
+  },
+  {
+    "title": "文字・真偽値・型推論",
+    "goal": "char と bool を使い分け、auto の型を初期化式から読む。",
+    "minutes": 30,
+    "explanation": "char は1文字、bool は true/false を表します。auto は初期化式から型を推論しますが、読みやすさのため値の意味が明確な名前を使います。",
+    "example": "char rank{'A'};\nbool cleared{true};\nauto stage{2};",
+    "exampleOutput": "出力なし",
+    "commonMistake": "文字列の引用符と1文字の引用符を混同する。",
+    "prompt": "char 型の rank を S、bool 型の cleared を true にして、値を1行ずつ表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    char rank{'S'};\n    bool cleared{true};\n    std::cout << rank << '\\n' << std::boolalpha << cleared << '\\n';\n}",
+    "hints": [
+      "char は単一引用符を使います。",
+      "bool は true または false です。",
+      "boolalpha を使うと true/false として表示できます。"
+    ],
+    "id": "w2-d4",
+    "version": 1,
+    "week": 2,
+    "day": 4,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "1文字の A を表すリテラルは？",
+      "choices": [
+        "\"A\"",
+        "'A'",
+        "true"
+      ],
+      "explanation": "'A' は文字リテラル、\"A\" は文字列リテラルです。"
+    },
+    "exercise": {
+      "prompt": "char 型の rank を S、bool 型の cleared を true にして、値を1行ずつ表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "S\ntrue",
+      "tests": [
+        {
+          "input": "",
+          "output": "S\ntrue"
+        }
+      ],
+      "hints": [
+        "char は単一引用符を使います。",
+        "bool は true または false です。",
+        "boolalpha を使うと true/false として表示できます。"
+      ]
+    },
+    "debug": {
+      "code": "char key{\"W\"};"
+    }
+  },
+  {
+    "title": "入力を読み取る",
+    "goal": "標準入力から値を受け取り、同じ値を結果に使う。",
+    "minutes": 40,
+    "explanation": "std::cin は標準入力から型に合う値を読みます。読み取り前に変数を宣言し、入力と出力が対応するようにします。",
+    "example": "int level{};\nstd::cin >> level;\nstd::cout << level << '\\n';",
+    "exampleOutput": "入力に応じて変わる",
+    "commonMistake": "変数へ入力する前に、その値を使ってしまう。",
+    "prompt": "入力された整数を2倍して表示してください。テスト入力は 7 です。",
+    "solution": "#include <iostream>\nint main() {\n    int value{};\n    std::cin >> value;\n    std::cout << value * 2 << '\\n';\n}",
+    "input": "7\n",
+    "hints": [
+      "int 変数を用意します。",
+      "std::cin >> value; で読みます。",
+      "読み取った値を2倍して出力します。"
+    ],
+    "id": "w2-d5",
+    "version": 1,
+    "week": 2,
+    "day": 5,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int value{}; std::cin >> value; の後、value に入るのは？",
+      "choices": [
+        "標準入力から読み取った整数",
+        "常に0",
+        "ファイル名"
+      ],
+      "explanation": ">> が入力ストリームから値を読み、変数に格納します。"
+    },
+    "exercise": {
+      "prompt": "入力された整数を2倍して表示してください。テスト入力は 7 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "7\n",
+      "expectedOutput": "14",
+      "tests": [
+        {
+          "input": "7\n",
+          "output": "14"
+        }
+      ],
+      "hints": [
+        "int 変数を用意します。",
+        "std::cin >> value; で読みます。",
+        "読み取った値を2倍して出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int value{};\nstd::cout << value * 2;\nstd::cin >> value;"
+    }
+  },
+  {
+    "title": "範囲とオーバーフロー",
+    "goal": "型が表現できる範囲を意識し、境界値をテストに含める。",
+    "minutes": 40,
+    "explanation": "整数型には表現できる範囲があります。符号付き整数の範囲外演算は未定義動作になり得るため、上限・下限を設計とテストで扱います。",
+    "example": "#include <limits>\nint top = std::numeric_limits<int>::max();",
+    "exampleOutput": "出力なし",
+    "commonMistake": "整数がどんな大きさでも正確に増え続けると考える。",
+    "prompt": "入力された整数を読み、正の数なら positive、それ以外なら non-positive と表示してください。",
+    "solution": "#include <iostream>\nint main() {\n    int value{};\n    std::cin >> value;\n    if (value > 0) std::cout << \"positive\\n\";\n    else std::cout << \"non-positive\\n\";\n}",
+    "input": "-1\n",
+    "hints": [
+      "入力を int に読み込みます。",
+      "比較演算子 > で0より大きいか調べます。",
+      "0以下の分岐も用意します。"
+    ],
+    "id": "w2-d6",
+    "version": 1,
+    "week": 2,
+    "day": 6,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int の表現範囲を超える計算を前提にしてよい？",
+      "choices": [
+        "よい",
+        "よくない。範囲を検討する",
+        "コンパイラが必ず大きい型に変える"
+      ],
+      "explanation": "整数型の表現範囲は有限です。範囲外を避ける設計にします。"
+    },
+    "exercise": {
+      "prompt": "入力された整数を読み、正の数なら positive、それ以外なら non-positive と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "-1\n",
+      "expectedOutput": "non-positive",
+      "tests": [
+        {
+          "input": "-1\n",
+          "output": "non-positive"
+        }
+      ],
+      "hints": [
+        "入力を int に読み込みます。",
+        "比較演算子 > で0より大きいか調べます。",
+        "0以下の分岐も用意します。"
+      ]
+    },
+    "debug": {
+      "code": "int hp{100};\nhp = hp + 1'000'000'000;"
+    }
+  },
+  {
+    "title": "総合：ステータス表示",
+    "goal": "複数の型、入力、計算、出力をつないで動作を確認する。",
+    "minutes": 45,
+    "explanation": "変数は型と役割を合わせて選び、入力から出力までの順序を保ちます。テスト入力を変えたときに結果が追従するかを確かめます。",
+    "example": "int hp{80};\nint damage{15};\nstd::cout << hp - damage << '\\n';",
+    "exampleOutput": "65",
+    "commonMistake": "固定値を表示するだけで、入力値に基づいた計算をしていない。",
+    "prompt": "入力されたHPとダメージを読み、残りHPを `HP: <値>` 形式で表示してください。入力は 80 15 です。",
+    "solution": "#include <iostream>\nint main() {\n    int hp{};\n    int damage{};\n    std::cin >> hp >> damage;\n    std::cout << \"HP: \" << hp - damage << '\\n';\n}",
+    "input": "80 15\n",
+    "hints": [
+      "整数変数を2つ用意します。",
+      "std::cin で2つの値を順に読みます。",
+      "表示ラベルと hp - damage を出力します。"
+    ],
+    "id": "w2-d7",
+    "version": 1,
+    "week": 2,
+    "day": 7,
+    "subject": "変数・型・初期化",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 1の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "ユーザー入力を計算に使う順番は？",
+      "choices": [
+        "計算→入力→出力",
+        "入力→計算→出力",
+        "出力→計算→入力"
+      ],
+      "explanation": "入力が先に必要で、その値を使って計算し、結果を表示します。"
+    },
+    "exercise": {
+      "prompt": "入力されたHPとダメージを読み、残りHPを `HP: <値>` 形式で表示してください。入力は 80 15 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "80 15\n",
+      "expectedOutput": "HP: 65",
+      "tests": [
+        {
+          "input": "80 15\n",
+          "output": "HP: 65"
+        }
+      ],
+      "hints": [
+        "整数変数を2つ用意します。",
+        "std::cin で2つの値を順に読みます。",
+        "表示ラベルと hp - damage を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int hp{};\nint damage{};\nstd::cin >> hp >> damage;\nstd::cout << \"HP: \" << damage - hp;"
+    }
+  },
+  {
+    "title": "算術演算子",
+    "goal": "四則演算と整数除算の結果を予測する。",
+    "minutes": 35,
+    "explanation": "+ - * / % は数値演算です。整数同士の / は小数部分を捨て、% は整数の余りを返します。",
+    "example": "std::cout << 7 / 2 << ' ' << 7 % 2 << '\\n';",
+    "exampleOutput": "3 1",
+    "commonMistake": "整数除算でも小数が残ると考える。",
+    "prompt": "入力された分数の整数部分と余りを `q=<商> r=<余り>` の形式で表示してください。入力は 17 5 です。",
+    "solution": "#include <iostream>\nint main() {\n    int a{}, b{};\n    std::cin >> a >> b;\n    std::cout << \"q=\" << a / b << \" r=\" << a % b << '\\n';\n}",
+    "input": "17 5\n",
+    "hints": [
+      "商は /、余りは % です。",
+      "2つの入力値を読みます。",
+      "文字列と2つの計算結果を連結して出力します。"
+    ],
+    "id": "w3-d1",
+    "version": 1,
+    "week": 3,
+    "day": 1,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "整数の 7 / 2 の結果は？",
+      "choices": [
+        "3",
+        "3.5",
+        "4"
+      ],
+      "explanation": "両方が整数なので小数部分が捨てられます。"
+    },
+    "exercise": {
+      "prompt": "入力された分数の整数部分と余りを `q=<商> r=<余り>` の形式で表示してください。入力は 17 5 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "17 5\n",
+      "expectedOutput": "q=3 r=2",
+      "tests": [
+        {
+          "input": "17 5\n",
+          "output": "q=3 r=2"
+        }
+      ],
+      "hints": [
+        "商は /、余りは % です。",
+        "2つの入力値を読みます。",
+        "文字列と2つの計算結果を連結して出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int seconds{125};\nstd::cout << seconds / 60 << ':' << seconds / 60;"
+    }
+  },
+  {
+    "title": "演算子の優先順位",
+    "goal": "括弧で意図を明示し、式を段階的に評価する。",
+    "minutes": 30,
+    "explanation": "掛け算と割り算は足し算・引き算より先に評価されます。複雑な式では括弧を使うと、意図が読みやすくなります。",
+    "example": "std::cout << 2 + 3 * 4 << '\\n';\nstd::cout << (2 + 3) * 4 << '\\n';",
+    "exampleOutput": "14\n20",
+    "commonMistake": "左から順番にすべての演算が行われると思い込む。",
+    "prompt": "入力された幅と高さから長方形の周の長さを計算してください。入力は 4 7 です。",
+    "solution": "#include <iostream>\nint main() {\n    int w{}, h{};\n    std::cin >> w >> h;\n    std::cout << 2 * (w + h) << '\\n';\n}",
+    "input": "4 7\n",
+    "hints": [
+      "周の長さは幅と高さの和の2倍です。",
+      "先に w + h をまとめます。",
+      "括弧を付けてから2を掛けます。"
+    ],
+    "id": "w3-d2",
+    "version": 1,
+    "week": 3,
+    "day": 2,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "2 + 3 * 4 の結果は？",
+      "choices": [
+        "20",
+        "14",
+        "24"
+      ],
+      "explanation": "掛け算を先に計算するため、2 + 12 = 14です。"
+    },
+    "exercise": {
+      "prompt": "入力された幅と高さから長方形の周の長さを計算してください。入力は 4 7 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "4 7\n",
+      "expectedOutput": "22",
+      "tests": [
+        {
+          "input": "4 7\n",
+          "output": "22"
+        }
+      ],
+      "hints": [
+        "周の長さは幅と高さの和の2倍です。",
+        "先に w + h をまとめます。",
+        "括弧を付けてから2を掛けます。"
+      ]
+    },
+    "debug": {
+      "code": "int w{4}, h{7};\nstd::cout << 2 * w + h;"
+    }
+  },
+  {
+    "title": "代入と複合代入",
+    "goal": "代入式と加算代入の状態変化を追跡する。",
+    "minutes": 30,
+    "explanation": "= は右辺を左辺へ代入します。+= や -= は現在値に加減算して更新します。これは等しいかを調べる == とは別の演算子です。",
+    "example": "int score{10};\nscore += 5;\nstd::cout << score << '\\n';",
+    "exampleOutput": "15",
+    "commonMistake": "条件式で == の代わりに = を使ってしまう。",
+    "prompt": "入力した初期スコアに、ボーナス5を加えて表示してください。入力は 12 です。",
+    "solution": "#include <iostream>\nint main() {\n    int score{};\n    std::cin >> score;\n    score += 5;\n    std::cout << score << '\\n';\n}",
+    "input": "12\n",
+    "hints": [
+      "入力値を score に読みます。",
+      "score += 5; で更新します。",
+      "更新後の値を出力します。"
+    ],
+    "id": "w3-d3",
+    "version": 1,
+    "week": 3,
+    "day": 3,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "score += 3; は何をする？",
+      "choices": [
+        "scoreを3で割る",
+        "scoreに3を加える",
+        "scoreが3か調べる"
+      ],
+      "explanation": "複合代入 += は現在値に右辺を足して代入します。"
+    },
+    "exercise": {
+      "prompt": "入力した初期スコアに、ボーナス5を加えて表示してください。入力は 12 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "12\n",
+      "expectedOutput": "17",
+      "tests": [
+        {
+          "input": "12\n",
+          "output": "17"
+        }
+      ],
+      "hints": [
+        "入力値を score に読みます。",
+        "score += 5; で更新します。",
+        "更新後の値を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int score{10};\nscore =+ 5;"
+    }
+  },
+  {
+    "title": "比較と論理演算",
+    "goal": "比較式と論理式の結果を bool として使う。",
+    "minutes": 35,
+    "explanation": "==、!=、<、<= などの比較は bool を返します。&& は両方、|| はどちらか、! は真偽を反転します。",
+    "example": "int hp{40};\nbool alive = hp > 0;\nstd::cout << std::boolalpha << alive << '\\n';",
+    "exampleOutput": "true",
+    "commonMistake": "条件式で & と && を取り違える。",
+    "prompt": "入力された年齢が18以上なら adult、それ以外なら minor と表示してください。入力は 20 です。",
+    "solution": "#include <iostream>\nint main() {\n    int age{};\n    std::cin >> age;\n    std::cout << (age >= 18 ? \"adult\\n\" : \"minor\\n\");\n}",
+    "input": "20\n",
+    "hints": [
+      "age と18を比較します。",
+      "条件演算子は condition ? A : B です。",
+      "文字列の末尾に改行を付けます。"
+    ],
+    "id": "w3-d4",
+    "version": 1,
+    "week": 3,
+    "day": 4,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "hp > 0 && hp < 100 が true になる条件は？",
+      "choices": [
+        "両方の比較が true",
+        "どちらか一方だけ true",
+        "hp が100以上"
+      ],
+      "explanation": "論理AND && は左右両方が true のとき true です。"
+    },
+    "exercise": {
+      "prompt": "入力された年齢が18以上なら adult、それ以外なら minor と表示してください。入力は 20 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "20\n",
+      "expectedOutput": "adult",
+      "tests": [
+        {
+          "input": "20\n",
+          "output": "adult"
+        }
+      ],
+      "hints": [
+        "age と18を比較します。",
+        "条件演算子は condition ? A : B です。",
+        "文字列の末尾に改行を付けます。"
+      ]
+    },
+    "debug": {
+      "code": "if (hp = 0) {\n    std::cout << \"down\";\n}"
+    }
+  },
+  {
+    "title": "型変換と narrowing",
+    "goal": "変換後の値を予測し、縮小変換を避ける。",
+    "minutes": 40,
+    "explanation": "型変換によって小数部が失われたり、表現範囲が変わったりします。波括弧初期化は危険な縮小変換をコンパイル時に拒否します。",
+    "example": "int whole = 3.8;\n// int exact{3.8}; は縮小変換のため拒否される",
+    "exampleOutput": "出力なし",
+    "commonMistake": "変換で情報が失われる可能性を考えず、暗黙変換を使う。",
+    "prompt": "入力した合計点を3科目の平均として小数で表示してください。入力は 7 8 9 です。",
+    "solution": "#include <iostream>\nint main() {\n    int a{}, b{}, c{};\n    std::cin >> a >> b >> c;\n    double average = (a + b + c) / 3.0;\n    std::cout << average << '\\n';\n}",
+    "input": "7 8 9\n",
+    "hints": [
+      "平均は合計を3で割ります。",
+      "3.0 のような浮動小数点数を式に使います。",
+      "int に戻さず double として表示します。"
+    ],
+    "id": "w3-d5",
+    "version": 1,
+    "week": 3,
+    "day": 5,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int x{3.8}; の扱いは？",
+      "choices": [
+        "3になる",
+        "コンパイル時に縮小変換として拒否",
+        "4になる"
+      ],
+      "explanation": "波括弧初期化は小数から整数への縮小変換を拒否します。"
+    },
+    "exercise": {
+      "prompt": "入力した合計点を3科目の平均として小数で表示してください。入力は 7 8 9 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "7 8 9\n",
+      "expectedOutput": "8",
+      "tests": [
+        {
+          "input": "7 8 9\n",
+          "output": "8"
+        }
+      ],
+      "hints": [
+        "平均は合計を3で割ります。",
+        "3.0 のような浮動小数点数を式に使います。",
+        "int に戻さず double として表示します。"
+      ]
+    },
+    "debug": {
+      "code": "int sum{7 + 8 + 9};\ndouble avg = sum / 3;"
+    }
+  },
+  {
+    "title": "未定義動作を避ける",
+    "goal": "安全でない整数式を見つけ、制約や検査を追加する。",
+    "minutes": 40,
+    "explanation": "未定義動作は、C++仕様が結果を定めていない状態です。符号付き整数のオーバーフローや0除算を「たまたま動いた」結果に頼らず、条件を先に検査します。",
+    "example": "if (divisor != 0) {\n    std::cout << value / divisor;\n}",
+    "exampleOutput": "入力・条件により変化",
+    "commonMistake": "1回の実行で期待値が出たので、未定義動作のない安全なコードだと思う。",
+    "prompt": "2つの整数を読み、割る数が0なら `cannot divide by zero`、そうでなければ整数の商を表示してください。入力は 20 0 です。",
+    "solution": "#include <iostream>\nint main() {\n    int value{}, divisor{};\n    std::cin >> value >> divisor;\n    if (divisor == 0) std::cout << \"cannot divide by zero\\n\";\n    else std::cout << value / divisor << '\\n';\n}",
+    "input": "20 0\n",
+    "hints": [
+      "除算の前に divisor を確認します。",
+      "0の場合とそれ以外で分岐します。",
+      "0なら指定されたエラー文字列を出します。"
+    ],
+    "id": "w3-d6",
+    "version": 1,
+    "week": 3,
+    "day": 6,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "未定義動作が発生したとき、結果は？",
+      "choices": [
+        "常に0",
+        "仕様で定められていない",
+        "必ず例外"
+      ],
+      "explanation": "未定義動作の後の振る舞いは規格で保証されません。"
+    },
+    "exercise": {
+      "prompt": "2つの整数を読み、割る数が0なら `cannot divide by zero`、そうでなければ整数の商を表示してください。入力は 20 0 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "20 0\n",
+      "expectedOutput": "cannot divide by zero",
+      "tests": [
+        {
+          "input": "20 0\n",
+          "output": "cannot divide by zero"
+        }
+      ],
+      "hints": [
+        "除算の前に divisor を確認します。",
+        "0の場合とそれ以外で分岐します。",
+        "0なら指定されたエラー文字列を出します。"
+      ]
+    },
+    "debug": {
+      "code": "int result = value / divisor;\nif (divisor == 0) std::cout << \"error\";"
+    }
+  },
+  {
+    "title": "総合：安全なミニ計算機",
+    "goal": "入力・演算・分岐を組み合わせ、想定外の入力を考慮する。",
+    "minutes": 45,
+    "explanation": "複数の演算を1つのプログラムにまとめるときは、入力順と条件判定を明確にします。ゼロ除算を避け、整数除算の仕様も利用者にわかるようにします。",
+    "example": "if (op == '/' && b == 0) {\n    std::cout << \"error\\n\";\n}",
+    "exampleOutput": "条件により変わる",
+    "commonMistake": "演算子を読んでも使わず、入力値と分岐がつながっていない。",
+    "prompt": "整数2つ a b と演算子 + または - を読み、`result: <値>` と表示してください。入力は `9 - 4` です。",
+    "solution": "#include <iostream>\nint main() {\n    int a{}, b{};\n    char op{};\n    std::cin >> a >> op >> b;\n    int result = (op == '+') ? a + b : a - b;\n    std::cout << \"result: \" << result << '\\n';\n}",
+    "input": "9 - 4\n",
+    "hints": [
+      "整数2つと文字1つを順に読みます。",
+      "演算子が '+' か比較します。",
+      "この課題の対象演算は + と - です。"
+    ],
+    "id": "w3-d7",
+    "version": 1,
+    "week": 3,
+    "day": 7,
+    "subject": "演算・変換・安全性",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 2の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "除算の安全性を確かめるべき条件は？",
+      "choices": [
+        "除数が0か",
+        "被除数が正か",
+        "出力が改行か"
+      ],
+      "explanation": "整数除算では除数が0のケースを先に処理します。"
+    },
+    "exercise": {
+      "prompt": "整数2つ a b と演算子 + または - を読み、`result: <値>` と表示してください。入力は `9 - 4` です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "9 - 4\n",
+      "expectedOutput": "result: 5",
+      "tests": [
+        {
+          "input": "9 - 4\n",
+          "output": "result: 5"
+        }
+      ],
+      "hints": [
+        "整数2つと文字1つを順に読みます。",
+        "演算子が '+' か比較します。",
+        "この課題の対象演算は + と - です。"
+      ]
+    },
+    "debug": {
+      "code": "char op{};\nstd::cin >> op;\nif (op == \"+\")"
+    }
+  },
+  {
+    "title": "if と else",
+    "goal": "条件を評価し、互いに排他的な処理を選ぶ。",
+    "minutes": 35,
+    "explanation": "if は条件が true のときにブロックを実行します。else は条件が false のときの分岐です。比較条件の境界を確認します。",
+    "example": "if (score >= 60) std::cout << \"pass\\n\";\nelse std::cout << \"retry\\n\";",
+    "exampleOutput": "scoreにより変わる",
+    "commonMistake": "60点ちょうどが合格かどうか、境界をテストしない。",
+    "prompt": "入力された整数が偶数なら even、奇数なら odd と表示してください。入力は 8 です。",
+    "solution": "#include <iostream>\nint main() {\n    int number{};\n    std::cin >> number;\n    if (number % 2 == 0) std::cout << \"even\\n\";\n    else std::cout << \"odd\\n\";\n}",
+    "input": "8\n",
+    "hints": [
+      "偶数は2で割った余りが0です。",
+      "% 演算子で余りを求めます。",
+      "余りが0かを if で調べます。"
+    ],
+    "id": "w4-d1",
+    "version": 1,
+    "week": 4,
+    "day": 1,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "score == 60 のとき score >= 60 は？",
+      "choices": [
+        "true",
+        "false",
+        "コンパイルエラー"
+      ],
+      "explanation": "60は60以上なので条件は true です。"
+    },
+    "exercise": {
+      "prompt": "入力された整数が偶数なら even、奇数なら odd と表示してください。入力は 8 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "8\n",
+      "expectedOutput": "even",
+      "tests": [
+        {
+          "input": "8\n",
+          "output": "even"
+        }
+      ],
+      "hints": [
+        "偶数は2で割った余りが0です。",
+        "% 演算子で余りを求めます。",
+        "余りが0かを if で調べます。"
+      ]
+    },
+    "debug": {
+      "code": "if (score > 60) std::cout << \"pass\";"
+    }
+  },
+  {
+    "title": "else if で範囲を分ける",
+    "goal": "条件の順序と境界を保って複数の分類を行う。",
+    "minutes": 35,
+    "explanation": "else if は上から順に評価され、最初に成立した分岐だけ実行します。広い条件を先に書くと、後の分岐へ到達できないことがあります。",
+    "example": "if (score >= 80) grade = 'A';\nelse if (score >= 60) grade = 'B';\nelse grade = 'C';",
+    "exampleOutput": "scoreにより変わる",
+    "commonMistake": "score >= 60 を先に置き、80以上も先に分類してしまう。",
+    "prompt": "入力点数が80以上なら A、60以上なら B、それ以外は C と表示してください。入力は 75 です。",
+    "solution": "#include <iostream>\nint main() {\n    int score{};\n    std::cin >> score;\n    if (score >= 80) std::cout << \"A\\n\";\n    else if (score >= 60) std::cout << \"B\\n\";\n    else std::cout << \"C\\n\";\n}",
+    "input": "75\n",
+    "hints": [
+      "80以上の条件を先に書きます。",
+      "次に60以上を確認します。",
+      "どちらでもなければCです。"
+    ],
+    "id": "w4-d2",
+    "version": 1,
+    "week": 4,
+    "day": 2,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "score=90で、最初の条件が score >= 60 の場合、次の分岐は？",
+      "choices": [
+        "必ず評価される",
+        "最初が成立するため評価されない",
+        "エラーになる"
+      ],
+      "explanation": "if-else if では先に成立した枝が選ばれます。"
+    },
+    "exercise": {
+      "prompt": "入力点数が80以上なら A、60以上なら B、それ以外は C と表示してください。入力は 75 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "75\n",
+      "expectedOutput": "B",
+      "tests": [
+        {
+          "input": "75\n",
+          "output": "B"
+        }
+      ],
+      "hints": [
+        "80以上の条件を先に書きます。",
+        "次に60以上を確認します。",
+        "どちらでもなければCです。"
+      ]
+    },
+    "debug": {
+      "code": "if (score >= 60) grade = 'B';\nelse if (score >= 80) grade = 'A';"
+    }
+  },
+  {
+    "title": "switch で選択肢を扱う",
+    "goal": "離散した値を switch/case で読みやすく処理する。",
+    "minutes": 35,
+    "explanation": "switch は整数・列挙値などの離散値に対する複数分岐に使えます。各 case の break で次の case への意図しない通過を防ぎます。",
+    "example": "switch (command) {\ncase 'w': std::cout << \"up\\n\"; break;\ndefault: std::cout << \"unknown\\n\";\n}",
+    "exampleOutput": "commandにより変わる",
+    "commonMistake": "break を書かず、次の case へ処理が続く。",
+    "prompt": "入力された数字1なら start、2なら pause、それ以外なら unknown と表示してください。入力は 2 です。",
+    "solution": "#include <iostream>\nint main() {\n    int command{};\n    std::cin >> command;\n    switch (command) {\n    case 1: std::cout << \"start\\n\"; break;\n    case 2: std::cout << \"pause\\n\"; break;\n    default: std::cout << \"unknown\\n\";\n    }\n}",
+    "input": "2\n",
+    "hints": [
+      "整数を読み、値に応じて分岐します。",
+      "caseごとに指定語を出します。",
+      "default は他の値を受け取ります。"
+    ],
+    "id": "w4-d3",
+    "version": 1,
+    "week": 4,
+    "day": 3,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "case の最後に break を置く主な理由は？",
+      "choices": [
+        "次のcaseへの通過を防ぐ",
+        "変数を初期化する",
+        "ループを開始する"
+      ],
+      "explanation": "break はswitch文から抜け、次のcaseの処理へ進まないようにします。"
+    },
+    "exercise": {
+      "prompt": "入力された数字1なら start、2なら pause、それ以外なら unknown と表示してください。入力は 2 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "2\n",
+      "expectedOutput": "pause",
+      "tests": [
+        {
+          "input": "2\n",
+          "output": "pause"
+        }
+      ],
+      "hints": [
+        "整数を読み、値に応じて分岐します。",
+        "caseごとに指定語を出します。",
+        "default は他の値を受け取ります。"
+      ]
+    },
+    "debug": {
+      "code": "switch (command) {\ncase 1: std::cout << \"start\";\ncase 2: std::cout << \"pause\"; break;\n}"
+    }
+  },
+  {
+    "title": "while と終了条件",
+    "goal": "while の反復条件を更新し、必ず終了するループを書く。",
+    "minutes": 35,
+    "explanation": "while は条件を先に調べ、true の間くり返します。ループ内で状態が変わらず条件も変化しないと、無限ループになります。",
+    "example": "int count{3};\nwhile (count > 0) {\n    std::cout << count << '\\n';\n    --count;\n}",
+    "exampleOutput": "3\n2\n1",
+    "commonMistake": "ループ条件に関係する変数を更新し忘れる。",
+    "prompt": "入力された正の整数 n から1までを降順で表示してください。入力は 3 です。",
+    "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    while (n > 0) {\n        std::cout << n << '\\n';\n        --n;\n    }\n}",
+    "input": "3\n",
+    "hints": [
+      "n が0より大きい間くり返します。",
+      "各回の最後に n を1減らします。",
+      "出力は減らす前に行います。"
+    ],
+    "id": "w4-d4",
+    "version": 1,
+    "week": 4,
+    "day": 4,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "while (count > 0) の中で count を変えないと？",
+      "choices": [
+        "必ず1回で終了",
+        "条件次第で無限に続く",
+        "コンパイル不可"
+      ],
+      "explanation": "countが正のままなら条件が変わらず、ループが終了しません。"
+    },
+    "exercise": {
+      "prompt": "入力された正の整数 n から1までを降順で表示してください。入力は 3 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "3\n",
+      "expectedOutput": "3\n2\n1",
+      "tests": [
+        {
+          "input": "3\n",
+          "output": "3\n2\n1"
+        }
+      ],
+      "hints": [
+        "n が0より大きい間くり返します。",
+        "各回の最後に n を1減らします。",
+        "出力は減らす前に行います。"
+      ]
+    },
+    "debug": {
+      "code": "int n{3};\nwhile (n > 0) {\n    std::cout << n << '\\n';\n}"
+    }
+  },
+  {
+    "title": "for で回数を決める",
+    "goal": "初期化、継続条件、更新をfor文に分けて書く。",
+    "minutes": 35,
+    "explanation": "for の括弧には初期化; 条件; 更新を順に書きます。回数が決まった反復に向いています。",
+    "example": "for (int i = 0; i < 4; ++i) {\n    std::cout << i << '\\n';\n}",
+    "exampleOutput": "0\n1\n2\n3",
+    "commonMistake": "i < 4 と i <= 4 の違いを見落とし、1回多く実行する。",
+    "prompt": "入力された n について、0から n-1 までの整数を1行ずつ表示してください。入力は 4 です。",
+    "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    for (int i = 0; i < n; ++i) std::cout << i << '\\n';\n}",
+    "input": "4\n",
+    "hints": [
+      "カウンタを0から始めます。",
+      "n 未満を条件にします。",
+      "各回で ++i し、i を出力します。"
+    ],
+    "id": "w4-d5",
+    "version": 1,
+    "week": 4,
+    "day": 5,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "for (int i=0; i<4; ++i) は何回実行される？",
+      "choices": [
+        "3回",
+        "4回",
+        "5回"
+      ],
+      "explanation": "iは0,1,2,3で条件を満たし、4では終了します。"
+    },
+    "exercise": {
+      "prompt": "入力された n について、0から n-1 までの整数を1行ずつ表示してください。入力は 4 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "4\n",
+      "expectedOutput": "0\n1\n2\n3",
+      "tests": [
+        {
+          "input": "4\n",
+          "output": "0\n1\n2\n3"
+        }
+      ],
+      "hints": [
+        "カウンタを0から始めます。",
+        "n 未満を条件にします。",
+        "各回で ++i し、i を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "for (int i = 0; i <= n; ++i) std::cout << i << '\\n';"
+    }
+  },
+  {
+    "title": "break と continue",
+    "goal": "反復の終了と現在回のスキップを使い分ける。",
+    "minutes": 35,
+    "explanation": "break は最も内側のループを終了します。continue はその回の残りの処理を飛ばして、次の反復へ進みます。",
+    "example": "for (int i = 1; i <= 5; ++i) {\n    if (i == 3) continue;\n    std::cout << i << ' ';\n}",
+    "exampleOutput": "1 2 4 5",
+    "commonMistake": "continue の後に更新式がないwhileループで、条件変数も更新せず停止しない。",
+    "prompt": "1からnまでのうち、3の倍数だけを飛ばして表示してください。入力は 5 です。",
+    "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    for (int i = 1; i <= n; ++i) {\n        if (i % 3 == 0) continue;\n        std::cout << i << '\\n';\n    }\n}",
+    "input": "5\n",
+    "hints": [
+      "1からnまでループします。",
+      "3で割った余りが0ならcontinueします。",
+      "それ以外の数だけ出力します。"
+    ],
+    "id": "w4-d6",
+    "version": 1,
+    "week": 4,
+    "day": 6,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "continue の動作は？",
+      "choices": [
+        "ループ全体を終える",
+        "現在の反復を飛ばす",
+        "プログラムを終了する"
+      ],
+      "explanation": "continueは現在回の残りを飛ばし、次の反復に移ります。"
+    },
+    "exercise": {
+      "prompt": "1からnまでのうち、3の倍数だけを飛ばして表示してください。入力は 5 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "5\n",
+      "expectedOutput": "1\n2\n4\n5",
+      "tests": [
+        {
+          "input": "5\n",
+          "output": "1\n2\n4\n5"
+        }
+      ],
+      "hints": [
+        "1からnまでループします。",
+        "3で割った余りが0ならcontinueします。",
+        "それ以外の数だけ出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int i{1};\nwhile (i <= 5) {\n    if (i == 3) continue;\n    std::cout << i << '\\n';\n    ++i;\n}"
+    }
+  },
+  {
+    "title": "総合：数当てゲームのロジック",
+    "goal": "入力、条件、反復をつなぎ、終了条件が明確な小課題を作る。",
+    "minutes": 50,
+    "explanation": "数当てゲームでは、入力値を目標値と比べて、正解なら終了、違えばヒントを出して続けます。今回は再現しやすいよう目標値を固定します。",
+    "example": "const int target{7};\nint guess{};\nstd::cin >> guess;\nif (guess == target) std::cout << \"correct\\n\";",
+    "exampleOutput": "入力に応じて変わる",
+    "commonMistake": "正解した後もループを続ける、または不正解でループを終える。",
+    "prompt": "目標値7の数当てを作ります。入力を読み、7なら correct、それより小さければ too low、大きければ too high と表示してください。入力は 5 です。",
+    "solution": "#include <iostream>\nint main() {\n    const int target{7};\n    int guess{};\n    std::cin >> guess;\n    if (guess == target) std::cout << \"correct\\n\";\n    else if (guess < target) std::cout << \"too low\\n\";\n    else std::cout << \"too high\\n\";\n}",
+    "input": "5\n",
+    "hints": [
+      "targetをconst intで7にします。",
+      "guessを入力してtargetと比較します。",
+      "等しい・小さい・大きいの3分岐にします。"
+    ],
+    "id": "w4-d7",
+    "version": 1,
+    "week": 4,
+    "day": 7,
+    "subject": "条件分岐・ループ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 3の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "正解時にゲームを終えるにはどんな制御が使える？",
+      "choices": [
+        "break",
+        "continue",
+        "++"
+      ],
+      "explanation": "breakはループを終了します。"
+    },
+    "exercise": {
+      "prompt": "目標値7の数当てを作ります。入力を読み、7なら correct、それより小さければ too low、大きければ too high と表示してください。入力は 5 です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "5\n",
+      "expectedOutput": "too low",
+      "tests": [
+        {
+          "input": "5\n",
+          "output": "too low"
+        }
+      ],
+      "hints": [
+        "targetをconst intで7にします。",
+        "guessを入力してtargetと比較します。",
+        "等しい・小さい・大きいの3分岐にします。"
+      ]
+    },
+    "debug": {
+      "code": "if (guess < target) std::cout << \"correct\";\nelse std::cout << \"too low\";"
+    }
+  },
+  {
+    "title": "最初の関数を定義して呼び出す",
+    "goal": "処理を名前付きの関数へまとめ、定義と呼び出しを区別する。",
+    "minutes": 35,
+    "explanation": "関数は、名前を付けた処理のまとまりです。戻り値がない処理には void を使います。関数本体を定義しただけでは実行されず、main などから名前と丸括弧を書いて呼び出す必要があります。",
+    "example": "#include <iostream>\n\nvoid printReady() {\n    std::cout << \"ready\\n\";\n}\n\nint main() {\n    printReady();\n}",
+    "exampleOutput": "ready",
+    "commonMistake": "関数を定義しただけで実行されたと思い、呼び出しを書き忘れる。",
+    "prompt": "void printReady() を定義し、main から呼び出して ready と1行で表示してください。",
+    "solution": "#include <iostream>\n\nvoid printReady() {\n    std::cout << \"ready\\n\";\n}\n\nint main() {\n    printReady();\n    return 0;\n}",
+    "input": "",
+    "tests": [
+      {
+        "input": "",
+        "output": "ready"
+      }
+    ],
+    "hints": [
+      "戻り値を書かない関数の戻り値型は void です。",
+      "関数本体を main より前に定義できます。",
+      "main 内に printReady(); と書いて実行します。"
+    ],
+    "id": "w5-d1",
+    "version": 1,
+    "week": 5,
+    "day": 1,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "void show() { ... } と定義した関数を実行するには？",
+      "choices": [
+        "show(); と呼び出す",
+        "関数名をコメントに書く",
+        "return 0; を追加するだけ"
+      ],
+      "explanation": "関数本体は呼び出されたときに実行されます。定義と呼び出しは別の操作です。"
+    },
+    "exercise": {
+      "prompt": "void printReady() を定義し、main から呼び出して ready と1行で表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "",
+      "expectedOutput": "ready",
+      "tests": [
+        {
+          "input": "",
+          "output": "ready"
+        }
+      ],
+      "hints": [
+        "戻り値を書かない関数の戻り値型は void です。",
+        "関数本体を main より前に定義できます。",
+        "main 内に printReady(); と書いて実行します。"
+      ]
+    },
+    "debug": {
+      "code": "#include <iostream>\n\nvoid printReady() {\n    std::cout << \"ready\\n\";\n}\n\nint main() {\n    return 0;\n}"
+    }
+  },
+  {
+    "title": "引数でデータを受け渡す",
+    "goal": "関数の引数を使い、入力値に応じた処理を再利用する。",
+    "minutes": 35,
+    "explanation": "引数は呼び出し側から関数へ渡す値です。仮引数は関数内で使う名前付きの変数で、値渡しでは引数の値が関数の仮引数へコピーされます。今回の printDamage は値を受け取って表示します。",
+    "example": "#include <iostream>\n\nvoid printDamage(int amount) {\n    std::cout << \"damage: \" << amount << '\\n';\n}\n\nint main() {\n    printDamage(18);\n}",
+    "exampleOutput": "damage: 18",
+    "commonMistake": "関数に必要な引数を渡さずに呼び出す、または定義側の型と異なる値を渡す。",
+    "prompt": "整数を読み取り、void printDamage(int amount) を使って damage: <値> と表示してください。",
+    "solution": "#include <iostream>\n\nvoid printDamage(int amount) {\n    std::cout << \"damage: \" << amount << '\\n';\n}\n\nint main() {\n    int amount{};\n    std::cin >> amount;\n    printDamage(amount);\n    return 0;\n}",
+    "input": "18\n",
+    "tests": [
+      {
+        "input": "18\n",
+        "output": "damage: 18"
+      },
+      {
+        "input": "0\n",
+        "output": "damage: 0"
+      },
+      {
+        "input": "37\n",
+        "output": "damage: 37"
+      }
+    ],
+    "hints": [
+      "printDamage の仮引数を int amount とします。",
+      "main で int を読み取り、その変数を呼び出し時に渡します。",
+      "出力では固定文字列と amount を << でつなぎます。"
+    ],
+    "id": "w5-d2",
+    "version": 1,
+    "week": 5,
+    "day": 2,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "void show(int value) を show(12); と呼ぶと、仮引数 value に入る値は？",
+      "choices": [
+        "12",
+        "0",
+        "関数の行番号"
+      ],
+      "explanation": "呼び出し時に渡した整数12が、仮引数 value の初期値になります。"
+    },
+    "exercise": {
+      "prompt": "整数を読み取り、void printDamage(int amount) を使って damage: <値> と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "18\n",
+      "expectedOutput": "damage: 18",
+      "tests": [
+        {
+          "input": "18\n",
+          "output": "damage: 18"
+        },
+        {
+          "input": "0\n",
+          "output": "damage: 0"
+        },
+        {
+          "input": "37\n",
+          "output": "damage: 37"
+        }
+      ],
+      "hints": [
+        "printDamage の仮引数を int amount とします。",
+        "main で int を読み取り、その変数を呼び出し時に渡します。",
+        "出力では固定文字列と amount を << でつなぎます。"
+      ]
+    },
+    "debug": {
+      "code": "void printDamage(int amount) {\n    std::cout << amount << '\\n';\n}\n\nint main() {\n    int amount{};\n    std::cin >> amount;\n    printDamage();\n}"
+    }
+  },
+  {
+    "title": "戻り値で計算結果を返す",
+    "goal": "計算を行う関数から値を返し、呼び出し側で利用する。",
+    "minutes": 40,
+    "explanation": "戻り値型は関数が呼び出し側へ返す値の型です。int add(int left, int right) は整数を返し、return で計算結果を返します。void 関数と違い、返された値を変数へ保存したり、別の式へ組み込んだりできます。",
+    "example": "#include <iostream>\n\nint add(int left, int right) {\n    return left + right;\n}\n\nint main() {\n    std::cout << add(4, 7) << '\\n';\n}",
+    "exampleOutput": "11",
+    "commonMistake": "戻り値を計算したのに return せず、呼び出し側で結果が使えない。",
+    "prompt": "整数2つを読み、int add(int left, int right) で合計を計算して表示してください。",
+    "solution": "#include <iostream>\n\nint add(int left, int right) {\n    return left + right;\n}\n\nint main() {\n    int left{}, right{};\n    std::cin >> left >> right;\n    const int result = add(left, right);\n    std::cout << result << '\\n';\n    return 0;\n}",
+    "input": "4 7\n",
+    "tests": [
+      {
+        "input": "4 7\n",
+        "output": "11"
+      },
+      {
+        "input": "-3 5\n",
+        "output": "2"
+      },
+      {
+        "input": "0 0\n",
+        "output": "0"
+      }
+    ],
+    "hints": [
+      "add の戻り値型は int です。",
+      "関数の中で left + right を計算します。",
+      "main で add(left, right) の戻り値を表示します。"
+    ],
+    "id": "w5-d3",
+    "version": 1,
+    "week": 5,
+    "day": 3,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int add(int a, int b) の return a + b; がすることは？",
+      "choices": [
+        "合計を呼び出し側へ返す",
+        "画面へ必ず表示する",
+        "関数をもう一度呼び出す"
+      ],
+      "explanation": "return は値を呼び出し側へ返し、その関数の実行を終えます。"
+    },
+    "exercise": {
+      "prompt": "整数2つを読み、int add(int left, int right) で合計を計算して表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "4 7\n",
+      "expectedOutput": "11",
+      "tests": [
+        {
+          "input": "4 7\n",
+          "output": "11"
+        },
+        {
+          "input": "-3 5\n",
+          "output": "2"
+        },
+        {
+          "input": "0 0\n",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "add の戻り値型は int です。",
+        "関数の中で left + right を計算します。",
+        "main で add(left, right) の戻り値を表示します。"
+      ]
+    },
+    "debug": {
+      "code": "int add(int left, int right) {\n    return left - right;\n}"
+    }
+  },
+  {
+    "title": "bool を返す判定関数",
+    "goal": "条件判定を bool 関数へまとめ、呼び出し側の分岐に使う。",
+    "minutes": 40,
+    "explanation": "bool は true または false を表します。判定関数は条件を返すようにすると、名前から目的が読み取りやすくなります。表示やゲーム状態の変更は呼び出し側で行うと、判定と入出力の責務を分けられます。",
+    "example": "#include <iostream>\n\nbool isAlive(int hp) {\n    return hp > 0;\n}\n\nint main() {\n    std::cout << (isAlive(1) ? \"alive\\n\" : \"down\\n\");\n}",
+    "exampleOutput": "alive",
+    "commonMistake": "HP が負数のときも生存と判定するなど、条件の境界を考えない。",
+    "prompt": "整数 HP を読み、bool isAlive(int hp) で判定してください。true なら alive、false なら down と表示します。",
+    "solution": "#include <iostream>\n\nbool isAlive(int hp) {\n    return hp > 0;\n}\n\nint main() {\n    int hp{};\n    std::cin >> hp;\n    if (isAlive(hp)) std::cout << \"alive\\n\";\n    else std::cout << \"down\\n\";\n    return 0;\n}",
+    "input": "1\n",
+    "tests": [
+      {
+        "input": "1\n",
+        "output": "alive"
+      },
+      {
+        "input": "0\n",
+        "output": "down"
+      },
+      {
+        "input": "-5\n",
+        "output": "down"
+      }
+    ],
+    "hints": [
+      "isAlive の戻り値型は bool です。",
+      "HP が0より大きいかを比較します。",
+      "main で戻り値を if の条件に使います。"
+    ],
+    "id": "w5-d4",
+    "version": 1,
+    "week": 5,
+    "day": 4,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "bool isAlive(int hp) { return hp > 0; } の戻り値は hp=0 のとき？",
+      "choices": [
+        "true",
+        "false",
+        "0除算で未定義"
+      ],
+      "explanation": "0 > 0 は false なので、生存していない判定になります。"
+    },
+    "exercise": {
+      "prompt": "整数 HP を読み、bool isAlive(int hp) で判定してください。true なら alive、false なら down と表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "1\n",
+      "expectedOutput": "alive",
+      "tests": [
+        {
+          "input": "1\n",
+          "output": "alive"
+        },
+        {
+          "input": "0\n",
+          "output": "down"
+        },
+        {
+          "input": "-5\n",
+          "output": "down"
+        }
+      ],
+      "hints": [
+        "isAlive の戻り値型は bool です。",
+        "HP が0より大きいかを比較します。",
+        "main で戻り値を if の条件に使います。"
+      ]
+    },
+    "debug": {
+      "code": "bool isAlive(int hp) {\n    return hp;\n}"
+    }
+  },
+  {
+    "title": "ローカル変数と関数のスコープ",
+    "goal": "ローカル変数の有効範囲を理解し、値を戻り値で受け渡す。",
+    "minutes": 40,
+    "explanation": "関数の中で宣言したローカル変数は、その関数のブロック内で使えます。別の関数から直接参照できません。関数間で計算結果を渡すときは、引数と戻り値を使うと依存関係が明確になります。",
+    "example": "#include <iostream>\n\nint addBonus(int base) {\n    const int bonus{10};\n    return base + bonus;\n}\n\nint main() {\n    std::cout << addBonus(35) << '\\n';\n}",
+    "exampleOutput": "45",
+    "commonMistake": "関数の中で作ったローカル変数を、関数の外から使おうとする。",
+    "prompt": "int addBonus(int base) を作り、base に10を加えた値を返してください。整数を読み、戻り値を表示します。",
+    "solution": "#include <iostream>\n\nint addBonus(int base) {\n    const int bonus{10};\n    return base + bonus;\n}\n\nint main() {\n    int base{};\n    std::cin >> base;\n    std::cout << addBonus(base) << '\\n';\n    return 0;\n}",
+    "input": "35\n",
+    "tests": [
+      {
+        "input": "35\n",
+        "output": "45"
+      },
+      {
+        "input": "0\n",
+        "output": "10"
+      },
+      {
+        "input": "90\n",
+        "output": "100"
+      }
+    ],
+    "hints": [
+      "bonus は addBonus の中で宣言します。",
+      "addBonus の戻り値型を int にします。",
+      "base + bonus を return し、main で結果を出力します。"
+    ],
+    "id": "w5-d5",
+    "version": 1,
+    "week": 5,
+    "day": 5,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "関数内で宣言したローカル変数 bonus を main から直接使える？",
+      "choices": [
+        "使える。名前は全ファイルで共有される",
+        "使えない。スコープの外にある",
+        "static を付けなくても必ず残る"
+      ],
+      "explanation": "ローカル変数の名前が有効なのは、その宣言を含むブロック内です。"
+    },
+    "exercise": {
+      "prompt": "int addBonus(int base) を作り、base に10を加えた値を返してください。整数を読み、戻り値を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "35\n",
+      "expectedOutput": "45",
+      "tests": [
+        {
+          "input": "35\n",
+          "output": "45"
+        },
+        {
+          "input": "0\n",
+          "output": "10"
+        },
+        {
+          "input": "90\n",
+          "output": "100"
+        }
+      ],
+      "hints": [
+        "bonus は addBonus の中で宣言します。",
+        "addBonus の戻り値型を int にします。",
+        "base + bonus を return し、main で結果を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int addBonus(int base) {\n    int bonus{10};\n}\n\nint main() {\n    return base + bonus;\n}"
+    }
+  },
+  {
+    "title": "統合：関数でHPを更新する",
+    "goal": "引数、戻り値、判定関数を組み合わせて小さなゲーム処理を書く。",
+    "minutes": 50,
+    "explanation": "ゲーム処理を関数へ分けると、HPを計算する処理と生存判定を別々に確認できます。applyDamage は新しいHPを返し、isAlive はその値を判定します。関数が値を返す設計なら、呼び出し順とデータの流れを追いやすくなります。",
+    "example": "#include <iostream>\n\nint applyDamage(int hp, int damage) {\n    return hp - damage;\n}\n\nbool isAlive(int hp) {\n    return hp > 0;\n}",
+    "exampleOutput": "HPの値と状態は入力に応じて変わる",
+    "commonMistake": "値渡しした hp のコピーだけを変更し、呼び出し側の変数が更新されたと思う。",
+    "prompt": "HP とダメージを読み、applyDamage(hp, damage) で新しいHPを計算してください。HP: <値> と、生存なら alive、それ以外なら down を表示します。",
+    "solution": "#include <iostream>\n\nint applyDamage(int hp, int damage) {\n    return hp - damage;\n}\n\nbool isAlive(int hp) {\n    return hp > 0;\n}\n\nint main() {\n    int hp{}, damage{};\n    std::cin >> hp >> damage;\n    const int updatedHp = applyDamage(hp, damage);\n    std::cout << \"HP: \" << updatedHp << '\\n';\n    std::cout << (isAlive(updatedHp) ? \"alive\\n\" : \"down\\n\");\n    return 0;\n}",
+    "input": "50 13\n",
+    "tests": [
+      {
+        "input": "50 13\n",
+        "output": "HP: 37\nalive"
+      },
+      {
+        "input": "5 7\n",
+        "output": "HP: -2\ndown"
+      },
+      {
+        "input": "10 0\n",
+        "output": "HP: 10\nalive"
+      }
+    ],
+    "hints": [
+      "applyDamage は int を返し、HP からダメージを引きます。",
+      "返された値を updatedHp などの変数へ保存します。",
+      "isAlive(updatedHp) の結果を条件にして状態を出します。"
+    ],
+    "id": "w5-d6",
+    "version": 1,
+    "week": 5,
+    "day": 6,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int applyDamage(int hp, int damage) が値渡しで hp を変更したとき、main の元の hp は？",
+      "choices": [
+        "関数内の変更だけでは変わらない",
+        "必ず0になる",
+        "同じ名前なので自動で変わる"
+      ],
+      "explanation": "値渡しでは関数の仮引数はコピーです。新しい値を使うには戻り値を代入します。"
+    },
+    "exercise": {
+      "prompt": "HP とダメージを読み、applyDamage(hp, damage) で新しいHPを計算してください。HP: <値> と、生存なら alive、それ以外なら down を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "50 13\n",
+      "expectedOutput": "HP: 37\nalive",
+      "tests": [
+        {
+          "input": "50 13\n",
+          "output": "HP: 37\nalive"
+        },
+        {
+          "input": "5 7\n",
+          "output": "HP: -2\ndown"
+        },
+        {
+          "input": "10 0\n",
+          "output": "HP: 10\nalive"
+        }
+      ],
+      "hints": [
+        "applyDamage は int を返し、HP からダメージを引きます。",
+        "返された値を updatedHp などの変数へ保存します。",
+        "isAlive(updatedHp) の結果を条件にして状態を出します。"
+      ]
+    },
+    "debug": {
+      "code": "void applyDamage(int hp, int damage) {\n    hp -= damage;\n}\n\nint main() {\n    int updatedHp = applyDamage(50, 13);\n}"
+    }
+  },
+  {
+    "title": "週末評価：上限付きスコア計算",
+    "goal": "関数の定義、引数、戻り値、分岐を使い、境界値を含む課題を解く。",
+    "minutes": 50,
+    "explanation": "週末の確認では資料を閉じ、引数から戻り値までのデータの流れを自力で組み立てます。base は0〜100、bonus は0〜20とします。合計が100を超えたら100に丸め、それ以外は合計を返します。",
+    "example": "#include <iostream>\n\nint finalScore(int base, int bonus) {\n    const int total = base + bonus;\n    if (total > 100) return 100;\n    return total;\n}",
+    "exampleOutput": "base と bonus の合計。ただし最大100",
+    "commonMistake": "合計が上限以下の経路で return を忘れたり、100ちょうども過剰に丸めたりする。",
+    "prompt": "base と bonus を読み、int finalScore(int base, int bonus) を呼び出して結果を表示してください。合計が100を超えるときは100を返します。",
+    "solution": "#include <iostream>\n\nint finalScore(int base, int bonus) {\n    const int total = base + bonus;\n    if (total > 100) return 100;\n    return total;\n}\n\nint main() {\n    int base{}, bonus{};\n    std::cin >> base >> bonus;\n    std::cout << finalScore(base, bonus) << '\\n';\n    return 0;\n}",
+    "input": "60 20\n",
+    "tests": [
+      {
+        "input": "60 20\n",
+        "output": "80"
+      },
+      {
+        "input": "92 15\n",
+        "output": "100"
+      },
+      {
+        "input": "0 0\n",
+        "output": "0"
+      }
+    ],
+    "hints": [
+      "base + bonus を total に保存します。",
+      "total が100を超える場合は先に100を返します。",
+      "それ以外の経路でも total を return します。"
+    ],
+    "id": "w5-d7",
+    "version": 1,
+    "week": 5,
+    "day": 7,
+    "subject": "関数・引数・戻り値",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 4の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "total が100ちょうどのとき、total > 100 は？",
+      "choices": [
+        "true",
+        "false",
+        "実行時エラー"
+      ],
+      "explanation": "100は100より大きくありません。上限ちょうどの値はそのまま返します。"
+    },
+    "exercise": {
+      "prompt": "base と bonus を読み、int finalScore(int base, int bonus) を呼び出して結果を表示してください。合計が100を超えるときは100を返します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "60 20\n",
+      "expectedOutput": "80",
+      "tests": [
+        {
+          "input": "60 20\n",
+          "output": "80"
+        },
+        {
+          "input": "92 15\n",
+          "output": "100"
+        },
+        {
+          "input": "0 0\n",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "base + bonus を total に保存します。",
+        "total が100を超える場合は先に100を返します。",
+        "それ以外の経路でも total を return します。"
+      ]
+    },
+    "debug": {
+      "code": "int finalScore(int base, int bonus) {\n    const int total = base + bonus;\n    if (total > 100) return 100;\n}"
+    }
+  },
+  {
+    "title": "std::array と添字",
+    "goal": "固定個数の値をまとめ、0から始まる添字で要素を読む。",
+    "minutes": 35,
+    "explanation": "std::array<int, 3> は int を3個まとめて保持する固定長コンテナです。先頭の添字は0なので、2番目の要素は values[1] で読みます。添字に要素数以上の値を使うと配列の範囲外へアクセスするため、要素数と添字の関係を確認します。",
+    "example": "#include <array>\n#include <iostream>\n\nint main() {\n    const std::array<int, 3> values{4, 7, 9};\n    std::cout << values[1] << '\\n';\n}",
+    "exampleOutput": "7",
+    "commonMistake": "2番目の要素を values[2] と書き、3番目を読んでしまう。",
+    "prompt": "整数を3つ読み、std::array<int, 3> に保存してください。2番目の値を1行で表示します。",
+    "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    std::cin >> values[0] >> values[1] >> values[2];\n    std::cout << values[1] << '\\n';\n    return 0;\n}",
+    "input": "4 7 9\n",
+    "tests": [
+      {
+        "input": "4 7 9\n",
+        "output": "7"
+      },
+      {
+        "input": "-2 0 15\n",
+        "output": "0"
+      },
+      {
+        "input": "100 50 25\n",
+        "output": "50"
+      }
+    ],
+    "hints": [
+      "<array> をインクルードし、std::array<int, 3> を宣言します。",
+      "入力は values[0]、values[1]、values[2] の順に読みます。",
+      "2番目は values[1] です。"
+    ],
+    "id": "w6-d1",
+    "version": 1,
+    "week": 6,
+    "day": 1,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "std::array<int, 3> values の2番目の要素を読む添字は？",
+      "choices": [
+        "0",
+        "1",
+        "2"
+      ],
+      "explanation": "添字は0から始まるため、2番目は添字1です。"
+    },
+    "exercise": {
+      "prompt": "整数を3つ読み、std::array<int, 3> に保存してください。2番目の値を1行で表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "4 7 9\n",
+      "expectedOutput": "7",
+      "tests": [
+        {
+          "input": "4 7 9\n",
+          "output": "7"
+        },
+        {
+          "input": "-2 0 15\n",
+          "output": "0"
+        },
+        {
+          "input": "100 50 25\n",
+          "output": "50"
+        }
+      ],
+      "hints": [
+        "<array> をインクルードし、std::array<int, 3> を宣言します。",
+        "入力は values[0]、values[1]、values[2] の順に読みます。",
+        "2番目は values[1] です。"
+      ]
+    },
+    "debug": {
+      "code": "std::array<int, 3> values{4, 7, 9};\nstd::cout << values[3];"
+    }
+  },
+  {
+    "title": "ループで配列を処理する",
+    "goal": "添字と for 文を使い、配列の全要素を合計する。",
+    "minutes": 40,
+    "explanation": "同じ処理を複数の要素へ行うときは、for 文で添字を変えながら配列をたどれます。3要素なら添字は0、1、2です。ループ条件を i < 3 とすれば、最後に使う添字は2になります。",
+    "example": "#include <array>\n#include <iostream>\n\nint main() {\n    const std::array<int, 3> values{3, 5, 8};\n    int total{};\n    for (int i = 0; i < 3; ++i) {\n        total += values[i];\n    }\n    std::cout << total << '\\n';\n}",
+    "exampleOutput": "16",
+    "commonMistake": "条件を i <= 3 にして、存在しない4番目の要素を処理する。",
+    "prompt": "整数を3つ読み、for 文を使って合計を表示してください。",
+    "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    int total{};\n    for (int i = 0; i < 3; ++i) {\n        total += values[i];\n    }\n    std::cout << total << '\\n';\n    return 0;\n}",
+    "input": "3 5 8\n",
+    "tests": [
+      {
+        "input": "3 5 8\n",
+        "output": "16"
+      },
+      {
+        "input": "0 0 0\n",
+        "output": "0"
+      },
+      {
+        "input": "-4 10 2\n",
+        "output": "8"
+      }
+    ],
+    "hints": [
+      "std::array<int, 3> と int total{} を用意します。",
+      "入力用と合計用に、それぞれ i < 3 のループを使います。",
+      "合計用ループでは total += values[i]; とします。"
+    ],
+    "id": "w6-d2",
+    "version": 1,
+    "week": 6,
+    "day": 2,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "3要素の添字を0から順に処理する条件は？",
+      "choices": [
+        "i < 3",
+        "i <= 3",
+        "i > 3"
+      ],
+      "explanation": "i < 3 なら i は0、1、2のときに実行されます。"
+    },
+    "exercise": {
+      "prompt": "整数を3つ読み、for 文を使って合計を表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "3 5 8\n",
+      "expectedOutput": "16",
+      "tests": [
+        {
+          "input": "3 5 8\n",
+          "output": "16"
+        },
+        {
+          "input": "0 0 0\n",
+          "output": "0"
+        },
+        {
+          "input": "-4 10 2\n",
+          "output": "8"
+        }
+      ],
+      "hints": [
+        "std::array<int, 3> と int total{} を用意します。",
+        "入力用と合計用に、それぞれ i < 3 のループを使います。",
+        "合計用ループでは total += values[i]; とします。"
+      ]
+    },
+    "debug": {
+      "code": "for (int i = 0; i <= 3; ++i) {\n    total += values[i];\n}"
+    }
+  },
+  {
+    "title": "std::string で文字列を扱う",
+    "goal": "標準ライブラリの文字列を読み取り、出力に組み込む。",
+    "minutes": 35,
+    "explanation": "std::string は長さが変わる文字列を扱う型です。<string> をインクルードし、std::cin >> name; と書くと空白までの1語を読み取れます。空白を含む行全体は次の授業で扱う std::getline を使います。",
+    "example": "#include <iostream>\n#include <string>\n\nint main() {\n    const std::string name{\"Ada\"};\n    std::cout << \"Hello, \" << name << '\\n';\n}",
+    "exampleOutput": "Hello, Ada",
+    "commonMistake": "std::string の宣言に必要な <string> をインクルードし忘れる。",
+    "prompt": "英字の名前を1語読み、Hello, <名前> と1行で表示してください。",
+    "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    std::cout << \"Hello, \" << name << '\\n';\n    return 0;\n}",
+    "input": "Ada\n",
+    "tests": [
+      {
+        "input": "Ada\n",
+        "output": "Hello, Ada"
+      },
+      {
+        "input": "Reito\n",
+        "output": "Hello, Reito"
+      },
+      {
+        "input": "Cplusplus\n",
+        "output": "Hello, Cplusplus"
+      }
+    ],
+    "hints": [
+      "文字列型には std::string を使います。",
+      "入力用の name を用意して std::cin >> name; とします。",
+      "固定文字列と name を std::cout の << でつなぎます。"
+    ],
+    "id": "w6-d3",
+    "version": 1,
+    "week": 6,
+    "day": 3,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "std::cin >> name; が文字列を読むとき、基本的にどこまで読む？",
+      "choices": [
+        "空白までの1語",
+        "常にファイル全体",
+        "整数だけ"
+      ],
+      "explanation": "operator>> は空白文字で区切られた次の1語を読み取ります。"
+    },
+    "exercise": {
+      "prompt": "英字の名前を1語読み、Hello, <名前> と1行で表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Ada\n",
+      "expectedOutput": "Hello, Ada",
+      "tests": [
+        {
+          "input": "Ada\n",
+          "output": "Hello, Ada"
+        },
+        {
+          "input": "Reito\n",
+          "output": "Hello, Reito"
+        },
+        {
+          "input": "Cplusplus\n",
+          "output": "Hello, Cplusplus"
+        }
+      ],
+      "hints": [
+        "文字列型には std::string を使います。",
+        "入力用の name を用意して std::cin >> name; とします。",
+        "固定文字列と name を std::cout の << でつなぎます。"
+      ]
+    },
+    "debug": {
+      "code": "#include <iostream>\nint main() {\n    std::string name;\n    std::cin >> name;\n}"
+    }
+  },
+  {
+    "title": "getline で空白を含む行を読む",
+    "goal": "std::getline を使い、空白を含む文字列を1行分読み取る。",
+    "minutes": 40,
+    "explanation": "std::cin >> text; は空白で入力を区切ります。行全体を読みたい場合は std::getline(std::cin, text); を使います。getline は行末の改行を文字列に含めず、行の途中にある空白は保持します。",
+    "example": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string title;\n    std::getline(std::cin, title);\n    std::cout << \"title: \" << title << '\\n';\n}",
+    "exampleOutput": "title: C++ Game",
+    "commonMistake": "空白を含む入力に std::cin >> を使い、最初の単語だけで読み取りが止まる。",
+    "prompt": "1行の文章を読み、text: <入力した文章> と表示してください。途中の空白を残します。",
+    "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::getline(std::cin, text);\n    std::cout << \"text: \" << text << '\\n';\n    return 0;\n}",
+    "input": "Hello C++\n",
+    "tests": [
+      {
+        "input": "Hello C++\n",
+        "output": "text: Hello C++"
+      },
+      {
+        "input": "two words here\n",
+        "output": "text: two words here"
+      },
+      {
+        "input": "single\n",
+        "output": "text: single"
+      }
+    ],
+    "hints": [
+      "入力行を保存する std::string text; を用意します。",
+      "std::getline(std::cin, text); で1行を読みます。",
+      "std::cout << \"text: \" << text; と表示します。"
+    ],
+    "id": "w6-d4",
+    "version": 1,
+    "week": 6,
+    "day": 4,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "入力行の空白も含めて読み取る関数は？",
+      "choices": [
+        "std::getline",
+        "std::cout",
+        "std::size"
+      ],
+      "explanation": "std::getline は区切り文字までの1行を文字列に読み取ります。"
+    },
+    "exercise": {
+      "prompt": "1行の文章を読み、text: <入力した文章> と表示してください。途中の空白を残します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Hello C++\n",
+      "expectedOutput": "text: Hello C++",
+      "tests": [
+        {
+          "input": "Hello C++\n",
+          "output": "text: Hello C++"
+        },
+        {
+          "input": "two words here\n",
+          "output": "text: two words here"
+        },
+        {
+          "input": "single\n",
+          "output": "text: single"
+        }
+      ],
+      "hints": [
+        "入力行を保存する std::string text; を用意します。",
+        "std::getline(std::cin, text); で1行を読みます。",
+        "std::cout << \"text: \" << text; と表示します。"
+      ]
+    },
+    "debug": {
+      "code": "std::string text;\nstd::cin >> text;\nstd::cout << text;"
+    }
+  },
+  {
+    "title": "ポインタで値を参照する",
+    "goal": "アドレスを保持するポインタと、* による間接参照を区別する。",
+    "minutes": 45,
+    "explanation": "ポインタはオブジェクトのアドレスを保持する変数です。&value は value のアドレスを取り、int* p は int を指すポインタを宣言します。*p はそのアドレスにある int の値を読み書きします。ポインタを使うときは、指す先のオブジェクトが存在していることを確認します。",
+    "example": "#include <iostream>\n\nint main() {\n    int hp{40};\n    int* hpAddress{&hp};\n    std::cout << *hpAddress << '\\n';\n}",
+    "exampleOutput": "40",
+    "commonMistake": "ポインタ変数に入っているアドレスと、そのアドレス先の値を混同する。",
+    "prompt": "整数を読み、int* ポインタを使ってその値を参照し、表示してください。",
+    "solution": "#include <iostream>\n\nint main() {\n    int value{};\n    std::cin >> value;\n    int* valueAddress{&value};\n    std::cout << *valueAddress << '\\n';\n    return 0;\n}",
+    "input": "42\n",
+    "tests": [
+      {
+        "input": "42\n",
+        "output": "42"
+      },
+      {
+        "input": "0\n",
+        "output": "0"
+      },
+      {
+        "input": "-8\n",
+        "output": "-8"
+      }
+    ],
+    "hints": [
+      "整数のローカル変数 value を先に宣言します。",
+      "int* valueAddress{&value}; でそのアドレスを保持します。",
+      "ポインタの指す値は *valueAddress で読み取れます。"
+    ],
+    "id": "w6-d5",
+    "version": 1,
+    "week": 6,
+    "day": 5,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "int* p = &value; の p が保持するものは？",
+      "choices": [
+        "value のアドレス",
+        "value の型名",
+        "必ず0"
+      ],
+      "explanation": "&value は value のアドレスを取得し、ポインタ p に保存します。"
+    },
+    "exercise": {
+      "prompt": "整数を読み、int* ポインタを使ってその値を参照し、表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "42\n",
+      "expectedOutput": "42",
+      "tests": [
+        {
+          "input": "42\n",
+          "output": "42"
+        },
+        {
+          "input": "0\n",
+          "output": "0"
+        },
+        {
+          "input": "-8\n",
+          "output": "-8"
+        }
+      ],
+      "hints": [
+        "整数のローカル変数 value を先に宣言します。",
+        "int* valueAddress{&value}; でそのアドレスを保持します。",
+        "ポインタの指す値は *valueAddress で読み取れます。"
+      ]
+    },
+    "debug": {
+      "code": "int value{42};\nint* address{&value};\nstd::cout << address;"
+    }
+  },
+  {
+    "title": "ポインタで配列をたどる",
+    "goal": "配列の先頭要素を指すポインタを進め、範囲内の要素を読む。",
+    "minutes": 45,
+    "explanation": "std::array の data() は先頭要素へのポインタを返します。ポインタを ++ すると次の要素へ進み、*current で現在の要素を読みます。配列の要素数だけ進めて止めます。配列末尾の1つ先を指す位置は作れますが、その位置を間接参照してはいけません。",
+    "example": "#include <array>\n#include <iostream>\n\nint main() {\n    const std::array<int, 3> values{2, 4, 6};\n    const int* current{values.data()};\n    for (int i = 0; i < 3; ++i) {\n        std::cout << *current << ' ';\n        ++current;\n    }\n}",
+    "exampleOutput": "2 4 6",
+    "commonMistake": "要素数を超えてポインタを進めて読み取り、配列の外を参照する。",
+    "prompt": "整数を3つ std::array に読み込み、data() から始まるポインタを使って先頭から順に表示してください。値の間は空白で区切ります。",
+    "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    int* current{values.data()};\n    for (int i = 0; i < 3; ++i) {\n        if (i > 0) std::cout << ' ';\n        std::cout << *current;\n        ++current;\n    }\n    std::cout << '\\n';\n    return 0;\n}",
+    "input": "4 7 9\n",
+    "tests": [
+      {
+        "input": "4 7 9\n",
+        "output": "4 7 9"
+      },
+      {
+        "input": "0 -1 8\n",
+        "output": "0 -1 8"
+      },
+      {
+        "input": "12 12 12\n",
+        "output": "12 12 12"
+      }
+    ],
+    "hints": [
+      "入力後に int* current{values.data()}; とします。",
+      "3回のループで *current を出力し、current を ++ します。",
+      "最後に余分な空白を付けないよう、i > 0 のときだけ区切りを表示します。"
+    ],
+    "id": "w6-d6",
+    "version": 1,
+    "week": 6,
+    "day": 6,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "const int* current が配列要素を指すとき、現在の要素を読む式は？",
+      "choices": [
+        "current",
+        "*current",
+        "&*"
+      ],
+      "explanation": "*current はポインタが指している現在の要素を表します。"
+    },
+    "exercise": {
+      "prompt": "整数を3つ std::array に読み込み、data() から始まるポインタを使って先頭から順に表示してください。値の間は空白で区切ります。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "4 7 9\n",
+      "expectedOutput": "4 7 9",
+      "tests": [
+        {
+          "input": "4 7 9\n",
+          "output": "4 7 9"
+        },
+        {
+          "input": "0 -1 8\n",
+          "output": "0 -1 8"
+        },
+        {
+          "input": "12 12 12\n",
+          "output": "12 12 12"
+        }
+      ],
+      "hints": [
+        "入力後に int* current{values.data()}; とします。",
+        "3回のループで *current を出力し、current を ++ します。",
+        "最後に余分な空白を付けないよう、i > 0 のときだけ区切りを表示します。"
+      ]
+    },
+    "debug": {
+      "code": "int* current{values.data()};\nfor (int i = 0; i <= 3; ++i) {\n    std::cout << *current << ' ';\n    ++current;\n}"
+    }
+  },
+  {
+    "title": "統合：ポインタと要素数を渡す関数",
+    "goal": "配列の先頭ポインタと要素数を関数へ渡し、合計を返す。",
+    "minutes": 50,
+    "explanation": "配列を受け取る関数では、先頭要素のポインタと要素数を組にして渡せます。ポインタだけでは要素数が分からないため、count を別の引数にします。const int* は関数内から要素を書き換えないことを示します。count の範囲内だけを読み取ることが大切です。",
+    "example": "int sum(const int* values, int count) {\n    int total{};\n    for (int i = 0; i < count; ++i) {\n        total += values[i];\n    }\n    return total;\n}",
+    "exampleOutput": "3要素が 3, 5, 8 の場合は 16",
+    "commonMistake": "ポインタだけで要素数まで分かると思い込み、渡された範囲を超えて読み取る。",
+    "prompt": "整数を3つ std::array に読み、sum(const int* values, int count) に先頭アドレスと要素数を渡してください。関数の戻り値を表示します。",
+    "solution": "#include <array>\n#include <iostream>\n\nint sum(const int* values, int count) {\n    int total{};\n    for (int i = 0; i < count; ++i) {\n        total += values[i];\n    }\n    return total;\n}\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    std::cout << sum(values.data(), static_cast<int>(values.size())) << '\\n';\n    return 0;\n}",
+    "input": "3 5 8\n",
+    "tests": [
+      {
+        "input": "3 5 8\n",
+        "output": "16"
+      },
+      {
+        "input": "-4 10 2\n",
+        "output": "8"
+      },
+      {
+        "input": "0 0 0\n",
+        "output": "0"
+      }
+    ],
+    "hints": [
+      "sum の引数は const int* values と int count にします。",
+      "関数内で count 回だけ values[i] を total に加算します。",
+      "呼び出し時は values.data() と static_cast<int>(values.size()) を渡します。"
+    ],
+    "id": "w6-d7",
+    "version": 1,
+    "week": 6,
+    "day": 7,
+    "subject": "配列・文字列・ポインタ",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 5の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "配列の先頭ポインタと一緒に要素数を渡す理由は？",
+      "choices": [
+        "ポインタから要素数は自動では分からないため",
+        "C++の関数は配列を読めないため",
+        "const を使えなくするため"
+      ],
+      "explanation": "通常のポインタは指し先の要素数を保持しません。処理する範囲を別に渡します。"
+    },
+    "exercise": {
+      "prompt": "整数を3つ std::array に読み、sum(const int* values, int count) に先頭アドレスと要素数を渡してください。関数の戻り値を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "3 5 8\n",
+      "expectedOutput": "16",
+      "tests": [
+        {
+          "input": "3 5 8\n",
+          "output": "16"
+        },
+        {
+          "input": "-4 10 2\n",
+          "output": "8"
+        },
+        {
+          "input": "0 0 0\n",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "sum の引数は const int* values と int count にします。",
+        "関数内で count 回だけ values[i] を total に加算します。",
+        "呼び出し時は values.data() と static_cast<int>(values.size()) を渡します。"
+      ]
+    },
+    "debug": {
+      "code": "int sum(const int* values, int count) {\n    int total{};\n    for (int i = 0; i <= count; ++i) total += values[i];\n    return total;\n}"
+    }
+  },
+  {
+    "title": "参照で同じ値に別名を付ける",
+    "goal": "既存の変数を参照する名前を作り、参照と元の変数が同じ値を扱うことを確かめる。",
+    "minutes": 35,
+    "explanation": "参照は、すでに存在するオブジェクトに付ける別名です。int& alias{score}; のように宣言と同時に初期化し、その後 alias を読む・書くと score と同じオブジェクトを扱います。参照は必ず有効なオブジェクトへ結び付け、指し先より長く使わないようにします。",
+    "example": "#include <iostream>\n\nint main() {\n    int score{10};\n    int& alias{score};\n    alias = 25;\n    std::cout << score << '\\n';\n}",
+    "exampleOutput": "25",
+    "commonMistake": "参照を初期化せず宣言したり、参照を作った後に別の変数へ付け替えられると思ったりする。",
+    "prompt": "整数 score と bonus を読み、int& alias{score}; を使って alias に bonus を足してください。最後に score を表示します。",
+    "solution": "#include <iostream>\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    int& alias{score};\n    alias += bonus;\n    std::cout << score << '\\n';\n    return 0;\n}",
+    "input": "10 5\n",
+    "tests": [
+      {
+        "input": "10 5\n",
+        "output": "15"
+      },
+      {
+        "input": "0 0\n",
+        "output": "0"
+      },
+      {
+        "input": "-4 9\n",
+        "output": "5"
+      }
+    ],
+    "hints": [
+      "score と bonus を int として読み取ります。",
+      "int& alias{score}; で score への参照を初期化します。",
+      "alias += bonus; の後で score を出力します。"
+    ],
+    "id": "w7-d1",
+    "version": 1,
+    "week": 7,
+    "day": 1,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "既存の int score を参照する正しい宣言は？",
+      "choices": [
+        "int& alias{score};",
+        "int& alias;",
+        "int alias&{score};"
+      ],
+      "explanation": "参照型は int& と書き、宣言時に参照先の score で初期化します。"
+    },
+    "exercise": {
+      "prompt": "整数 score と bonus を読み、int& alias{score}; を使って alias に bonus を足してください。最後に score を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "10 5\n",
+      "expectedOutput": "15",
+      "tests": [
+        {
+          "input": "10 5\n",
+          "output": "15"
+        },
+        {
+          "input": "0 0\n",
+          "output": "0"
+        },
+        {
+          "input": "-4 9\n",
+          "output": "5"
+        }
+      ],
+      "hints": [
+        "score と bonus を int として読み取ります。",
+        "int& alias{score}; で score への参照を初期化します。",
+        "alias += bonus; の後で score を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int score{10};\nint& alias;\nalias = score;"
+    }
+  },
+  {
+    "title": "複数の参照から同じ変数を見る",
+    "goal": "参照と元の変数が独立した値ではなく、同一オブジェクトの別名であると確認する。",
+    "minutes": 35,
+    "explanation": "同じ変数に複数の参照を結び付けても、値のコピーが増えるわけではありません。score を変更すると、それを参照する alias から見える値も変わります。参照を読むときは、どのオブジェクトの別名なのかを追います。",
+    "example": "#include <iostream>\n\nint main() {\n    int score{20};\n    int& first{score};\n    int& second{score};\n    ++first;\n    std::cout << second << '\\n';\n}",
+    "exampleOutput": "21",
+    "commonMistake": "参照へ代入すると別名の付け替えが起きると思い、元のオブジェクトへの変更を見落とす。",
+    "prompt": "整数 value を読み、value を参照する first と second を作ってください。first に delta を足し、second の値を表示します。",
+    "solution": "#include <iostream>\n\nint main() {\n    int value{}, delta{};\n    std::cin >> value >> delta;\n    int& first{value};\n    int& second{value};\n    first += delta;\n    std::cout << second << '\\n';\n    return 0;\n}",
+    "input": "20 1\n",
+    "tests": [
+      {
+        "input": "20 1\n",
+        "output": "21"
+      },
+      {
+        "input": "5 8\n",
+        "output": "13"
+      },
+      {
+        "input": "0 -3\n",
+        "output": "-3"
+      }
+    ],
+    "hints": [
+      "first と second の両方を value で初期化します。",
+      "first と second は別々のコピーではありません。",
+      "first += delta; の後に second を出力します。"
+    ],
+    "id": "w7-d2",
+    "version": 1,
+    "week": 7,
+    "day": 2,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "first と second が同じ score を参照し、++first を行うと second から見える値は？",
+      "choices": [
+        "score と同じく1増える",
+        "変わらない",
+        "参照が自動で無効になる"
+      ],
+      "explanation": "両方とも同じ score の別名なので、どちらから読んでも更新後の値です。"
+    },
+    "exercise": {
+      "prompt": "整数 value を読み、value を参照する first と second を作ってください。first に delta を足し、second の値を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "20 1\n",
+      "expectedOutput": "21",
+      "tests": [
+        {
+          "input": "20 1\n",
+          "output": "21"
+        },
+        {
+          "input": "5 8\n",
+          "output": "13"
+        },
+        {
+          "input": "0 -3\n",
+          "output": "-3"
+        }
+      ],
+      "hints": [
+        "first と second の両方を value で初期化します。",
+        "first と second は別々のコピーではありません。",
+        "first += delta; の後に second を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "int value{20};\nint& first{value};\nfirst = other;\nstd::cout << value;"
+    }
+  },
+  {
+    "title": "const 参照で読み取り専用にする",
+    "goal": "const 参照で文字列を変更せず受け取り、呼び出し側の値を保護する。",
+    "minutes": 40,
+    "explanation": "const std::string& は文字列をコピーせず読み取り専用で受け取る参照です。関数内から name を変更できません。参照先の寿命が関数呼び出し中に保たれることも前提です。小さな int や double は通常値渡しが簡潔で、const 参照は主にコピーを避けたい大きなオブジェクトで使います。",
+    "example": "#include <iostream>\n#include <string>\n\nvoid printName(const std::string& name) {\n    std::cout << \"name: \" << name << '\\n';\n}\n\nint main() {\n    const std::string player{\"Ada\"};\n    printName(player);\n}",
+    "exampleOutput": "name: Ada",
+    "commonMistake": "読み取り専用の引数を変更しようとしたり、小さな整数にも常に参照を使うと思い込んだりする。",
+    "prompt": "1語の名前を読み、void printName(const std::string& name) で受け取って name: <名前> と表示してください。",
+    "solution": "#include <iostream>\n#include <string>\n\nvoid printName(const std::string& name) {\n    std::cout << \"name: \" << name << '\\n';\n}\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    printName(name);\n    return 0;\n}",
+    "input": "Ada\n",
+    "tests": [
+      {
+        "input": "Ada\n",
+        "output": "name: Ada"
+      },
+      {
+        "input": "Reito\n",
+        "output": "name: Reito"
+      },
+      {
+        "input": "Player1\n",
+        "output": "name: Player1"
+      }
+    ],
+    "hints": [
+      "関数の引数を const std::string& name とします。",
+      "main 側で std::string name; を用意し、1語読み取ります。",
+      "printName(name); と呼び出し、関数内で接頭辞と name を出力します。"
+    ],
+    "id": "w7-d3",
+    "version": 1,
+    "week": 7,
+    "day": 3,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "const std::string& name の関数内でできない操作は？",
+      "choices": [
+        "name を出力する",
+        "name の文字数を調べる",
+        "name に別の文字列を代入する"
+      ],
+      "explanation": "const 参照からは読み取りができますが、参照先の文字列を変更できません。"
+    },
+    "exercise": {
+      "prompt": "1語の名前を読み、void printName(const std::string& name) で受け取って name: <名前> と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Ada\n",
+      "expectedOutput": "name: Ada",
+      "tests": [
+        {
+          "input": "Ada\n",
+          "output": "name: Ada"
+        },
+        {
+          "input": "Reito\n",
+          "output": "name: Reito"
+        },
+        {
+          "input": "Player1\n",
+          "output": "name: Player1"
+        }
+      ],
+      "hints": [
+        "関数の引数を const std::string& name とします。",
+        "main 側で std::string name; を用意し、1語読み取ります。",
+        "printName(name); と呼び出し、関数内で接頭辞と name を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "void printName(const std::string& name) {\n    name = \"Unknown\";\n}"
+    }
+  },
+  {
+    "title": "値渡しは関数内のコピー",
+    "goal": "値渡しで関数へ渡した変数は、呼び出し元では変更されないと確認する。",
+    "minutes": 40,
+    "explanation": "値渡しでは引数の値が関数の仮引数へコピーされます。score を関数内で変更しても、呼び出し元の score はそのままです。呼び出し元を変更しない計算なら、値を受け取って結果を返す設計が分かりやすくなります。",
+    "example": "#include <iostream>\n\nvoid addBonus(int score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{10};\n    addBonus(score, 5);\n    std::cout << score << '\\n';\n}",
+    "exampleOutput": "10",
+    "commonMistake": "関数内の仮引数を更新すれば、呼び出し元の同名変数も変わると思う。",
+    "prompt": "整数 score と bonus を読み、void addBonus(int score, int bonus) を呼び出してください。関数内では score に bonus を足します。main に戻った後の score を表示します。",
+    "solution": "#include <iostream>\n\nvoid addBonus(int score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    addBonus(score, bonus);\n    std::cout << score << '\\n';\n    return 0;\n}",
+    "input": "10 5\n",
+    "tests": [
+      {
+        "input": "10 5\n",
+        "output": "10"
+      },
+      {
+        "input": "0 8\n",
+        "output": "0"
+      },
+      {
+        "input": "-4 9\n",
+        "output": "-4"
+      }
+    ],
+    "hints": [
+      "addBonus の引数は int score と int bonus です。",
+      "関数内で score += bonus; としても score はコピーです。",
+      "関数呼び出しの後、main 側の score を出力します。"
+    ],
+    "id": "w7-d4",
+    "version": 1,
+    "week": 7,
+    "day": 4,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "void update(int score) の中で score を増やした後、呼び出し元の値は？",
+      "choices": [
+        "変わらない",
+        "必ず2倍になる",
+        "参照先がなくなる"
+      ],
+      "explanation": "値渡しでは仮引数がコピーなので、呼び出し元の変数は変更されません。"
+    },
+    "exercise": {
+      "prompt": "整数 score と bonus を読み、void addBonus(int score, int bonus) を呼び出してください。関数内では score に bonus を足します。main に戻った後の score を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "10 5\n",
+      "expectedOutput": "10",
+      "tests": [
+        {
+          "input": "10 5\n",
+          "output": "10"
+        },
+        {
+          "input": "0 8\n",
+          "output": "0"
+        },
+        {
+          "input": "-4 9\n",
+          "output": "-4"
+        }
+      ],
+      "hints": [
+        "addBonus の引数は int score と int bonus です。",
+        "関数内で score += bonus; としても score はコピーです。",
+        "関数呼び出しの後、main 側の score を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "void addBonus(int score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{10};\n    addBonus(score, 5);\n    std::cout << score;\n}"
+    }
+  },
+  {
+    "title": "参照渡しで呼び出し元を更新する",
+    "goal": "変更を関数の外へ反映したいときに、非const参照を使う。",
+    "minutes": 40,
+    "explanation": "int& score のような非const参照を引数にすると、関数の仮引数は呼び出し元の変数の別名になります。関数内での変更がそのまま呼び出し元へ反映されます。変更する意図を関数名や引数型から読み取れるようにします。",
+    "example": "#include <iostream>\n\nvoid addBonus(int& score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{10};\n    addBonus(score, 5);\n    std::cout << score << '\\n';\n}",
+    "exampleOutput": "15",
+    "commonMistake": "呼び出し元を変更したいのに引数を値渡しのままにする。",
+    "prompt": "整数 score と bonus を読み、void addBonus(int& score, int bonus) で score を更新して表示してください。",
+    "solution": "#include <iostream>\n\nvoid addBonus(int& score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    addBonus(score, bonus);\n    std::cout << score << '\\n';\n    return 0;\n}",
+    "input": "10 5\n",
+    "tests": [
+      {
+        "input": "10 5\n",
+        "output": "15"
+      },
+      {
+        "input": "0 8\n",
+        "output": "8"
+      },
+      {
+        "input": "-4 9\n",
+        "output": "5"
+      }
+    ],
+    "hints": [
+      "呼び出し元の score を変更する引数に int& を使います。",
+      "bonus は小さな int なので、値渡しのままにします。",
+      "関数の呼び出し後、main の score を表示します。"
+    ],
+    "id": "w7-d5",
+    "version": 1,
+    "week": 7,
+    "day": 5,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "関数から呼び出し元の int score を変更する引数型は？",
+      "choices": [
+        "int score",
+        "int& score",
+        "const int& score"
+      ],
+      "explanation": "非const参照は元の変数の別名なので、関数内の代入が呼び出し元にも反映されます。"
+    },
+    "exercise": {
+      "prompt": "整数 score と bonus を読み、void addBonus(int& score, int bonus) で score を更新して表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "10 5\n",
+      "expectedOutput": "15",
+      "tests": [
+        {
+          "input": "10 5\n",
+          "output": "15"
+        },
+        {
+          "input": "0 8\n",
+          "output": "8"
+        },
+        {
+          "input": "-4 9\n",
+          "output": "5"
+        }
+      ],
+      "hints": [
+        "呼び出し元の score を変更する引数に int& を使います。",
+        "bonus は小さな int なので、値渡しのままにします。",
+        "関数の呼び出し後、main の score を表示します。"
+      ]
+    },
+    "debug": {
+      "code": "void addBonus(int score, int bonus) {\n    score += bonus;\n}"
+    }
+  },
+  {
+    "title": "引数の型で変更意図を示す",
+    "goal": "小さな数値は値渡し、読むだけの文字列はconst参照、更新する状態は非const参照で受け取る。",
+    "minutes": 45,
+    "explanation": "関数の引数型はデータの流れを表せます。小さな整数は値渡しで受け取り、読み取り専用の std::string は const 参照でコピーを避け、呼び出し元を更新する値には非const参照を使います。参照を増やすこと自体が目的ではなく、コピー・読み取り・変更の意図を型に表します。",
+    "example": "#include <string>\n\nvoid applyRankBonus(int& score, const std::string& rank) {\n    if (rank == \"S\") score += 10;\n}",
+    "exampleOutput": "rank が S なら score に10を加える",
+    "commonMistake": "小さな値まで何でも参照渡しにし、どの引数が変更されるか曖昧にする。",
+    "prompt": "ランクと整数 score を読み、applyRankBonus(int& score, const std::string& rank) を呼び出してください。ランク S なら10加算し、最後の score を表示します。",
+    "solution": "#include <iostream>\n#include <string>\n\nvoid applyRankBonus(int& score, const std::string& rank) {\n    if (rank == \"S\") score += 10;\n}\n\nint main() {\n    std::string rank;\n    int score{};\n    std::cin >> rank >> score;\n    applyRankBonus(score, rank);\n    std::cout << score << '\\n';\n    return 0;\n}",
+    "input": "S 70\n",
+    "tests": [
+      {
+        "input": "S 70\n",
+        "output": "80"
+      },
+      {
+        "input": "A 70\n",
+        "output": "70"
+      },
+      {
+        "input": "S 0\n",
+        "output": "10"
+      }
+    ],
+    "hints": [
+      "score は関数内で変更するので int& にします。",
+      "rank は読むだけなので const std::string& にします。",
+      "rank == \"S\" の場合だけ score に10を足します。"
+    ],
+    "id": "w7-d6",
+    "version": 1,
+    "week": 7,
+    "day": 6,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "std::string の rank を読むだけで受け取り、score は更新したいときの組み合わせは？",
+      "choices": [
+        "int score, std::string rank",
+        "int& score, const std::string& rank",
+        "const int& score, std::string& rank"
+      ],
+      "explanation": "score は非const参照で更新し、読むだけの文字列 rank はconst参照で受け取ります。"
+    },
+    "exercise": {
+      "prompt": "ランクと整数 score を読み、applyRankBonus(int& score, const std::string& rank) を呼び出してください。ランク S なら10加算し、最後の score を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "S 70\n",
+      "expectedOutput": "80",
+      "tests": [
+        {
+          "input": "S 70\n",
+          "output": "80"
+        },
+        {
+          "input": "A 70\n",
+          "output": "70"
+        },
+        {
+          "input": "S 0\n",
+          "output": "10"
+        }
+      ],
+      "hints": [
+        "score は関数内で変更するので int& にします。",
+        "rank は読むだけなので const std::string& にします。",
+        "rank == \"S\" の場合だけ score に10を足します。"
+      ]
+    },
+    "debug": {
+      "code": "void applyRankBonus(int score, const std::string& rank) {\n    if (rank == \"S\") score += 10;\n}"
+    }
+  },
+  {
+    "title": "週末評価：参照でスコアを更新する",
+    "goal": "値渡し・const参照・非const参照を使い分け、関数間のデータの流れを組み立てる。",
+    "minutes": 50,
+    "explanation": "入力したランクからボーナス値を計算する関数は、文字列を const 参照で受け取って値を返します。別の関数は score を非const参照で受け取り、返されたボーナスを加算します。小さなボーナス値は値渡しです。関数ごとの役割と、どの値が変化するかを確認します。",
+    "example": "#include <string>\n\nint bonusForRank(const std::string& rank) {\n    if (rank == \"S\") return 10;\n    if (rank == \"A\") return 5;\n    return 0;\n}\n\nvoid applyBonus(int& score, int bonus) {\n    score += bonus;\n}",
+    "exampleOutput": "rank が A、score が70なら75",
+    "commonMistake": "スコア更新関数の score を値渡しにしてしまい、main 側へ変更が伝わらない。",
+    "prompt": "ランク S は10点、A は5点、それ以外は0点のボーナスを返す bonusForRank(const std::string& rank) と、score を更新する applyBonus(int& score, int bonus) を作ってください。ランクと点数を読み、更新後の点数を表示します。",
+    "solution": "#include <iostream>\n#include <string>\n\nint bonusForRank(const std::string& rank) {\n    if (rank == \"S\") return 10;\n    if (rank == \"A\") return 5;\n    return 0;\n}\n\nvoid applyBonus(int& score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    std::string rank;\n    int score{};\n    std::cin >> rank >> score;\n    applyBonus(score, bonusForRank(rank));\n    std::cout << score << '\\n';\n    return 0;\n}",
+    "input": "A 70\n",
+    "tests": [
+      {
+        "input": "A 70\n",
+        "output": "75"
+      },
+      {
+        "input": "S 0\n",
+        "output": "10"
+      },
+      {
+        "input": "B 99\n",
+        "output": "99"
+      }
+    ],
+    "hints": [
+      "bonusForRank は rank をconst参照で受け取り、整数を返します。",
+      "applyBonus は score を非const参照で受け取ります。",
+      "applyBonus(score, bonusForRank(rank)); の順で呼び出します。"
+    ],
+    "id": "w7-d7",
+    "version": 1,
+    "week": 7,
+    "day": 7,
+    "subject": "参照・const・引数の渡し方",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 6の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "読み取りだけの文字列 rank を受け取る関数に適した型は？",
+      "choices": [
+        "std::string&",
+        "const std::string&",
+        "std::string* const&"
+      ],
+      "explanation": "const std::string& は変更を禁止しながら、文字列をコピーせず受け取れます。"
+    },
+    "exercise": {
+      "prompt": "ランク S は10点、A は5点、それ以外は0点のボーナスを返す bonusForRank(const std::string& rank) と、score を更新する applyBonus(int& score, int bonus) を作ってください。ランクと点数を読み、更新後の点数を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "A 70\n",
+      "expectedOutput": "75",
+      "tests": [
+        {
+          "input": "A 70\n",
+          "output": "75"
+        },
+        {
+          "input": "S 0\n",
+          "output": "10"
+        },
+        {
+          "input": "B 99\n",
+          "output": "99"
+        }
+      ],
+      "hints": [
+        "bonusForRank は rank をconst参照で受け取り、整数を返します。",
+        "applyBonus は score を非const参照で受け取ります。",
+        "applyBonus(score, bonusForRank(rank)); の順で呼び出します。"
+      ]
+    },
+    "debug": {
+      "code": "void applyBonus(int score, int bonus) {\n    score += bonus;\n}"
+    }
+  },
+  {
+    "title": "struct で関連する値をまとめる",
+    "goal": "複数の値をひとつの型としてまとめ、メンバー名で読み取る。",
+    "minutes": 35,
+    "explanation": "struct は複数のメンバーを持つ新しい型を定義します。Point のような型を作ると、x と y が同じ座標を表すことをコード上でも示せます。メンバーはオブジェクト名の後に . を付けて読み書きします。",
+    "example": "#include <iostream>\n\nstruct Point {\n    int x;\n    int y;\n};\n\nint main() {\n    const Point spawn{3, 4};\n    std::cout << spawn.x << ' ' << spawn.y << '\\n';\n}",
+    "exampleOutput": "3 4",
+    "commonMistake": "メンバーの順序を間違えて初期化したり、座標を別々の変数のまま扱ったりする。",
+    "prompt": "struct Point { int x; int y; }; を定義し、入力された x と y から Point を作って `x: <値> y: <値>` と表示してください。",
+    "solution": "#include <iostream>\n\nstruct Point { int x; int y; };\n\nint main() {\n    int x{}, y{};\n    std::cin >> x >> y;\n    const Point position{x, y};\n    std::cout << \"x: \" << position.x << \" y: \" << position.y << '\\n';\n    return 0;\n}",
+    "input": "3 4\n",
+    "tests": [
+      {
+        "input": "3 4\n",
+        "output": "x: 3 y: 4"
+      },
+      {
+        "input": "0 0\n",
+        "output": "x: 0 y: 0"
+      },
+      {
+        "input": "-2 7\n",
+        "output": "x: -2 y: 7"
+      }
+    ],
+    "hints": [
+      "Point 型に int の x と y を宣言します。",
+      "Point position{x, y}; の順で入力値をまとめます。",
+      "position.x と position.y を指定された形式で出力します。"
+    ],
+    "id": "w8-d1",
+    "version": 1,
+    "week": 8,
+    "day": 1,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "Point position の x メンバーを読む式は？",
+      "choices": [
+        "position.x",
+        "position->x",
+        "Point::x"
+      ],
+      "explanation": "オブジェクトのメンバーには . を使います。-> はポインタ経由のアクセスです。"
+    },
+    "exercise": {
+      "prompt": "struct Point { int x; int y; }; を定義し、入力された x と y から Point を作って `x: <値> y: <値>` と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "3 4\n",
+      "expectedOutput": "x: 3 y: 4",
+      "tests": [
+        {
+          "input": "3 4\n",
+          "output": "x: 3 y: 4"
+        },
+        {
+          "input": "0 0\n",
+          "output": "x: 0 y: 0"
+        },
+        {
+          "input": "-2 7\n",
+          "output": "x: -2 y: 7"
+        }
+      ],
+      "hints": [
+        "Point 型に int の x と y を宣言します。",
+        "Point position{x, y}; の順で入力値をまとめます。",
+        "position.x と position.y を指定された形式で出力します。"
+      ]
+    },
+    "debug": {
+      "code": "struct Point { int x; int y; };\nPoint position{3, 4};\nstd::cout << position->x;"
+    }
+  },
+  {
+    "title": "オブジェクトのメンバーを更新する",
+    "goal": "struct の各メンバーを通じて、ひとつのオブジェクトの状態を扱う。",
+    "minutes": 35,
+    "explanation": "Player のような struct は、名前とHPなど関連する状態を一緒に持てます。初期化子リストはメンバー宣言の順に値を対応させます。変更可能なオブジェクトなら player.hp のように特定のメンバーだけを更新できます。",
+    "example": "#include <iostream>\n#include <string>\n\nstruct Player { std::string name; int hp; };\n\nint main() {\n    Player player{\"Ada\", 80};\n    player.hp += 10;\n    std::cout << player.name << \": \" << player.hp << '\\n';\n}",
+    "exampleOutput": "Ada: 90",
+    "commonMistake": "メンバーの宣言順と異なる順で値を渡したり、const オブジェクトのメンバーを変更しようとしたりする。",
+    "prompt": "Player に std::string name と int hp を持たせます。名前とHPを読み、Player を初期化して `name: <名前>` と `hp: <値>` を2行で表示してください。",
+    "solution": "#include <iostream>\n#include <string>\n\nstruct Player { std::string name; int hp; };\n\nint main() {\n    Player player;\n    std::cin >> player.name >> player.hp;\n    std::cout << \"name: \" << player.name << '\\n';\n    std::cout << \"hp: \" << player.hp << '\\n';\n    return 0;\n}",
+    "input": "Ada 80\n",
+    "tests": [
+      {
+        "input": "Ada 80\n",
+        "output": "name: Ada\nhp: 80"
+      },
+      {
+        "input": "Player 0\n",
+        "output": "name: Player\nhp: 0"
+      },
+      {
+        "input": "Reito 120\n",
+        "output": "name: Reito\nhp: 120"
+      }
+    ],
+    "hints": [
+      "Player の name は std::string、hp は int です。",
+      "std::cin から name と hp を順に読み取れます。",
+      "player.name と player.hp を別々の行に出力します。"
+    ],
+    "id": "w8-d2",
+    "version": 1,
+    "week": 8,
+    "day": 2,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "struct Player { std::string name; int hp; }; に合わせた初期化は？",
+      "choices": [
+        "Player p{\"Ada\", 80};",
+        "Player p{80, \"Ada\"};",
+        "Player p{\"Ada\"};"
+      ],
+      "explanation": "集成体初期化ではメンバー宣言順に対応する値を渡します。"
+    },
+    "exercise": {
+      "prompt": "Player に std::string name と int hp を持たせます。名前とHPを読み、Player を初期化して `name: <名前>` と `hp: <値>` を2行で表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Ada 80\n",
+      "expectedOutput": "name: Ada\nhp: 80",
+      "tests": [
+        {
+          "input": "Ada 80\n",
+          "output": "name: Ada\nhp: 80"
+        },
+        {
+          "input": "Player 0\n",
+          "output": "name: Player\nhp: 0"
+        },
+        {
+          "input": "Reito 120\n",
+          "output": "name: Reito\nhp: 120"
+        }
+      ],
+      "hints": [
+        "Player の name は std::string、hp は int です。",
+        "std::cin から name と hp を順に読み取れます。",
+        "player.name と player.hp を別々の行に出力します。"
+      ]
+    },
+    "debug": {
+      "code": "struct Player { std::string name; int hp; };\nPlayer player{80, \"Ada\"};"
+    }
+  },
+  {
+    "title": "enum class で選択肢を表す",
+    "goal": "意味のある名前を持つ列挙型で、数値コードを安全な選択肢に変換する。",
+    "minutes": 35,
+    "explanation": "enum class は取りうる選択肢を型として表します。整数と暗黙に混ざらないため、入力コードを列挙値へ明示的に対応付ける設計にできます。switch の case には列挙子を指定します。",
+    "example": "#include <iostream>\n\nenum class Menu { Start, Pause, Unknown };\n\nint main() {\n    const Menu selected{Menu::Pause};\n    switch (selected) {\n    case Menu::Start: std::cout << \"start\\n\"; break;\n    case Menu::Pause: std::cout << \"pause\\n\"; break;\n    case Menu::Unknown: std::cout << \"unknown\\n\"; break;\n    }\n}",
+    "exampleOutput": "pause",
+    "commonMistake": "enum class の値を修飾せずに書いたり、入力整数を検証なしで選択肢として使ったりする。",
+    "prompt": "入力コード1を Start、2を Pause、それ以外を Unknown に対応させ、enum class と switch を使って `start`、`pause`、`unknown` のいずれかを表示してください。",
+    "solution": "#include <iostream>\n\nenum class Menu { Start, Pause, Unknown };\n\nint main() {\n    int code{};\n    std::cin >> code;\n    Menu selected{Menu::Unknown};\n    if (code == 1) selected = Menu::Start;\n    else if (code == 2) selected = Menu::Pause;\n    switch (selected) {\n    case Menu::Start: std::cout << \"start\\n\"; break;\n    case Menu::Pause: std::cout << \"pause\\n\"; break;\n    case Menu::Unknown: std::cout << \"unknown\\n\"; break;\n    }\n    return 0;\n}",
+    "input": "2\n",
+    "tests": [
+      {
+        "input": "1\n",
+        "output": "start"
+      },
+      {
+        "input": "2\n",
+        "output": "pause"
+      },
+      {
+        "input": "9\n",
+        "output": "unknown"
+      }
+    ],
+    "hints": [
+      "Start、Pause、Unknown を Menu の選択肢として定義します。",
+      "整数コードを if と else if で列挙値へ変換します。",
+      "switch の各 case で対応する小文字の結果を出力します。"
+    ],
+    "id": "w8-d3",
+    "version": 1,
+    "week": 8,
+    "day": 3,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "enum class State { Ready }; の値を指定する正しい書き方は？",
+      "choices": [
+        "State::Ready",
+        "Ready",
+        "State.Ready"
+      ],
+      "explanation": "enum class の列挙子は型名で修飾し、State::Ready と書きます。"
+    },
+    "exercise": {
+      "prompt": "入力コード1を Start、2を Pause、それ以外を Unknown に対応させ、enum class と switch を使って `start`、`pause`、`unknown` のいずれかを表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "2\n",
+      "expectedOutput": "start",
+      "tests": [
+        {
+          "input": "1\n",
+          "output": "start"
+        },
+        {
+          "input": "2\n",
+          "output": "pause"
+        },
+        {
+          "input": "9\n",
+          "output": "unknown"
+        }
+      ],
+      "hints": [
+        "Start、Pause、Unknown を Menu の選択肢として定義します。",
+        "整数コードを if と else if で列挙値へ変換します。",
+        "switch の各 case で対応する小文字の結果を出力します。"
+      ]
+    },
+    "debug": {
+      "code": "enum class Menu { Start, Pause };\nMenu selected{Start};"
+    }
+  },
+  {
+    "title": "名前空間で関数を整理する",
+    "goal": "関連する関数を名前空間にまとめ、用途を呼び出し側で明示する。",
+    "minutes": 35,
+    "explanation": "namespace は関数や型の名前をグループ化します。別の機能が同じ短い関数名を使っても衝突しにくくなり、呼び出し側でも rules::clampScore のように所属が分かります。",
+    "example": "#include <iostream>\n\nnamespace rules {\nint clampScore(int score) {\n    if (score < 0) return 0;\n    if (score > 100) return 100;\n    return score;\n}\n}\n\nint main() {\n    std::cout << rules::clampScore(125) << '\\n';\n}",
+    "exampleOutput": "100",
+    "commonMistake": "定義した名前空間を呼び出し時に付け忘れたり、using namespace をヘッダーへ広げたりする。",
+    "prompt": "namespace rules に int clampScore(int score) を定義し、score を0未満なら0、100超なら100、それ以外ならそのまま返してください。入力値をこの関数に渡して結果を表示します。",
+    "solution": "#include <iostream>\n\nnamespace rules {\nint clampScore(int score) {\n    if (score < 0) return 0;\n    if (score > 100) return 100;\n    return score;\n}\n}\n\nint main() {\n    int score{};\n    std::cin >> score;\n    std::cout << rules::clampScore(score) << '\\n';\n    return 0;\n}",
+    "input": "125\n",
+    "tests": [
+      {
+        "input": "125\n",
+        "output": "100"
+      },
+      {
+        "input": "75\n",
+        "output": "75"
+      },
+      {
+        "input": "-4\n",
+        "output": "0"
+      }
+    ],
+    "hints": [
+      "関数を namespace rules の波括弧の内側に定義します。",
+      "上限と下限を if で調べてから値を返します。",
+      "呼び出し側では rules::clampScore(score) と書きます。"
+    ],
+    "id": "w8-d4",
+    "version": 1,
+    "week": 8,
+    "day": 4,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "namespace game 内の int score() を呼び出す式は？",
+      "choices": [
+        "game::score()",
+        "game.score()",
+        "score::game()"
+      ],
+      "explanation": "名前空間名と中の名前はスコープ解決演算子 :: でつなぎます。"
+    },
+    "exercise": {
+      "prompt": "namespace rules に int clampScore(int score) を定義し、score を0未満なら0、100超なら100、それ以外ならそのまま返してください。入力値をこの関数に渡して結果を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "125\n",
+      "expectedOutput": "100",
+      "tests": [
+        {
+          "input": "125\n",
+          "output": "100"
+        },
+        {
+          "input": "75\n",
+          "output": "75"
+        },
+        {
+          "input": "-4\n",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "関数を namespace rules の波括弧の内側に定義します。",
+        "上限と下限を if で調べてから値を返します。",
+        "呼び出し側では rules::clampScore(score) と書きます。"
+      ]
+    },
+    "debug": {
+      "code": "namespace rules { int clampScore(int value) { return value; } }\nstd::cout << rules.clampScore(80);"
+    }
+  },
+  {
+    "title": "構造体の状態を列挙型で表す",
+    "goal": "構造体のデータから状態を判定し、enum class の値として返す。",
+    "minutes": 40,
+    "explanation": "整数のHPから状態を判定して、bool だけでなく意味の分かる LifeState を返すことができます。関数に const Character& を渡せば、状態を調べるだけでオブジェクトをコピーせず、変更もしない意図を表せます。",
+    "example": "#include <iostream>\n\nenum class LifeState { Alive, Down };\nstruct Character { int hp; };\n\nLifeState stateOf(const Character& character) {\n    return character.hp > 0 ? LifeState::Alive : LifeState::Down;\n}\n\nint main() {\n    const Character player{50};\n    std::cout << (stateOf(player) == LifeState::Alive ? \"alive\\n\" : \"down\\n\");\n}",
+    "exampleOutput": "alive",
+    "commonMistake": "状態を表す値として任意の整数を返し、0や1が何を意味するかを呼び出し側に推測させる。",
+    "prompt": "Character に int hp を持たせ、LifeState を返す stateOf(const Character&) を定義してください。入力したHPから状態を判定し、alive または down を表示します。",
+    "solution": "#include <iostream>\n\nenum class LifeState { Alive, Down };\nstruct Character { int hp; };\n\nLifeState stateOf(const Character& character) {\n    if (character.hp > 0) return LifeState::Alive;\n    return LifeState::Down;\n}\n\nint main() {\n    Character player{};\n    std::cin >> player.hp;\n    const LifeState state{stateOf(player)};\n    if (state == LifeState::Alive) std::cout << \"alive\\n\";\n    else std::cout << \"down\\n\";\n    return 0;\n}",
+    "input": "50\n",
+    "tests": [
+      {
+        "input": "50\n",
+        "output": "alive"
+      },
+      {
+        "input": "1\n",
+        "output": "alive"
+      },
+      {
+        "input": "0\n",
+        "output": "down"
+      }
+    ],
+    "hints": [
+      "LifeState に Alive と Down を定義します。",
+      "stateOf は const Character& を受け取り hp を読みます。",
+      "hp が正なら Alive、そうでなければ Down を選んで表示します。"
+    ],
+    "id": "w8-d5",
+    "version": 1,
+    "week": 8,
+    "day": 5,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "Character のHPが0以下のとき、stateOf が返す値は？",
+      "choices": [
+        "LifeState::Alive",
+        "LifeState::Down",
+        "nullptr"
+      ],
+      "explanation": "Alive はHPが正のときだけです。0以下なら Down を返します。"
+    },
+    "exercise": {
+      "prompt": "Character に int hp を持たせ、LifeState を返す stateOf(const Character&) を定義してください。入力したHPから状態を判定し、alive または down を表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "50\n",
+      "expectedOutput": "alive",
+      "tests": [
+        {
+          "input": "50\n",
+          "output": "alive"
+        },
+        {
+          "input": "1\n",
+          "output": "alive"
+        },
+        {
+          "input": "0\n",
+          "output": "down"
+        }
+      ],
+      "hints": [
+        "LifeState に Alive と Down を定義します。",
+        "stateOf は const Character& を受け取り hp を読みます。",
+        "hp が正なら Alive、そうでなければ Down を選んで表示します。"
+      ]
+    },
+    "debug": {
+      "code": "enum class LifeState { Alive, Down };\nif (player.hp > 0) return Alive;"
+    }
+  },
+  {
+    "title": "構造体を受け取り新しい値を返す",
+    "goal": "小さな構造体を値として受け取り、計算結果の構造体を返す。",
+    "minutes": 40,
+    "explanation": "Vector2 のように小さな値をまとめた型は、値渡しして結果を返す設計にできます。moveBy は受け取った position を直接変更せず、新しい座標を返します。呼び出し側は返された値を明示的に受け取ります。",
+    "example": "#include <iostream>\n\nstruct Vector2 { int x; int y; };\n\nVector2 moveBy(Vector2 position, Vector2 delta) {\n    return {position.x + delta.x, position.y + delta.y};\n}\n\nint main() {\n    const Vector2 result{moveBy({2, 3}, {1, 1})};\n    std::cout << result.x << ' ' << result.y << '\\n';\n}",
+    "exampleOutput": "3 4",
+    "commonMistake": "戻り値を無視したり、関数内の仮引数を変更しただけで呼び出し元も変わると思ったりする。",
+    "prompt": "Vector2 に x と y を持たせます。moveBy(Vector2 position, Vector2 delta) が各成分を足した新しい Vector2 を返すようにし、入力された現在位置と移動量から結果を表示してください。",
+    "solution": "#include <iostream>\n\nstruct Vector2 { int x; int y; };\n\nVector2 moveBy(Vector2 position, Vector2 delta) {\n    return {position.x + delta.x, position.y + delta.y};\n}\n\nint main() {\n    Vector2 position{};\n    Vector2 delta{};\n    std::cin >> position.x >> position.y >> delta.x >> delta.y;\n    const Vector2 result{moveBy(position, delta)};\n    std::cout << result.x << ' ' << result.y << '\\n';\n    return 0;\n}",
+    "input": "2 3 1 1\n",
+    "tests": [
+      {
+        "input": "2 3 1 1\n",
+        "output": "3 4"
+      },
+      {
+        "input": "0 0 -2 5\n",
+        "output": "-2 5"
+      },
+      {
+        "input": "10 -4 3 -6\n",
+        "output": "13 -10"
+      }
+    ],
+    "hints": [
+      "Vector2 の x と y を int で定義します。",
+      "moveBy は position と delta の両方を値で受け取ります。",
+      "{position.x + delta.x, position.y + delta.y} を返します。"
+    ],
+    "id": "w8-d6",
+    "version": 1,
+    "week": 8,
+    "day": 6,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "値渡しされた Vector2 position のメンバーを関数内で変えたとき、呼び出し元の position は？",
+      "choices": [
+        "変更されない",
+        "必ず消える",
+        "呼び出し元と共有される"
+      ],
+      "explanation": "値渡しされた position はコピーです。新しい値を返し、呼び出し側が受け取ります。"
+    },
+    "exercise": {
+      "prompt": "Vector2 に x と y を持たせます。moveBy(Vector2 position, Vector2 delta) が各成分を足した新しい Vector2 を返すようにし、入力された現在位置と移動量から結果を表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "2 3 1 1\n",
+      "expectedOutput": "3 4",
+      "tests": [
+        {
+          "input": "2 3 1 1\n",
+          "output": "3 4"
+        },
+        {
+          "input": "0 0 -2 5\n",
+          "output": "-2 5"
+        },
+        {
+          "input": "10 -4 3 -6\n",
+          "output": "13 -10"
+        }
+      ],
+      "hints": [
+        "Vector2 の x と y を int で定義します。",
+        "moveBy は position と delta の両方を値で受け取ります。",
+        "{position.x + delta.x, position.y + delta.y} を返します。"
+      ]
+    },
+    "debug": {
+      "code": "Vector2 moveBy(Vector2 position, Vector2 delta) {\n    position.x += delta.x;\n    position.y += delta.y;\n}\nVector2 result = moveBy(position, delta);"
+    }
+  },
+  {
+    "title": "週末評価：型を使ったミニ戦闘処理",
+    "goal": "struct、enum class、namespace と参照渡しを組み合わせて状態更新を表す。",
+    "minutes": 50,
+    "explanation": "Enemy はHPという状態を持ち、Weapon は攻撃の種類を表します。battle 名前空間に攻撃処理をまとめると、責務と所属が明確です。attack は Enemy& を通じて対象のHPを更新し、HPが0未満にならないようにします。",
+    "example": "#include <algorithm>\n\nenum class Weapon { Sword, Magic };\nstruct Enemy { int hp; };\n\nnamespace battle {\nint damageFor(Weapon weapon) { return weapon == Weapon::Sword ? 5 : 12; }\nvoid attack(Enemy& enemy, Weapon weapon) {\n    enemy.hp = std::max(0, enemy.hp - damageFor(weapon));\n}\n}",
+    "exampleOutput": "HP 30 の敵に Magic を使うと HP 18",
+    "commonMistake": "Enemy を値渡しにして呼び出し元のHPを更新できなかったり、攻撃後のHPが負数になったりする。",
+    "prompt": "Enemy、Weapon、battle 名前空間を定義します。Weapon::Sword のダメージは5、Weapon::Magic は12です。HPと武器コード（1はSword、2はMagic）を読み、battle::attack でHPを0未満にならないよう更新し、残りHPを表示してください。",
+    "solution": "#include <algorithm>\n#include <iostream>\n\nenum class Weapon { Sword, Magic };\nstruct Enemy { int hp; };\n\nnamespace battle {\nint damageFor(Weapon weapon) {\n    if (weapon == Weapon::Sword) return 5;\n    return 12;\n}\nvoid attack(Enemy& enemy, Weapon weapon) {\n    enemy.hp = std::max(0, enemy.hp - damageFor(weapon));\n}\n}\n\nint main() {\n    Enemy enemy{};\n    int weaponCode{};\n    std::cin >> enemy.hp >> weaponCode;\n    const Weapon weapon{weaponCode == 1 ? Weapon::Sword : Weapon::Magic};\n    battle::attack(enemy, weapon);\n    std::cout << enemy.hp << '\\n';\n    return 0;\n}",
+    "input": "30 2\n",
+    "tests": [
+      {
+        "input": "30 2\n",
+        "output": "18"
+      },
+      {
+        "input": "4 1\n",
+        "output": "0"
+      },
+      {
+        "input": "20 1\n",
+        "output": "15"
+      }
+    ],
+    "hints": [
+      "Weapon の列挙値と Enemy のHPメンバーを定義します。",
+      "damageFor と attack を battle 名前空間に置きます。",
+      "attack の引数は Enemy& とし、std::max でHPの下限を0にします。"
+    ],
+    "id": "w8-d7",
+    "version": 1,
+    "week": 8,
+    "day": 7,
+    "subject": "構造体・列挙型・名前空間",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 7の内容"
+    ],
+    "standard": "c++17",
+    "quiz": {
+      "question": "attack から呼び出し元の Enemy のHPを更新する引数型は？",
+      "choices": [
+        "Enemy enemy",
+        "const Enemy& enemy",
+        "Enemy& enemy"
+      ],
+      "explanation": "Enemy& は呼び出し元オブジェクトの別名で、変更を反映できます。"
+    },
+    "exercise": {
+      "prompt": "Enemy、Weapon、battle 名前空間を定義します。Weapon::Sword のダメージは5、Weapon::Magic は12です。HPと武器コード（1はSword、2はMagic）を読み、battle::attack でHPを0未満にならないよう更新し、残りHPを表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "30 2\n",
+      "expectedOutput": "18",
+      "tests": [
+        {
+          "input": "30 2\n",
+          "output": "18"
+        },
+        {
+          "input": "4 1\n",
+          "output": "0"
+        },
+        {
+          "input": "20 1\n",
+          "output": "15"
+        }
+      ],
+      "hints": [
+        "Weapon の列挙値と Enemy のHPメンバーを定義します。",
+        "damageFor と attack を battle 名前空間に置きます。",
+        "attack の引数は Enemy& とし、std::max でHPの下限を0にします。"
+      ]
+    },
+    "debug": {
+      "code": "namespace battle {\nvoid attack(Enemy enemy, int damage) { enemy.hp -= damage; }\n}\nattack(enemy, 12);"
+    }
+  }
+]

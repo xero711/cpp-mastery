@@ -1,14 +1,23 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createRunnerServer, loadConfig, MAX_REQUEST_BYTES, validateJob } from "../src/server.mjs";
+import { createRunnerServer, loadConfig, MAX_REQUEST_BYTES, validateGradeSubmission, validateJob, validateQuizSubmission, validateRevealRequest } from "../src/server.mjs";
 
 const token = "local-test-token-0123456789-abcdefghijklmnopqrstuvwxyz";
 const origin = "http://localhost:3000";
 const validJob = { source: "int main() {}", standard: "c++17", tests: [{ stdin: "" }] };
+const privateLessonRegistry = [{
+  id: "w1-d1",
+  solution: "SECRET_SOLUTION",
+  quizAnswer: 2,
+  debugFix: "SECRET_DEBUG_FIX",
+  debugExplanation: "SECRET_DEBUG_EXPLANATION",
+  tests: [{ input: "public-input\n", output: "public-output" }],
+  hiddenTests: [{ input: "hidden-input-secret\n", output: "hidden-output-secret" }],
+}];
 
-async function withServer({ executeJob, rateLimit, maxConcurrentJobs = 2 } = {}, run) {
+async function withServer({ executeJob, rateLimit, maxConcurrentJobs = 2, lessonRegistry = privateLessonRegistry } = {}, run) {
   const config = { apiToken: token, origins: new Set([origin]), maxConcurrentJobs, runtime: "runc", image: "cpp-mastery-sandbox:dev" };
-  const server = createRunnerServer({ config, executeJob, rateLimit });
+  const server = createRunnerServer({ config, executeJob, lessonRegistry, rateLimit });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address();
   try {
@@ -18,8 +27,8 @@ async function withServer({ executeJob, rateLimit, maxConcurrentJobs = 2 } = {},
   }
 }
 
-function post(url, { body = validJob, authorization = `Bearer ${token}`, requestOrigin = origin, headers = {} } = {}) {
-  return fetch(`${url}/v1/execute`, {
+function post(url, { path = "/v1/execute", body = validJob, authorization = `Bearer ${token}`, requestOrigin = origin, headers = {} } = {}) {
+  return fetch(`${url}${path}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -83,6 +92,68 @@ describe("runner API security boundary", () => {
     assert.equal(validateJob({ ...validJob, tests: Array.from({ length: 9 }, () => ({ stdin: "x".repeat(8192) })) }).ok, false);
     assert.equal(validateJob({ ...validJob, tests: [{ stdin: "", expected: "secret" }] }).ok, false);
     assert.equal(validateJob({ ...validJob, unexpected: true }).ok, false);
+  });
+
+  it("builds grading jobs only from the runner-owned registry", () => {
+    const valid = validateGradeSubmission({ lessonId: "w1-d1", source: "int main() {}", standard: "c++17" }, privateLessonRegistry);
+    assert.equal(valid.ok, true);
+    assert.deepEqual(valid.job.tests, [{ stdin: "public-input\n" }, { stdin: "hidden-input-secret\n" }]);
+    assert.equal(valid.publicTestCount, 1);
+    assert.equal(validateGradeSubmission({ lessonId: "w1-d1", source: "", standard: "c++17", tests: [] }, privateLessonRegistry).ok, false);
+    assert.equal(validateGradeSubmission({ lessonId: "missing", source: "", standard: "c++17" }, privateLessonRegistry).ok, false);
+    assert.equal(validateQuizSubmission({ lessonId: "w1-d1", choice: 2 }, privateLessonRegistry).ok, true);
+    assert.equal(validateRevealRequest({ lessonId: "w1-d1", kind: "solution" }, privateLessonRegistry).ok, true);
+  });
+
+  it("grades public and hidden cases server-side without returning hidden inputs or expected outputs", async () => {
+    const executeJob = async (job) => {
+      assert.deepEqual(job.tests, [{ stdin: "public-input\n" }, { stdin: "hidden-input-secret\n" }]);
+      return {
+        status: "ok",
+        compilerOutput: "",
+        cases: ["public-output", "hidden-output-secret"].map((stdout) => ({ stdout, stderr: "", exitCode: 0, durationMs: 3, timedOut: false, outputLimited: false })),
+      };
+    };
+    await withServer({ executeJob }, async (url) => {
+      const response = await post(url, { path: "/v1/grade", body: { lessonId: "w1-d1", source: "int main() {}", standard: "c++17" } });
+      assert.equal(response.status, 200);
+      const result = await response.json();
+      assert.equal(result.status, "passed");
+      assert.equal(result.score, 100);
+      assert.equal(result.cases.length, 1);
+      assert.equal(result.cases[0].passed, true);
+      const serialized = JSON.stringify(result);
+      assert.equal(serialized.includes("hidden-input-secret"), false);
+      assert.equal(serialized.includes("hidden-output-secret"), false);
+      assert.equal(serialized.includes("SECRET_SOLUTION"), false);
+    });
+  });
+
+  it("fails a submission that passes public cases but fails a hidden case", async () => {
+    await withServer({ executeJob: async () => ({
+      status: "ok",
+      compilerOutput: "",
+      cases: ["public-output", "wrong-hidden-output"].map((stdout) => ({ stdout, stderr: "", exitCode: 0, durationMs: 3, timedOut: false, outputLimited: false })),
+    }) }, async (url) => {
+      const response = await post(url, { path: "/v1/grade", body: { lessonId: "w1-d1", source: "int main() {}", standard: "c++17" } });
+      const result = await response.json();
+      assert.equal(result.status, "failed");
+      assert.equal(result.score, 50);
+      assert.equal(result.cases.length, 1);
+      assert.equal(result.cases[0].passed, true);
+      assert.equal(JSON.stringify(result).includes("wrong-hidden-output"), false);
+    });
+  });
+
+  it("reveals quiz grading and answer content only through explicit authenticated calls", async () => {
+    await withServer({ executeJob: async () => { throw new Error("sandbox should not run"); } }, async (url) => {
+      const quiz = await post(url, { path: "/v1/quiz", body: { lessonId: "w1-d1", choice: 2 } });
+      assert.deepEqual(await quiz.json(), { correct: true });
+      const solution = await post(url, { path: "/v1/reveal", body: { lessonId: "w1-d1", kind: "solution" } });
+      assert.deepEqual(await solution.json(), { solution: "SECRET_SOLUTION" });
+      const debug = await post(url, { path: "/v1/reveal", body: { lessonId: "w1-d1", kind: "debug" } });
+      assert.deepEqual(await debug.json(), { fix: "SECRET_DEBUG_FIX", explanation: "SECRET_DEBUG_EXPLANATION" });
+    });
   });
 
   it("does not call the sandbox without authorization", async () => {

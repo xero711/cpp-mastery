@@ -1,25 +1,19 @@
 import type { Lesson } from "@/lib/lessons";
 
-export type RunnerCaseResult = {
-  stdout: string;
-  stderr: string;
-  exitCode: number | null;
-  durationMs: number;
-  timedOut: boolean;
-  outputLimited: boolean;
-};
-
-export type RunnerResponse = {
-  status: "ok" | "compile_error" | "runner_error";
-  compilerOutput: string;
-  cases: RunnerCaseResult[];
-};
-
 export type GradeResult = {
   status: "passed" | "failed" | "compile_error" | "unavailable" | "runner_error";
   message: string;
   compilerOutput?: string;
   cases: { passed: boolean; expected: string; actual: string; stderr: string; durationMs: number; timedOut?: boolean; outputLimited?: boolean }[];
+  score: number;
+  durationMs: number;
+};
+
+type ApiGradeResult = {
+  status: "passed" | "failed" | "compile_error" | "runner_error";
+  message: string;
+  compilerOutput: string;
+  cases: { passed: boolean; stdout: string; stderr: string; durationMs: number; timedOut: boolean; outputLimited: boolean; exitCode: number | null }[];
   score: number;
   durationMs: number;
 };
@@ -40,29 +34,8 @@ function resolveRunnerUrl(value: string | undefined) {
   }
 }
 
-function normalizeOutput(value: string) {
-  return value.replace(/\r\n/g, "\n").trimEnd();
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function isRunnerCase(value: unknown): value is RunnerCaseResult {
-  if (!isRecord(value)) return false;
-  return typeof value.stdout === "string" && value.stdout.length <= 8_192
-    && typeof value.stderr === "string" && value.stderr.length <= 8_192
-    && (value.exitCode === null || Number.isSafeInteger(value.exitCode))
-    && typeof value.durationMs === "number" && Number.isFinite(value.durationMs) && value.durationMs >= 0
-    && typeof value.timedOut === "boolean"
-    && typeof value.outputLimited === "boolean";
-}
-
-function isRunnerResponse(value: unknown, expectedCases: number): value is RunnerResponse {
-  if (!isRecord(value) || !["ok", "compile_error", "runner_error"].includes(String(value.status))) return false;
-  if (typeof value.compilerOutput !== "string" || value.compilerOutput.length > 32_000 || !Array.isArray(value.cases)) return false;
-  if (value.status === "ok") return value.cases.length === expectedCases && value.cases.every(isRunnerCase);
-  return value.cases.length === 0;
 }
 
 async function readJsonLimited(response: Response): Promise<unknown> {
@@ -100,68 +73,74 @@ function unavailable(message: string): GradeResult {
   return { status: "unavailable", message, cases: [], score: 0, durationMs: 0 };
 }
 
+async function postRunner(path: string, body: unknown, apiToken: string) {
+  if (!configuredRunner) return { ok: false as const, message: "このGitHub PagesサイトにC++実行ワーカーのURLが設定されていません。" };
+  if (!apiToken.trim()) return { ok: false as const, message: "設定画面で実行ワーカーのアクセストークンを登録してください。トークンはこのブラウザーだけに保存されます。" };
+  const response = await fetch(`${configuredRunner}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiToken.trim()}` },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(60_000),
+  });
+  const raw = await readJsonLimited(response);
+  if (!isRecord(raw)) return { ok: false as const, message: "実行ワーカーから形式の正しい応答を受け取れませんでした。" };
+  if (!response.ok) {
+    return { ok: false as const, message: typeof raw.message === "string" ? raw.message : typeof raw.error === "string" ? raw.error : `Runner responded with HTTP ${response.status}` };
+  }
+  return { ok: true as const, raw };
+}
+
+function isApiGradeResult(value: unknown, expectedPublicCases: number): value is ApiGradeResult {
+  if (!isRecord(value) || !["passed", "failed", "compile_error", "runner_error"].includes(String(value.status))) return false;
+  if (typeof value.message !== "string" || typeof value.compilerOutput !== "string" || value.compilerOutput.length > 32_000) return false;
+  if (!Array.isArray(value.cases) || typeof value.score !== "number" || !Number.isInteger(value.score) || value.score < 0 || value.score > 100) return false;
+  if (typeof value.durationMs !== "number" || !Number.isFinite(value.durationMs) || value.durationMs < 0) return false;
+  if (["passed", "failed"].includes(String(value.status)) && value.cases.length !== expectedPublicCases) return false;
+  if (["compile_error", "runner_error"].includes(String(value.status)) && value.cases.length !== 0) return false;
+  return value.cases.every((test) => isRecord(test)
+    && typeof test.passed === "boolean"
+    && typeof test.stdout === "string" && test.stdout.length <= 8_192
+    && typeof test.stderr === "string" && test.stderr.length <= 8_192
+    && typeof test.durationMs === "number" && Number.isFinite(test.durationMs) && test.durationMs >= 0
+    && typeof test.timedOut === "boolean"
+    && typeof test.outputLimited === "boolean"
+    && (test.exitCode === null || Number.isSafeInteger(test.exitCode)));
+}
+
 export async function gradeLessonCode(
   source: string,
   lesson: Lesson,
   standard: "c++17" | "c++20" | "c++23" = lesson.standard,
   apiToken = "",
 ): Promise<GradeResult> {
-  if (!configuredRunner) {
-    return unavailable("このGitHub PagesサイトにC++実行ワーカーのURLが設定されていません。コードはブラウザー内に保存できますが、コンパイル・採点は停止中です。");
-  }
+  if (!configuredRunner) return unavailable("このGitHub PagesサイトにC++実行ワーカーのURLが設定されていません。コードはブラウザー内に保存できますが、コンパイル・採点は停止中です。");
   if (!apiToken.trim()) return unavailable("設定画面で実行ワーカーのアクセストークンを登録してください。トークンはこのブラウザーだけに保存されます。");
   if (new TextEncoder().encode(source).byteLength > sourceLimitBytes) {
     return { status: "runner_error", message: "提出コードは32 KB以下にしてください。", cases: [], score: 0, durationMs: 0 };
   }
 
   try {
-    const response = await fetch(`${configuredRunner}/v1/execute`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiToken.trim()}` },
-      body: JSON.stringify({
-        source,
-        standard,
-        tests: lesson.exercise.tests.map((test) => ({ stdin: test.input })),
-      }),
-      signal: AbortSignal.timeout(60_000),
-    });
-    const raw = await readJsonLimited(response);
-    if (response.status === 503 && isRunnerResponse(raw, lesson.exercise.tests.length) && raw.status === "runner_error") {
-      return { status: "runner_error", message: "隔離実行環境でエラーが発生しました。解答の正誤とは分けて確認してください。", compilerOutput: raw.compilerOutput, cases: [], score: 0, durationMs: 0 };
+    const response = await postRunner("/v1/grade", { lessonId: lesson.id, source, standard }, apiToken);
+    if (!response.ok) return { status: "runner_error", message: response.message, cases: [], score: 0, durationMs: 0 };
+    if (!isApiGradeResult(response.raw, lesson.exercise.tests.length)) {
+      return { status: "runner_error", message: "採点応答の形式を確認できませんでした。", cases: [], score: 0, durationMs: 0 };
     }
-    if (!response.ok) throw new Error(`Runner responded with HTTP ${response.status}`);
-    if (!isRunnerResponse(raw, lesson.exercise.tests.length)) throw new Error("Runner response did not match the protocol");
-    const result = raw;
-    if (result.status === "compile_error") {
-      return { status: "compile_error", message: "コンパイルエラーがあります。診断を確認してください。", compilerOutput: result.compilerOutput, cases: [], score: 0, durationMs: 0 };
-    }
-    if (result.status === "runner_error") {
-      return { status: "runner_error", message: "隔離実行環境でエラーが発生しました。解答の正誤とは分けて確認してください。", compilerOutput: result.compilerOutput, cases: [], score: 0, durationMs: 0 };
-    }
-
-    const cases = lesson.exercise.tests.map((test, index) => {
-      const actual = result.cases[index];
-      const passed = actual.exitCode === 0 && !actual.timedOut && !actual.outputLimited
-        && normalizeOutput(actual.stdout) === normalizeOutput(test.output);
-      return {
-        passed,
-        expected: test.output,
-        actual: actual.stdout,
-        stderr: actual.stderr,
-        durationMs: actual.durationMs,
-        timedOut: actual.timedOut,
-        outputLimited: actual.outputLimited,
-      };
-    });
-    const passedCount = cases.filter((test) => test.passed).length;
-    const score = cases.length ? Math.round((passedCount / cases.length) * 100) : 0;
+    const result = response.raw;
     return {
-      status: score === 100 ? "passed" : "failed",
-      message: score === 100 ? "すべての公開テストに通りました。" : `${cases.length - passedCount}件のテストが一致しませんでした。出力を見直してください。`,
+      status: result.status,
+      message: result.message,
       compilerOutput: result.compilerOutput,
-      cases,
-      score,
-      durationMs: cases.reduce((total, test) => total + test.durationMs, 0),
+      cases: result.cases.map((test, index) => ({
+        passed: test.passed,
+        expected: lesson.exercise.tests[index]?.output ?? "",
+        actual: test.stdout,
+        stderr: test.stderr,
+        durationMs: test.durationMs,
+        timedOut: test.timedOut,
+        outputLimited: test.outputLimited,
+      })),
+      score: result.score,
+      durationMs: result.durationMs,
     };
   } catch (error) {
     return {
@@ -174,6 +153,24 @@ export async function gradeLessonCode(
       durationMs: 0,
     };
   }
+}
+
+export async function gradeQuizAnswer(lessonId: string, choice: number, apiToken: string) {
+  try {
+    const response = await postRunner("/v1/quiz", { lessonId, choice }, apiToken);
+    if (!response.ok) return { correct: null, message: response.message };
+    return typeof response.raw.correct === "boolean"
+      ? { correct: response.raw.correct, message: "" }
+      : { correct: null, message: "クイズ応答の形式を確認できませんでした。" };
+  } catch {
+    return { correct: null, message: "実行ワーカーへ接続できません。" };
+  }
+}
+
+export async function revealLessonAnswer(lessonId: string, kind: "solution" | "debug", apiToken: string) {
+  const response = await postRunner("/v1/reveal", { lessonId, kind }, apiToken);
+  if (!response.ok) throw new Error(response.message);
+  return response.raw;
 }
 
 export function hasConfiguredRunner() {

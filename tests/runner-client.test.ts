@@ -1,72 +1,92 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { lessons } from "../src/lib/lessons";
 
-describe("runner grading protocol", () => {
-  afterEach(() => vi.unstubAllGlobals());
+const token = "test-runner-token-0123456789-abcdef";
+const publicCase = (stdout: string, passed: boolean) => ({
+  passed,
+  stdout,
+  stderr: "",
+  exitCode: 0,
+  durationMs: 18,
+  timedOut: false,
+  outputLimited: false,
+});
 
-  it("scores returned stdout against the lesson's expected output", async () => {
+describe("runner client privacy boundary", () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("sends only source, lesson id, and standard to server-owned grading", async () => {
     vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      status: "ok",
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      status: "passed",
+      message: "公開テストと非公開テストにすべて通りました。",
       compilerOutput: "build succeeded",
-      cases: [{ stdout: `${lessons[0].exercise.expectedOutput}\r\n`, stderr: "", exitCode: 0, durationMs: 18, timedOut: false, outputLimited: false }],
-    }), { status: 200, headers: { "Content-Type": "application/json" } })));
+      cases: [publicCase(`${lessons[0].exercise.expectedOutput}\r\n`, true)],
+      score: 100,
+      durationMs: 18,
+    }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
 
     const { gradeLessonCode } = await import("../src/lib/runner-client");
-    const result = await gradeLessonCode(lessons[0].exercise.solution, lessons[0], "c++17", "test-runner-token-0123456789-abcdef");
+    const result = await gradeLessonCode("user source", lessons[0], "c++17", token);
 
     expect(result.status).toBe("passed");
     expect(result.score).toBe(100);
     expect(result.cases[0].passed).toBe(true);
+    const [url, request] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("https://runner.example/v1/grade");
+    expect(JSON.parse(String(request.body))).toEqual({ lessonId: lessons[0].id, source: "user source", standard: "c++17" });
+    expect(new Headers(request.headers).get("authorization")).toBe(`Bearer ${token}`);
   });
 
-  it("keeps wrong output separate from compile and infrastructure errors", async () => {
+  it("preserves server verdicts for wrong output, compile errors, and runner failures", async () => {
     vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      status: "ok",
-      compilerOutput: "build succeeded",
-      cases: [{ stdout: "wrong\n", stderr: "", exitCode: 0, durationMs: 8, timedOut: false, outputLimited: false }],
-    }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: "failed", message: "1件の公開テストに不一致があります。", compilerOutput: "", cases: [publicCase("wrong\n", false)], score: 0, durationMs: 8,
+      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: "compile_error", message: "コンパイルエラーがあります。", compilerOutput: "missing semicolon", cases: [], score: 0, durationMs: 0,
+      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: "runner_error", message: "隔離実行環境でエラーが発生しました。", compilerOutput: "", cases: [], score: 0, durationMs: 0,
+      }), { status: 503 }));
+    vi.stubGlobal("fetch", fetchMock);
+
     const { gradeLessonCode } = await import("../src/lib/runner-client");
-    const wrong = await gradeLessonCode("source", lessons[0], "c++17", "test-runner-token-0123456789-abcdef");
-    expect(wrong.status).toBe("failed");
-    expect(wrong.score).toBe(0);
-
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      status: "compile_error", compilerOutput: "missing semicolon", cases: [],
-    }), { status: 200, headers: { "Content-Type": "application/json" } })));
-    const compileError = await gradeLessonCode("source", lessons[0], "c++17", "test-runner-token-0123456789-abcdef");
-    expect(compileError.status).toBe("compile_error");
-    expect(compileError.score).toBe(0);
+    expect((await gradeLessonCode("source", lessons[0], "c++17", token)).status).toBe("failed");
+    expect((await gradeLessonCode("source", lessons[0], "c++17", token)).status).toBe("compile_error");
+    expect((await gradeLessonCode("source", lessons[0], "c++17", token)).status).toBe("runner_error");
   });
 
-  it("never awards points for a time-limited or output-limited case", async () => {
+  it("requires an access token before making a request", async () => {
     vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      status: "ok",
-      compilerOutput: "",
-      cases: [{ stdout: lessons[0].exercise.expectedOutput, stderr: "", exitCode: 0, durationMs: 100, timedOut: true, outputLimited: false }],
-    }), { status: 200, headers: { "Content-Type": "application/json" } })));
-    const { gradeLessonCode } = await import("../src/lib/runner-client");
-    const result = await gradeLessonCode("source", lessons[0], "c++17", "test-runner-token-0123456789-abcdef");
-    expect(result.status).toBe("failed");
-    expect(result.score).toBe(0);
-  });
-
-  it("requires an access token and sends it only as a bearer header", async () => {
-    vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
-      status: "ok", compilerOutput: "", cases: [{ stdout: lessons[0].exercise.expectedOutput, stderr: "", exitCode: 0, durationMs: 1, timedOut: false, outputLimited: false }],
-    }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
     const { gradeLessonCode } = await import("../src/lib/runner-client");
+
     const missing = await gradeLessonCode("source", lessons[0]);
     expect(missing.status).toBe("unavailable");
     expect(fetchMock).not.toHaveBeenCalled();
+  });
 
-    await gradeLessonCode("source", lessons[0], "c++17", "test-runner-token-0123456789-abcdef");
-    const [, request] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(new Headers(request.headers).get("authorization")).toBe("Bearer test-runner-token-0123456789-abcdef");
-    expect(String(request.body)).not.toContain("test-runner-token");
+  it("uses explicit endpoints for quiz grading and answer reveal", async () => {
+    vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ correct: true }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ solution: "shown after click" }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { gradeQuizAnswer, revealLessonAnswer } = await import("../src/lib/runner-client");
+
+    expect(await gradeQuizAnswer("w1-d1", 0, token)).toEqual({ correct: true, message: "" });
+    expect(await revealLessonAnswer("w1-d1", "solution", token)).toEqual({ solution: "shown after click" });
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+      "https://runner.example/v1/quiz",
+      "https://runner.example/v1/reveal",
+    ]);
   });
 });

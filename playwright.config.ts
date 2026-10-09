@@ -24,5 +24,6 @@ export default defineConfig({
     url: `${baseURL}dashboard/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: { NEXT_PUBLIC_CPP_RUNNER_URL: "https://runner.example" },
   },
 });

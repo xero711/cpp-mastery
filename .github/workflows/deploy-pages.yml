@@ -33,6 +33,8 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate public lessons and private runner registry
+        run: pnpm generate:lessons
       - name: Lint
         run: pnpm lint
       - name: Test application and runner API
@@ -46,6 +48,8 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_CPP_RUNNER_URL: ${{ vars.CPP_RUNNER_URL }}
+      - name: Verify private data is absent from Pages assets
+        run: pnpm verify:public-bundle
       - name: Add Pages marker
         run: touch out/.nojekyll
       - name: Upload Pages artifact

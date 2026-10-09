@@ -1,5 +1,6 @@
 import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 import { spawn } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -15,6 +16,7 @@ export const SANDBOX_TIMEOUT_MS = 50_000;
 
 const allowedStandards = new Set(["c++17", "c++20", "c++23"]);
 const standardUtf8 = new TextEncoder();
+const privateLessonRegistry = JSON.parse(readFileSync(new URL("../data/lesson-registry.json", import.meta.url), "utf8"));
 
 export function loadConfig(env = process.env) {
   const production = env.NODE_ENV === "production";
@@ -82,6 +84,41 @@ export function validateJob(value) {
   }
   if (totalStdinBytes > MAX_TOTAL_STDIN_BYTES) return { ok: false, message: "標準入力の合計は64 KB以下にしてください。" };
   return { ok: true, job: { source: value.source, standard: value.standard, tests: value.tests } };
+}
+
+export function validateGradeSubmission(value, registry = privateLessonRegistry) {
+  if (!isRecord(value) || !hasExactKeys(value, ["source", "standard", "lessonId"])) {
+    return { ok: false, message: "採点リクエストの形式が正しくありません。" };
+  }
+  const lessonId = typeof value.lessonId === "string" ? value.lessonId : "";
+  const lesson = registry.find((item) => item.id === lessonId);
+  if (!lesson) return { ok: false, message: "指定された課題が見つかりません。" };
+  const tests = [...lesson.tests, ...lesson.hiddenTests];
+  const validation = validateJob({ source: value.source, standard: value.standard, tests: tests.map(({ input }) => ({ stdin: input })) });
+  if (!validation.ok) return validation;
+  return { ok: true, lesson, publicTestCount: lesson.tests.length, job: validation.job };
+}
+
+export function validateQuizSubmission(value, registry = privateLessonRegistry) {
+  if (!isRecord(value) || !hasExactKeys(value, ["lessonId", "choice"])) {
+    return { ok: false, message: "クイズ回答の形式が正しくありません。" };
+  }
+  const lesson = registry.find((item) => item.id === value.lessonId);
+  if (!lesson || !Number.isSafeInteger(value.choice) || value.choice < 0 || value.choice > 15) {
+    return { ok: false, message: "クイズ回答を確認できませんでした。" };
+  }
+  return { ok: true, lesson, choice: value.choice };
+}
+
+export function validateRevealRequest(value, registry = privateLessonRegistry) {
+  if (!isRecord(value) || !hasExactKeys(value, ["lessonId", "kind"])) {
+    return { ok: false, message: "解答表示リクエストの形式が正しくありません。" };
+  }
+  const lesson = registry.find((item) => item.id === value.lessonId);
+  if (!lesson || !["solution", "debug"].includes(value.kind)) {
+    return { ok: false, message: "解答を確認できませんでした。" };
+  }
+  return { ok: true, lesson, kind: value.kind };
 }
 
 export async function runSandboxJob(job, config, options = {}) {
@@ -219,7 +256,7 @@ async function cleanupContainer(docker, containerName) {
   await Promise.race([new Promise((resolve) => remove.once("close", resolve)), delay(2_000)]);
 }
 
-export function createRunnerServer({ config, executeJob = (job, options) => runSandboxJob(job, config, options), rateLimit = 20 } = {}) {
+export function createRunnerServer({ config, executeJob = (job, options) => runSandboxJob(job, config, options), lessonRegistry = privateLessonRegistry, rateLimit = 20 } = {}) {
   if (!config?.apiToken || !(config.origins instanceof Set)) throw new Error("Runner configuration is required.");
   let activeJobs = 0;
   let rateStart = Date.now();
@@ -255,7 +292,7 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
       writeJson(response, 200, { status: "ok" });
       return;
     }
-    if (request.method !== "POST" || request.url !== "/v1/execute") {
+    if (request.method !== "POST" || !["/v1/execute", "/v1/grade", "/v1/quiz", "/v1/reveal"].includes(request.url)) {
       rejectEarly(request, response, 404, { error: "指定されたAPIはありません。" });
       return;
     }
@@ -293,16 +330,6 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
       writeJson(response, 400, { error: "JSONの形式が正しくありません。" });
       return;
     }
-    const validation = validateJob(parsed);
-    if (!validation.ok) {
-      writeJson(response, 400, { error: validation.message });
-      return;
-    }
-
-    if (activeJobs >= config.maxConcurrentJobs) {
-      writeJson(response, 429, { error: "実行ワーカーが混雑しています。少し待ってから再試行してください。" }, { "Retry-After": "3" });
-      return;
-    }
     if (Date.now() - rateStart >= 60_000) {
       rateStart = Date.now();
       rateCount = 0;
@@ -313,6 +340,41 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
       return;
     }
 
+    if (request.url === "/v1/quiz") {
+      const validation = validateQuizSubmission(parsed, lessonRegistry);
+      if (!validation.ok) {
+        writeJson(response, 400, { error: validation.message });
+        return;
+      }
+      writeJson(response, 200, { correct: validation.choice === validation.lesson.quizAnswer });
+      return;
+    }
+    if (request.url === "/v1/reveal") {
+      const validation = validateRevealRequest(parsed, lessonRegistry);
+      if (!validation.ok) {
+        writeJson(response, 400, { error: validation.message });
+        return;
+      }
+      const body = validation.kind === "solution"
+        ? { solution: validation.lesson.solution }
+        : { fix: validation.lesson.debugFix, explanation: validation.lesson.debugExplanation };
+      writeJson(response, 200, body);
+      return;
+    }
+
+    const gradeSubmission = request.url === "/v1/grade";
+    const validation = gradeSubmission
+      ? validateGradeSubmission(parsed, lessonRegistry)
+      : validateJob(parsed);
+    if (!validation.ok) {
+      writeJson(response, 400, { error: validation.message });
+      return;
+    }
+
+    if (activeJobs >= config.maxConcurrentJobs) {
+      writeJson(response, 429, { error: "実行ワーカーが混雑しています。少し待ってから再試行してください。" }, { "Retry-After": "3" });
+      return;
+    }
     const abortController = new AbortController();
     response.once("close", () => {
       if (!response.writableEnded) abortController.abort();
@@ -320,7 +382,8 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
     activeJobs += 1;
     try {
       const result = await executeJob(validation.job, { signal: abortController.signal });
-      writeJson(response, result.status === "runner_error" ? 503 : 200, result);
+      const body = gradeSubmission ? gradeSandboxResult(result, validation) : result;
+      writeJson(response, body.status === "runner_error" ? 503 : 200, body);
     } catch (error) {
       if (!response.writableEnded && !abortController.signal.aborted) {
         const reason = error instanceof Error ? error.message : "unknown";
@@ -349,6 +412,42 @@ export async function verifyDocker(config, dockerBinary) {
   if (!isRecord(runtimes) || !Object.hasOwn(runtimes, config.runtime)) throw new Error(`Docker runtime '${config.runtime}' is not installed.`);
   const imageResult = await spawnCapture(binary, ["image", "inspect", config.image], 8_000);
   if (imageResult.exitCode !== 0) throw new Error("Configured C++ sandbox image is not available locally.");
+}
+
+function gradeSandboxResult(result, submission) {
+  if (result.status !== "ok") {
+    return {
+      status: result.status,
+      message: result.status === "compile_error"
+        ? "コンパイルエラーがあります。診断を確認してください。"
+        : "隔離実行環境でエラーが発生しました。解答の正誤とは分けて確認してください。",
+      compilerOutput: result.compilerOutput,
+      cases: [],
+      score: 0,
+      durationMs: 0,
+    };
+  }
+
+  const tests = [...submission.lesson.tests, ...submission.lesson.hiddenTests];
+  const evaluated = tests.map((test, index) => {
+    const actual = result.cases[index];
+    const passed = actual.exitCode === 0 && !actual.timedOut && !actual.outputLimited
+      && actual.stdout.replace(/\r\n/g, "\n").trimEnd() === test.output.replace(/\r\n/g, "\n").trimEnd();
+    return { passed, ...actual };
+  });
+  const publicCases = evaluated.slice(0, submission.publicTestCount);
+  const passedCount = evaluated.filter((test) => test.passed).length;
+  const score = evaluated.length ? Math.round((passedCount / evaluated.length) * 100) : 0;
+  return {
+    status: score === 100 ? "passed" : "failed",
+    message: score === 100
+      ? "公開テストと非公開テストにすべて通りました。"
+      : `${publicCases.filter((test) => !test.passed).length}件の公開テストに不一致があります。非公開テストの結果も採点に含まれています。`,
+    compilerOutput: result.compilerOutput,
+    cases: publicCases,
+    score,
+    durationMs: evaluated.reduce((total, test) => total + test.durationMs, 0),
+  };
 }
 
 function spawnCapture(binary, args, timeoutMs) {

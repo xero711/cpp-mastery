@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/copy-monaco.mjs",
+    "predev": "node scripts/copy-monaco.mjs && node scripts/generate-lessons.mjs",
     "build": "next build",
-    "prebuild": "node scripts/copy-monaco.mjs",
+    "prebuild": "node scripts/copy-monaco.mjs && node scripts/generate-lessons.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run && node --test services/runner/test/server.node.mjs",
     "test:e2e": "playwright test",
-    "verify:lessons": "scripts\\verify-lessons.cmd"
+    "verify:lessons": "scripts\\verify-lessons.cmd",
+    "generate:lessons": "node scripts/generate-lessons.mjs",
+    "verify:public-bundle": "node scripts/verify-public-bundle.mjs"
   },
   "dependencies": {
     "@monaco-editor/react": "4.7.0",

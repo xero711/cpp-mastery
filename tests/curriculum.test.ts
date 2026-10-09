@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { curriculumDays, curriculumWeeks } from "../src/lib/curriculum";
 import { lessons } from "../src/lib/lessons";
+import privateLessonRegistry from "../services/runner/data/lesson-registry.json";
 
 describe("curriculum and authored lesson set", () => {
   it("contains 104 weeks and 728 scheduled learning days", () => {
@@ -19,8 +20,9 @@ describe("curriculum and authored lesson set", () => {
       expect(lesson.example.trim()).not.toBe("");
       expect(lesson.subject.trim()).not.toBe("");
       expect(lesson.quiz.choices.length).toBeGreaterThan(1);
-      expect(lesson.quiz.answer).toBeGreaterThanOrEqual(0);
-      expect(lesson.quiz.answer).toBeLessThan(lesson.quiz.choices.length);
+      const privateLesson = privateLessonRegistry.find((item) => item.id === lesson.id);
+      expect(privateLesson?.quizAnswer).toBeGreaterThanOrEqual(0);
+      expect(privateLesson?.quizAnswer).toBeLessThan(lesson.quiz.choices.length);
       expect(lesson.exercise.tests.length).toBeGreaterThan(0);
       expect(typeof lesson.exercise.expectedOutput).toBe("string");
       expect(lesson.exercise.tests[0].output).toBe(lesson.exercise.expectedOutput);

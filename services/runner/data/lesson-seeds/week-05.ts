@@ -1,4 +1,4 @@
-import type { LessonSeed } from "../lessons";
+import type { LessonSeed } from "../lesson-source.ts";
 
 export const week5LessonSeeds: LessonSeed[] = [
   {

@@ -7,7 +7,7 @@ import { curriculumWeeks } from "@/lib/curriculum";
 import { dateInJapan, lessonSlotForDate } from "@/lib/calendar";
 import { readRunnerApiToken, readLearnerState, recordSubmission, saveLessonAnswer, saveLessonDraft, saveQuizChoice, type LearnerState } from "@/lib/browser-store";
 import { findLesson } from "@/lib/lessons";
-import { gradeLessonCode, type GradeResult } from "@/lib/runner-client";
+import { gradeLessonCode, gradeQuizAnswer, revealLessonAnswer, type GradeResult } from "@/lib/runner-client";
 import { CodeEditorPanel } from "@/components/code-editor-panel";
 
 type Standard = "c++17" | "c++20" | "c++23";
@@ -22,6 +22,9 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
   const [running, setRunning] = useState(false);
   const [debugDrafts, setDebugDrafts] = useState<Record<string, string>>({});
   const [reflectionDrafts, setReflectionDrafts] = useState<Record<string, string>>({});
+  const [revealedSolutions, setRevealedSolutions] = useState<Record<string, string>>({});
+  const [revealedDebug, setRevealedDebug] = useState<Record<string, { fix: string; explanation: string }>>({});
+  const [actionMessages, setActionMessages] = useState<Record<string, string>>({});
   const [saveMessage, setSaveMessage] = useState("");
 
   const lesson = findLesson(target.week, target.day);
@@ -36,7 +39,8 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
   const debugRevealed = Boolean(record?.debugRevealed);
   const solutionRevealed = Boolean(record?.solutionRevealed);
   const hintCount = record?.hintsUsed ?? 0;
-  const quizIsCorrect = lesson && quizChoice !== null ? quizChoice === lesson.quiz.answer : Boolean(record?.quizCorrect);
+  const quizIsCorrect = Boolean(record?.quizCorrect);
+  const quizSubmitted = quizChoice !== null && record?.quizCorrect !== undefined;
   const completed = Boolean(record?.completedAt);
 
   useEffect(() => {
@@ -73,14 +77,32 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
 
   async function chooseQuiz(index: number) {
     if (!lesson) return;
-    const updated = await saveQuizChoice(lesson.id, index, index === lesson.quiz.answer);
+    setActionMessages((current) => ({ ...current, [lesson.id]: "" }));
+    const runnerToken = await readRunnerApiToken().catch(() => "");
+    const graded = await gradeQuizAnswer(lesson.id, index, runnerToken);
+    if (graded.correct === null) {
+      setActionMessages((current) => ({ ...current, [lesson.id]: graded.message }));
+      return;
+    }
+    const updated = await saveQuizChoice(lesson.id, index, graded.correct);
     setState(updated);
   }
 
   async function saveDebugAndReveal() {
     if (!lesson) return;
-    const updated = await saveLessonAnswer(lesson.id, { debugAnswer, debugRevealed: true });
-    setState(updated);
+    setActionMessages((current) => ({ ...current, [lesson.id]: "" }));
+    try {
+      const runnerToken = await readRunnerApiToken().catch(() => "");
+      const answer = await revealLessonAnswer(lesson.id, "debug", runnerToken);
+      const fix = answer.fix;
+      const explanation = answer.explanation;
+      if (typeof fix !== "string" || typeof explanation !== "string") throw new Error("デバッグ解説の応答を確認できませんでした。");
+      setRevealedDebug((current) => ({ ...current, [lesson.id]: { fix, explanation } }));
+      const updated = await saveLessonAnswer(lesson.id, { debugRevealed: true });
+      setState(updated);
+    } catch (error) {
+      setActionMessages((current) => ({ ...current, [lesson.id]: error instanceof Error ? error.message : "解説を取得できませんでした。" }));
+    }
   }
 
   async function revealHint() {
@@ -92,8 +114,18 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
 
   async function revealSolution() {
     if (!lesson) return;
-    const updated = await saveLessonAnswer(lesson.id, { solutionRevealed: true });
-    setState(updated);
+    setActionMessages((current) => ({ ...current, [lesson.id]: "" }));
+    try {
+      const runnerToken = await readRunnerApiToken().catch(() => "");
+      const answer = await revealLessonAnswer(lesson.id, "solution", runnerToken);
+      const solution = answer.solution;
+      if (typeof solution !== "string") throw new Error("模範解答の応答を確認できませんでした。");
+      setRevealedSolutions((current) => ({ ...current, [lesson.id]: solution }));
+      const updated = await saveLessonAnswer(lesson.id, { solutionRevealed: true });
+      setState(updated);
+    } catch (error) {
+      setActionMessages((current) => ({ ...current, [lesson.id]: error instanceof Error ? error.message : "模範解答を取得できませんでした。" }));
+    }
   }
 
   async function saveReflection(value: string) {
@@ -155,14 +187,14 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
 
           <section className="lesson-section panel"><div className="lesson-section-heading"><span className="step-number">04</span><div><span className="section-kicker">CODE EXAMPLE</span><h2>コード例で動きを確かめる</h2></div></div><div className="sample-code"><div><span className="file-dot" />example.cpp <span className="sample-language">C++17</span></div><pre><code>{lesson.example}</code></pre></div><div className="output-card"><div><TerminalSquare size={14} />実行結果</div><pre>{lesson.exampleOutput}</pre></div><p className="lesson-prose small-prose">図や出力例は説明用です。提出コードの評価には、下の実行ワーカーが返す結果だけを使います。</p></section>
 
-          <section className="lesson-section panel quiz-section"><div className="lesson-section-heading"><span className="step-number">05</span><div><span className="section-kicker">QUICK CHECK</span><h2>理解を確認する</h2></div></div><p className="quiz-question">{lesson.quiz.question}</p><div className="quiz-options">{lesson.quiz.choices.map((choice, index) => <button type="button" key={choice} className={`quiz-option ${quizChoice === index ? index === lesson.quiz.answer ? "quiz-correct" : "quiz-wrong" : ""}`} onClick={() => chooseQuiz(index)}><span className="choice-letter">{String.fromCharCode(65 + index)}</span><span>{choice}</span>{quizChoice === index && (index === lesson.quiz.answer ? <Check size={16} /> : <CircleHelp size={16} />)}</button>)}</div>{quizChoice !== null && <div className={`quiz-feedback ${quizIsCorrect ? "feedback-correct" : "feedback-wrong"}`}><strong>{quizIsCorrect ? "正解" : "もう一度考えてみよう"}</strong><span>{lesson.quiz.explanation}</span></div>}</section>
+          <section className="lesson-section panel quiz-section"><div className="lesson-section-heading"><span className="step-number">05</span><div><span className="section-kicker">QUICK CHECK</span><h2>理解を確認する</h2></div></div><p className="quiz-question">{lesson.quiz.question}</p><div className="quiz-options">{lesson.quiz.choices.map((choice, index) => <button type="button" key={choice} className={`quiz-option ${quizSubmitted && quizChoice === index ? quizIsCorrect ? "quiz-correct" : "quiz-wrong" : ""}`} onClick={() => void chooseQuiz(index)}><span className="choice-letter">{String.fromCharCode(65 + index)}</span><span>{choice}</span>{quizSubmitted && quizChoice === index && (quizIsCorrect ? <Check size={16} /> : <CircleHelp size={16} />)}</button>)}</div>{quizSubmitted && <div className={`quiz-feedback ${quizIsCorrect ? "feedback-correct" : "feedback-wrong"}`}><strong>{quizIsCorrect ? "正解" : "もう一度考えてみよう"}</strong><span>{lesson.quiz.explanation}</span></div>}{actionMessages[lesson.id] && <p className="editor-footnote">{actionMessages[lesson.id]}</p>}</section>
 
-          <section className="lesson-section panel debug-section"><div className="lesson-section-heading"><span className="step-number">06</span><div><span className="section-kicker">DEBUGGING</span><h2>バグを見つける</h2></div></div><p className="lesson-prose">このコードが正しく動かない原因を考え、どこを直すか書いてみてください。</p><div className="sample-code debug-code"><div><span className="file-dot file-dot-red" />broken.cpp</div><pre><code>{lesson.debug.code}</code></pre></div><textarea className="answer-textarea" value={debugAnswer} onChange={(event) => { const value = event.target.value; setDebugDrafts((current) => ({ ...current, [lesson.id]: value })); void saveLessonAnswer(lesson.id, { debugAnswer: value }).then(setState); }} placeholder="原因と修正方法を自分の言葉で書く" aria-label="デバッグの回答" /><button type="button" className="button button-secondary reveal-button" onClick={saveDebugAndReveal}>{debugRevealed ? <EyeOff size={15} /> : <Eye size={15} />}{debugRevealed ? "解説を表示中" : "解説を確認"}</button>{debugRevealed && <div className="answer-reveal"><strong>修正の考え方</strong><pre>{lesson.debug.fix}</pre><p>{lesson.debug.explanation}</p></div>}</section>
+          <section className="lesson-section panel debug-section"><div className="lesson-section-heading"><span className="step-number">06</span><div><span className="section-kicker">DEBUGGING</span><h2>バグを見つける</h2></div></div><p className="lesson-prose">このコードが正しく動かない原因を考え、どこを直すか書いてみてください。</p><div className="sample-code debug-code"><div><span className="file-dot file-dot-red" />broken.cpp</div><pre><code>{lesson.debug.code}</code></pre></div><textarea className="answer-textarea" value={debugAnswer} onChange={(event) => { const value = event.target.value; setDebugDrafts((current) => ({ ...current, [lesson.id]: value })); void saveLessonAnswer(lesson.id, { debugAnswer: value }).then(setState); }} placeholder="原因と修正方法を自分の言葉で書く" aria-label="デバッグの回答" /><button type="button" className="button button-secondary reveal-button" onClick={() => void saveDebugAndReveal()}>{revealedDebug[lesson.id] ? <EyeOff size={15} /> : <Eye size={15} />}{revealedDebug[lesson.id] ? "解説を表示中" : debugRevealed ? "解説をもう一度見る" : "解説を確認"}</button>{revealedDebug[lesson.id] && <div className="answer-reveal"><strong>修正の考え方</strong><pre>{revealedDebug[lesson.id].fix}</pre><p>{revealedDebug[lesson.id].explanation}</p></div>}{actionMessages[lesson.id] && <p className="editor-footnote">{actionMessages[lesson.id]}</p>}</section>
 
           <section className="lesson-section panel exercise-section"><div className="lesson-section-heading"><span className="step-number">07</span><div><span className="section-kicker">IMPLEMENT</span><h2>自分で実装する</h2></div></div><p className="lesson-prose">{lesson.exercise.prompt}</p>{lesson.exercise.input && <div className="stdin-hint"><span>公開テスト入力の例</span><code>{lesson.exercise.input.trimEnd() || "(入力なし)"}</code></div>}
             <div className="hint-area"><button type="button" className="hint-button" onClick={revealHint} disabled={hintCount >= lesson.exercise.hints.length}><Lightbulb size={15} />ヒントを見る <span>{hintCount}/{lesson.exercise.hints.length}</span></button>{hintCount > 0 && <div className="hint-list">{lesson.exercise.hints.slice(0, hintCount).map((hint, index) => <p key={index}><span>ヒント {index + 1}</span>{hint}</p>)}</div>}</div>
             <CodeEditorPanel lesson={lesson} code={code || lesson.exercise.starter} onCodeChange={(value) => setDrafts((current) => ({ ...current, [lesson.id]: value }))} standard={standard} onStandardChange={(value) => setStandards((current) => ({ ...current, [lesson.id]: value }))} result={result} running={running} onSubmit={submitCode} />
-            <div className="solution-area"><button type="button" className="text-button" onClick={revealSolution}>{solutionRevealed ? <EyeOff size={14} /> : <Eye size={14} />}{solutionRevealed ? "模範解答を表示中" : "模範解答を見る"}</button>{solutionRevealed && <div className="answer-reveal solution-reveal"><strong>ひとつの実装例</strong><pre>{lesson.exercise.solution}</pre><p>入力・出力条件を満たす別の実装も考えられます。模範解答の形だけを暗記せず、各行の理由を説明してください。</p></div>}</div>
+            <div className="solution-area"><button type="button" className="text-button" onClick={() => void revealSolution()}>{revealedSolutions[lesson.id] ? <EyeOff size={14} /> : <Eye size={14} />}{revealedSolutions[lesson.id] ? "模範解答を表示中" : solutionRevealed ? "模範解答をもう一度見る" : "模範解答を見る"}</button>{revealedSolutions[lesson.id] && <div className="answer-reveal solution-reveal"><strong>ひとつの実装例</strong><pre>{revealedSolutions[lesson.id]}</pre><p>入力・出力条件を満たす別の実装も考えられます。模範解答の形だけを暗記せず、各行の理由を説明してください。</p></div>}{actionMessages[lesson.id] && <p className="editor-footnote">{actionMessages[lesson.id]}</p>}</div>
           </section>
 
           <section className="lesson-section panel reflection-section"><div className="lesson-section-heading"><span className="step-number">08</span><div><span className="section-kicker">REFLECTION</span><h2>今日の振り返り</h2></div></div><p className="lesson-prose">何がわかり、どこで迷ったかを短く残します。次回ここから再開できます。</p><textarea className="answer-textarea reflection-input" value={reflection} onChange={(event) => void saveReflection(event.target.value)} placeholder="例：整数同士の割り算は小数にならないことを、出力で確かめた。" aria-label="今日の振り返り" /><div className="lesson-evidence"><ShieldCheck size={15} /><span>学習完了は、理解チェックと実際の公開テストに通った記録が両方そろった場合だけ付きます。</span></div></section>

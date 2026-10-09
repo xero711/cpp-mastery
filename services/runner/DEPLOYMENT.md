@@ -144,7 +144,7 @@ Before connecting the website:
    ```
 
 2. Verify `https://runner.example.com/healthz` returns `{"status":"ok"}`.
-3. Open the deployed site, save the same runner token in Settings, submit a known C++ exercise, and verify actual compiler output and test results. Confirm that a wrong answer, a compile error, a timeout, and a runner outage are shown as distinct outcomes.
+3. Open the GitHub Pages site, save the same owner-only runner token in Settings, submit a known C++ exercise, and verify actual compiler output and server-side score. Confirm that a wrong answer, a compile error, a hidden-test failure, a timeout, and a runner outage are shown as distinct outcomes. Also verify `/v1/quiz` and explicit `/v1/reveal` calls from the site.
 4. Set the repository Actions variable `CPP_RUNNER_URL` to `https://runner.example.com`. The Pages workflow will build the static client with that URL.
 
 The current API uses one configured bearer token for the runner instance; it does not issue per-user credentials. Keep this deployment for the owner until an account/token-issuance layer exists. Do not distribute one shared token to public site visitors.

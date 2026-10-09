@@ -31,9 +31,32 @@ async function submit(job) {
   return { response, body: await response.json() };
 }
 
+async function grade(lessonId, source, standard = "c++17") {
+  const response = await fetch(`${url}/v1/grade`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${token}`, origin, "content-type": "application/json" },
+    body: JSON.stringify({ lessonId, source, standard }),
+    signal: AbortSignal.timeout(60_000),
+  });
+  return { response, body: await response.json() };
+}
+
 try {
   const health = await fetch(`${url}/healthz`);
   assert.equal(health.status, 200);
+
+  const hiddenGrade = await grade("w3-d1", "#include <iostream>\nint main(){int a{},b{};std::cin>>a>>b;std::cout<<\"q=\"<<a/b<<\" r=\"<<a%b;}\n");
+  assert.equal(hiddenGrade.response.status, 200, JSON.stringify(hiddenGrade.body));
+  assert.equal(hiddenGrade.body.status, "passed", JSON.stringify(hiddenGrade.body));
+  assert.equal(hiddenGrade.body.score, 100);
+  assert.equal(hiddenGrade.body.cases.length, 1, "only public case details should be returned");
+  assert.equal(JSON.stringify(hiddenGrade.body).includes("19 4"), false);
+
+  const hiddenFailure = await grade("w3-d1", "#include <iostream>\nint main(){std::cout<<\"q=3 r=2\";}\n");
+  assert.equal(hiddenFailure.body.status, "failed");
+  assert.ok(hiddenFailure.body.score < 100, "hidden test failures must affect the server-owned score");
+  assert.equal(hiddenFailure.body.cases[0].passed, true, "the hardcoded answer should still pass the public case");
+  assert.equal(JSON.stringify(hiddenFailure.body).includes("q=4 r=3"), false);
 
   for (const standard of ["c++17", "c++20", "c++23"]) {
     const result = await submit({

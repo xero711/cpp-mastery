@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
-import { lessons } from "../src/lib/lessons.ts";
+import { lessons } from "../services/runner/data/lesson-source.ts";
 
 if (process.platform !== "win32") {
   console.error("This check requires Windows and Visual Studio C++ Build Tools.");
@@ -42,7 +42,8 @@ try {
       continue;
     }
 
-    for (const [index, test] of lesson.exercise.tests.entries()) {
+    const tests = [...lesson.exercise.tests, ...lesson.exercise.hiddenTests];
+    for (const [index, test] of tests.entries()) {
       const run = spawnSync(executablePath, [], {
         input: test.input,
         encoding: "utf8",
@@ -64,4 +65,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${lessons.length} C++ reference solutions and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public test cases with Visual Studio C++.`);
+console.log(`Verified ${lessons.length} reference solutions and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);
