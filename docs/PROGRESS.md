@@ -166,3 +166,10 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Temporary local services were stopped and verified absent: no Ollama/llama-server process and no listeners on ports 11434 or 8082.
 - Commit `97ab83f` deployed successfully to GitHub Pages in [run 37922806719](https://github.com/xero711/cpp-mastery/actions/runs/37922806719); CI passed lint, tests, Chromium E2E, static export, public-bundle scan, and deployment.
 - Still open: production HTTPS hosting and per-user authorization for the mentor, OpenAI verification, public gVisor runner hosting, custom-domain HTTPS eligibility, and detailed daily lesson authoring for Weeks 9–104.
+
+## 2026-10-09 — runner browser-to-grade CI recovery
+
+- Current state inspection found runner CI [37922806740](https://github.com/xero711/cpp-mastery/actions/runs/37922806740) had failed after the AI settings card added a second button whose accessible name partially matched `URLを保存`. Updated runner E2E selectors to require exact button names.
+- Local `pnpm test` passed (24 Vitest tests and 21 Node API tests); `pnpm lint` and `git diff --check` passed.
+- Commit `3dfd9f4` passed runner CI [37923379801](https://github.com/xero711/cpp-mastery/actions/runs/37923379801): Docker sandbox image build, runner API checks, real C++17/20/23 compile/run and isolation checks, static Pages export, Chromium browser grading/history/solution/debug flow, and the due-review progression E2E all passed.
+- This confirms the separate runner and complete browser-to-grade path on GitHub's isolated Linux CI VM using `runc`. The Windows PC still has no Docker CLI/engine or WSL Linux distribution, and production gVisor hosting remains unconfigured; those are still separate acceptance gaps.
