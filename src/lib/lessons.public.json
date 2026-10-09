@@ -4862,5 +4862,397 @@
     "debug": {
       "code": "if (word.find(query)) ++matches;"
     }
+  },
+  {
+    "id": "w14-d1",
+    "version": 1,
+    "week": 14,
+    "day": 1,
+    "title": "クラスに一つの責務を持たせる",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "状態と、それを扱う操作を同じオブジェクトの中へまとめる。",
+    "minutes": 40,
+    "explanation": "オブジェクト指向設計では、クラスを作ること自体を目的にしません。ひとつのオブジェクトが何を知り、何を担当するかを先に決めます。状態とその状態を扱う操作が近くにあると、利用する側が内部の更新方法を知る必要がなくなります。\n\nこの例のCounterは値を保持し、値を増やす操作を担当します。mainは入力を読み、Counterへ操作を依頼して結果を表示します。クラスの責務を説明するときは「何をするものか」を短く言えるか確認します。",
+    "example": "#include <iostream>\n\nclass Counter {\npublic:\n    void add(const int amount) { value_ = value_ + amount; }\n    int value() const { return value_; }\n\nprivate:\n    int value_{};\n};\n\nint main() {\n    Counter counter;\n    counter.add(3);\n    counter.add(4);\n    std::cout << \"value: \" << counter.value() << std::endl;\n}",
+    "exampleOutput": "value: 7",
+    "commonMistake": "Counterに画面表示、入力、ファイル保存まで詰め込む。値の管理という役割を保ち、入出力は利用側に任せます。",
+    "quiz": {
+      "question": "Counterクラスが主に担当する処理はどれ？",
+      "choices": [
+        "値を保持し、増やす",
+        "キーボード入力を監視する",
+        "画面の色を変える"
+      ],
+      "answer": 0,
+      "explanation": "Counterは値の管理を担当し、入力や表示の仕組みは持ちません。"
+    },
+    "exercise": {
+      "prompt": "Counterクラスを作ります。整数nと続くn個の増減量（各-1000〜1000）を読み、Counterへ順に追加してください。nが0〜100なら `value: <合計>`、範囲外なら `invalid` と表示します。値の保持はprivateにし、addとvalueの操作を用意してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "2\n3 4\n",
+      "expectedOutput": "value: 7",
+      "tests": [
+        {
+          "input": "2\n3 4\n",
+          "output": "value: 7"
+        },
+        {
+          "input": "0\n",
+          "output": "value: 0"
+        },
+        {
+          "input": "3\n-2 5 1\n",
+          "output": "value: 4"
+        }
+      ],
+      "hints": [
+        "Counterに現在値を持たせます。",
+        "値を変える操作をaddとしてpublicに用意します。",
+        "mainは入力を読み、counter.addを呼び、value()で結果を取得します。"
+      ]
+    },
+    "debug": {
+      "code": "counter.value_ += amount;"
+    }
+  },
+  {
+    "id": "w14-d2",
+    "version": 1,
+    "week": 14,
+    "day": 2,
+    "title": "オブジェクトの操作で不変条件を守る",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "HealthオブジェクトがHPの範囲を保つよう、状態変更をメソッドにまとめる。",
+    "minutes": 40,
+    "explanation": "不変条件は、オブジェクトがいつでも守るべき状態の条件です。HealthではHPを0以上最大HP以下に保ちます。利用側がフィールドを直接変更すると、負のHPや上限を超えた値を作れてしまいます。\n\nreceiveDamageに状態変更を任せれば、HPを減らした後に下限を確かめる場所を一つにできます。利用側はHPの保存方法を知らずに、ダメージを受ける操作だけを呼びます。",
+    "example": "#include <iostream>\n\nclass Health {\npublic:\n    explicit Health(int maximum) : maximum_{maximum}, current_{maximum} {}\n    void receiveDamage(int amount) {\n        current_ -= amount;\n        if (current_ < 0) current_ = 0;\n    }\n    int current() const { return current_; }\n\nprivate:\n    int maximum_{};\n    int current_{};\n};\n\nint main() {\n    Health health{10};\n    health.receiveDamage(4);\n    health.receiveDamage(4);\n    std::cout << \"hp: \" << health.current() << std::endl;\n}",
+    "exampleOutput": "hp: 2",
+    "commonMistake": "ダメージ処理を呼び出すたびに、main側でもHPの下限処理を書く。状態を守るルールはHealthへ集めます。",
+    "quiz": {
+      "question": "HPを0未満にしないルールを置く場所として適切なのは？",
+      "choices": [
+        "ダメージを受ける操作",
+        "すべての呼び出し元に重複して書く",
+        "出力ラベル"
+      ],
+      "answer": 0,
+      "explanation": "HPを変更するHealthの操作にルールを置くと、すべての利用者で同じ条件を守れます。"
+    },
+    "exercise": {
+      "prompt": "最大HPとn回分のダメージを読みます。Healthは最大HPで初期化し、ダメージを受けるたびにHPを減らします。HPは0未満にならないようにし、最後に `hp: <現在HP>` と表示してください。最大HPは1〜1000、nは0〜100、各ダメージは0〜10000です。範囲外の最大HPまたはnは `invalid` と表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "10 2\n4 4\n",
+      "expectedOutput": "hp: 2",
+      "tests": [
+        {
+          "input": "10 2\n4 4\n",
+          "output": "hp: 2"
+        },
+        {
+          "input": "5 1\n9\n",
+          "output": "hp: 0"
+        },
+        {
+          "input": "8 0\n",
+          "output": "hp: 8"
+        }
+      ],
+      "hints": [
+        "Healthにmaximumとcurrentをprivateで持たせます。",
+        "receiveDamageでcurrentを減らし、0未満になったら0に直します。",
+        "最後の値はcurrent()から読み取り、利用側でフィールドを変更しません。"
+      ]
+    },
+    "debug": {
+      "code": "current_ -= amount;"
+    }
+  },
+  {
+    "id": "w14-d3",
+    "version": 1,
+    "week": 14,
+    "day": 3,
+    "title": "問い合わせメソッドをconstにする",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "オブジェクトの状態を変えない問い合わせをconstメンバー関数として設計する。",
+    "minutes": 35,
+    "explanation": "メンバー関数の末尾にconstを付けると、その関数が通常の方法でメンバー状態を変更しないことを型で表せます。areaは幅と高さから面積を計算するだけなのでconstにできます。\n\n読み取り専用の参照からもconstメンバー関数は呼べます。状態を変更する操作と、状態を調べる操作を宣言から区別できるため、APIの使い方が読みやすくなります。",
+    "example": "#include <iostream>\n\nclass Rectangle {\npublic:\n    Rectangle(int width, int height) : width_{width}, height_{height} {}\n    int area() const { return width_ * height_; }\n\nprivate:\n    int width_{};\n    int height_{};\n};\n\nint main() {\n    const Rectangle panel{8, 3};\n    std::cout << \"area: \" << panel.area() << std::endl;\n}",
+    "exampleOutput": "area: 24",
+    "commonMistake": "areaのように状態を読むだけの関数へconstを付けない。constオブジェクトから呼べず、読み取り専用の利用を妨げます。",
+    "quiz": {
+      "question": "const Rectangle objectから呼び出せるareaの宣言は？",
+      "choices": [
+        "int area() const",
+        "int area()",
+        "void area()"
+      ],
+      "answer": 0,
+      "explanation": "constオブジェクトから呼ぶメンバー関数は、読み取り専用であることをconstで示します。"
+    },
+    "exercise": {
+      "prompt": "幅と高さを持つRectangleクラスを作り、面積を返すconstメソッドarea()を用意してください。幅と高さを読み、どちらも0〜10000なら `area: <面積>`、範囲外なら `invalid` と表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "8 3\n",
+      "expectedOutput": "area: 24",
+      "tests": [
+        {
+          "input": "8 3\n",
+          "output": "area: 24"
+        },
+        {
+          "input": "0 7\n",
+          "output": "area: 0"
+        },
+        {
+          "input": "100 100\n",
+          "output": "area: 10000"
+        }
+      ],
+      "hints": [
+        "幅と高さをRectangleのprivateな状態として持たせます。",
+        "area()は状態を変えないので、関数の末尾にconstを付けます。",
+        "const Rectangleとして作った後でもarea()を呼べることを確認します。"
+      ]
+    },
+    "debug": {
+      "code": "int area() { return width_ * height_; }"
+    }
+  },
+  {
+    "id": "w14-d4",
+    "version": 1,
+    "week": 14,
+    "day": 4,
+    "title": "オブジェクトの境界をpublic変数で破らない",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "利用側から内部状態を直接書き換えず、意味のある公開操作を用意する。",
+    "minutes": 40,
+    "explanation": "publicフィールドを公開すると、利用側が状態をどんな順番でも変更できます。値の検査や関連する更新が必要になったとき、すべての利用箇所を探して直さなければなりません。\n\nDoorの状態をprivateにしてopen、close、isOpenを公開すると、利用側はドアの実装方法ではなく、行いたい操作を表現できます。すでに開いているドアを再度開く操作のように、現在状態に応じた細部はDoorの中へ閉じ込められます。",
+    "example": "#include <iostream>\n\nclass Door {\npublic:\n    void open() { open_ = true; }\n    void close() { open_ = false; }\n    bool isOpen() const { return open_; }\n\nprivate:\n    bool open_{};\n};\n\nint main() {\n    Door door;\n    door.open();\n    std::cout << (door.isOpen() ? \"open\" : \"closed\") << std::endl;\n}",
+    "exampleOutput": "open",
+    "commonMistake": "door.open_ = trueのように内部表現を直接操作する。呼び出し側はDoorの公開APIを使います。",
+    "quiz": {
+      "question": "利用側がドアの状態を知るための公開操作は？",
+      "choices": [
+        "door.open_を読む",
+        "door.isOpen()を呼ぶ",
+        "Doorのprivateを書き換える"
+      ],
+      "answer": 1,
+      "explanation": "状態を問い合わせる公開APIを用意すれば、内部の保存方法を隠せます。"
+    },
+    "exercise": {
+      "prompt": "Doorクラスを作り、最初は閉じた状態にします。Oならopen、Cならclose、?なら状態を `open` または `closed` と表示します。n個のコマンドを読み、状態はprivateにしてください。nが0〜100でない場合は `invalid` と表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "5\n? O ? C ?\n",
+      "expectedOutput": "closed\nopen\nclosed",
+      "tests": [
+        {
+          "input": "5\n? O ? C ?\n",
+          "output": "closed\nopen\nclosed"
+        },
+        {
+          "input": "3\nO O ?\n",
+          "output": "open"
+        },
+        {
+          "input": "2\nC ?\n",
+          "output": "closed"
+        }
+      ],
+      "hints": [
+        "Doorは開閉状態をprivateなboolで持ちます。",
+        "OとCはDoorの操作を呼び、?はconst問い合わせを使います。",
+        "入力の処理はmainに置き、状態の変更方法はDoorのAPIに任せます。"
+      ]
+    },
+    "debug": {
+      "code": "door.open_ = true;"
+    }
+  },
+  {
+    "id": "w14-d5",
+    "version": 1,
+    "week": 14,
+    "day": 5,
+    "title": "状態を持たない処理は関数にする",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "永続する状態を持たない計算と、状態を守るオブジェクトを使い分ける。",
+    "minutes": 35,
+    "explanation": "すべての処理にクラスが必要なわけではありません。入力値から結果を計算するだけで、過去の呼び出しを覚える必要がない処理は、独立した関数で十分なことがあります。\n\n一方、CounterやHealthのように複数回の操作を通して状態を保ち、条件を守る必要があるものはオブジェクトにまとめる理由があります。設計では「何をクラスにするか」だけでなく「クラスにしなくてよいものは何か」も考えます。",
+    "example": "#include <iostream>\n\nint calculateDamage(int attack, int defense) {\n    const int damage = attack - defense;\n    return damage > 0 ? damage : 0;\n}\n\nint main() {\n    std::cout << \"damage: \" << calculateDamage(10, 3) << std::endl;\n}",
+    "exampleOutput": "damage: 7",
+    "commonMistake": "一度の計算だけを行う型を作り、攻撃値や防御値を保存しないのにオブジェクトの状態として扱う。",
+    "quiz": {
+      "question": "現在の状態を保存せず、毎回引数だけから結果を返す計算に向くものは？",
+      "choices": [
+        "自由関数",
+        "必ず継承クラス",
+        "グローバル変数"
+      ],
+      "answer": 0,
+      "explanation": "状態を保つ必要がなければ、入力と結果を明示する関数が簡潔です。"
+    },
+    "exercise": {
+      "prompt": "attackとdefenseを読みます。両方が0〜1000なら自由関数calculateDamageで `max(attack - defense, 0)` を計算し、`damage: <値>` と表示します。範囲外なら `invalid` と表示してください。状態を保持するクラスは作りません。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "10 3\n",
+      "expectedOutput": "damage: 7",
+      "tests": [
+        {
+          "input": "10 3\n",
+          "output": "damage: 7"
+        },
+        {
+          "input": "5 8\n",
+          "output": "damage: 0"
+        },
+        {
+          "input": "0 0\n",
+          "output": "damage: 0"
+        }
+      ],
+      "hints": [
+        "attackとdefenseからdamageを返す関数をmainの外に定義します。",
+        "負の差を返さないよう、差と0の大きい方を使います。",
+        "この計算は過去の呼び出し状態を必要としないので、関数だけで表します。"
+      ]
+    },
+    "debug": {
+      "code": "int calculateDamage(int attack, int defense) { return attack - defense; }"
+    }
+  },
+  {
+    "id": "w14-d6",
+    "version": 1,
+    "week": 14,
+    "day": 6,
+    "title": "ドメインの状態と表示の責務を分ける",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "Playerにゲーム状態を持たせ、文字列表示は利用側の関数へ分ける。",
+    "minutes": 45,
+    "explanation": "Playerは名前やHPなど、ゲーム内の状態とその変更を担当します。画面へどの順番で文字を出すかは別の責務です。表示処理をクラスの状態変更に混ぜず、公開問い合わせを使う関数へ置くと、後でコンソール表示をUIへ置き換えるときに影響を限定できます。\n\n自動採点は表示結果を検証できますが、クラスの分け方を出力だけから完全には証明できません。模範解答を読み、Playerが表示先へ直接依存していないかも確認してください。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Player {\npublic:\n    Player(std::string name, int hp) : name_{name}, hp_{hp} {}\n    const std::string& name() const { return name_; }\n    int hp() const { return hp_; }\n    void receiveDamage(int amount) {\n        hp_ -= amount;\n        if (hp_ < 0) hp_ = 0;\n    }\n\nprivate:\n    std::string name_;\n    int hp_{};\n};\n\nvoid printStatus(const Player& player) {\n    std::cout << player.name() << \" hp: \" << player.hp() << std::endl;\n}\n\nint main() {\n    Player player{\"Rin\", 10};\n    player.receiveDamage(3);\n    printStatus(player);\n}",
+    "exampleOutput": "Rin hp: 7",
+    "commonMistake": "PlayerのreceiveDamageが画面へHPを表示する。状態を変える処理と表示を分けると、それぞれを別の方法で利用できます。",
+    "quiz": {
+      "question": "Playerの状態を使って表示を行う関数に適した引数は？",
+      "choices": [
+        "Player&",
+        "const Player&",
+        "Playerをグローバル変数にする"
+      ],
+      "answer": 1,
+      "explanation": "表示関数は状態を変更しないので、const参照で受け取れます。"
+    },
+    "exercise": {
+      "prompt": "名前、初期HP、ダメージを読みます。Playerクラスに名前とHPをprivateで持たせ、receiveDamageでHPを0未満にしないようにします。printStatus(const Player&)関数が `名前 hp: <HP>` を表示します。名前は空白を含まない文字列、初期HPとダメージは0〜1000です。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "Rin 10 3\n",
+      "expectedOutput": "Rin hp: 7",
+      "tests": [
+        {
+          "input": "Rin 10 3\n",
+          "output": "Rin hp: 7"
+        },
+        {
+          "input": "Mira 5 8\n",
+          "output": "Mira hp: 0"
+        },
+        {
+          "input": "Kai 0 0\n",
+          "output": "Kai hp: 0"
+        }
+      ],
+      "hints": [
+        "Playerはnameとhpをprivateに持ちます。",
+        "状態を変えるreceiveDamageと、状態を読むconstメソッドを用意します。",
+        "表示はPlayerの外で、const Player&から得た情報だけを使います。"
+      ]
+    },
+    "debug": {
+      "code": "std::cout << name_ << \" hp: \" << hp_;"
+    }
+  },
+  {
+    "id": "w14-d7",
+    "version": 1,
+    "week": 14,
+    "day": 7,
+    "title": "総合設計：容量を守るInventoryを作る",
+    "subject": "オブジェクト指向設計",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 13の内容"
+    ],
+    "goal": "内部データを隠したInventoryの公開APIで追加と検索を行う。",
+    "minutes": 55,
+    "explanation": "小さなInventoryは、項目を保存する責務と最大容量を守る責務を持ちます。利用側にvectorを直接公開すると、容量を超える追加や内部順序の変更を防げません。add、contains、sizeのような操作を公開すれば、保存方法を後で変更しても利用側のコードを保ちやすくなります。\n\nこの課題では項目名を順番に追加し、満杯後の追加は拒否します。同じ名前の項目も個別に保存します。自動テストは追加・検索・容量の外から見える動作を検証し、設計意図は模範解答と説明で確認します。",
+    "example": "#include <iostream>\n#include <string>\n#include <vector>\n\nclass Inventory {\npublic:\n    explicit Inventory(int capacity) : capacity_{capacity} {}\n    bool add(const std::string& item) {\n        if (items_.size() >= static_cast<std::size_t>(capacity_)) return false;\n        items_.push_back(item);\n        return true;\n    }\n    bool contains(const std::string& item) const {\n        for (const std::string& saved : items_) {\n            if (saved == item) return true;\n        }\n        return false;\n    }\n    std::size_t size() const { return items_.size(); }\n\nprivate:\n    int capacity_{};\n    std::vector<std::string> items_;\n};\n\nint main() {\n    Inventory inventory{2};\n    inventory.add(\"potion\");\n    inventory.add(\"elixir\");\n    std::cout << \"stored: \" << inventory.size() << std::endl;\n    std::cout << \"contains elixir: \" << (inventory.contains(\"elixir\") ? \"yes\" : \"no\") << std::endl;\n}",
+    "exampleOutput": "stored: 2\ncontains elixir: yes",
+    "commonMistake": "Inventoryのvectorをpublicにする。利用側からitems_.push_backを呼ばれると、容量ルールを迂回できます。",
+    "quiz": {
+      "question": "容量上限の検査を一か所に集める公開操作は？",
+      "choices": [
+        "add",
+        "sizeだけ",
+        "利用側からvectorを変更"
+      ],
+      "answer": 0,
+      "explanation": "追加のたびに呼ぶaddが容量を検査し、上限を守れます。"
+    },
+    "exercise": {
+      "prompt": "capacity、追加を試す件数n、n個の項目名、最後に検索する名前を読みます。capacityが0〜20、nが0〜100ならInventoryへ順番に追加してください。容量を超えた項目は拒否します。`stored: <保存数>`、`contains: yes/no`、`rejected: <拒否数>` を3行で表示します。範囲外のcapacityまたはnは `invalid` と表示します。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "2 3\npotion elixir herb elixir\n",
+      "expectedOutput": "stored: 2\ncontains: yes\nrejected: 1",
+      "tests": [
+        {
+          "input": "2 3\npotion elixir herb elixir\n",
+          "output": "stored: 2\ncontains: yes\nrejected: 1"
+        },
+        {
+          "input": "0 2\na b missing\n",
+          "output": "stored: 0\ncontains: no\nrejected: 2"
+        },
+        {
+          "input": "4 3\nkey key map key\n",
+          "output": "stored: 3\ncontains: yes\nrejected: 0"
+        }
+      ],
+      "hints": [
+        "Inventoryはcapacityとvectorをprivateに持ちます。",
+        "addは満杯ならfalseを返し、追加できたときだけtrueを返します。",
+        "保存数と検索はsize()、contains()を通して調べ、items_を外へ公開しません。"
+      ]
+    },
+    "debug": {
+      "code": "if (items_.size() > static_cast<std::size_t>(capacity_)) return false;"
+    }
   }
 ]
