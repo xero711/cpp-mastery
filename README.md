@@ -23,6 +23,13 @@ pnpm test
 pnpm build
 ```
 
+Chromiumブラウザーでバックアップ・復元を確認するE2Eテストは、初回のみブラウザーをインストールしてから実行します。
+
+```powershell
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
 `pnpm build` は静的サイトを `out/` に出力します。GitHub Actionsもこの出力をPagesへ公開します。
 
 WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの56レッスン（Week 1〜8）の模範解答を実コンパイルし、110件の公開テスト入出力と照合できます。

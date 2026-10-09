@@ -81,3 +81,9 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Local browser review confirmed the Week 8 Day 7 Japanese lesson, typed quiz, debugging task, integrated combat exercise, and editor rendered. The practice page listed Week 8 and filtering it showed seven tasks.
 - Commit `e9bc15f` deployed successfully to GitHub Pages in [run 37907927815](https://github.com/xero711/cpp-mastery/actions/runs/37907927815); lint, application/API tests, static export, artifact upload, and deployment all passed.
 - Weeks 9–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed; current GitHub Actions variables and secrets are empty.
+
+## 2026-10-09 — backup/restore browser E2E
+
+- Added a Chromium Playwright E2E that saves learner progress, exports a backup, checks the runner token is absent, changes the answer, imports the backup, and verifies the saved answer and separate token are restored correctly.
+- The Pages workflow now installs Chromium and runs this E2E before the static build. `pnpm test` passes all 14 Vitest tests and 9 runner API tests; `pnpm lint`, `pnpm test:e2e` (1 browser test), and `pnpm build` (743 static pages) pass locally.
+- Manual browser verification also confirmed backup export/import behavior. Week 9–104 lesson authoring, broader browser E2E coverage, production runner hosting, live public-page inspection through the Cloudflare challenge, and HTTPS enforcement remain open.

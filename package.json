@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run && node --test services/runner/test/server.node.mjs",
+    "test:e2e": "playwright test",
     "verify:lessons": "scripts\\verify-lessons.cmd"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
