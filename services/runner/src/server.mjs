@@ -189,6 +189,9 @@ async function runSandboxCase(job, config, { signal, dockerBinary, timeoutMs }) 
       try {
         const result = JSON.parse(output);
         if (!validateSandboxResponse(result, 1)) throw new Error("sandbox response validation failed");
+        if (result.status === "runner_error" && diagnostic) {
+          console.error("C++ sandbox worker diagnostic", diagnostic.split("\n", 1)[0].slice(0, 160));
+        }
         resolve(result);
       } catch (error) {
         reject(error);

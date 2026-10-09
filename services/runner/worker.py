@@ -236,6 +236,7 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except Exception:
+    except Exception as error:
+        print(f"C++ worker internal error ({type(error).__name__})", file=sys.stderr, flush=True)
         emit({"status": "runner_error", "compilerOutput": "実行ワーカーで内部エラーが発生しました。", "cases": []})
         raise SystemExit(0)
