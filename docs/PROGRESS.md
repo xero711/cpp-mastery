@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 126 authored C++ reference solutions against 320 public and 148 hidden test cases, 70 standalone Week 9–18 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
+Verified: static export, lint, current automated tests, 133 authored C++ reference solutions against 341 public and 162 hidden test cases, 77 standalone Week 9–19 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
 
-Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 19–104.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 20–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -251,3 +251,10 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - The course now contains 126 daily lessons and reference solutions, 320 public grading cases, and 148 runner-only hidden cases. Chromium curriculum E2E includes authored lesson pages through Week 18.
 - `pnpm verify:lessons` passed with Visual Studio C++ for all 126 reference solutions, 70 standalone Week 9–18 examples, and all 320 public plus 148 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production static build generated 743 routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed.
 - GitHub Pages publication succeeded in [run 37943037551](https://github.com/xero711/cpp-mastery/actions/runs/37943037551), and isolated runner CI succeeded in [run 37943037422](https://github.com/xero711/cpp-mastery/actions/runs/37943037422). Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 19–104.
+
+## 2026-10-09 — Week 19 smart-pointer ownership
+
+- Authored seven lessons on `unique_ptr` and `make_unique`, ownership transfer, borrowed references, `shared_ptr`, `weak_ptr::lock`, breaking ownership cycles, and Scene-owned game characters.
+- The course now contains 133 daily lessons and reference solutions, 341 public grading cases, and 162 runner-only hidden cases. Chromium curriculum E2E covers the generated lesson routes; this added week uses the same published route/data path.
+- `pnpm verify:lessons` passed with Visual Studio C++ for all 133 reference solutions, 77 standalone Week 9–19 examples, and 341 public plus 162 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production build generated 743 static routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed, including the curriculum route through Week 19.
+- GitHub Pages remains the frontend host. The current Pages settings are public and use the GitHub Actions workflow. The Week 19 workflow deployment status will be recorded after publication. Live content verification is blocked in this environment by HTTP 403 on the `github.io` URL and Cloudflare's browser challenge on the existing custom-domain route. DNS and certificate state are unchanged.

@@ -3256,5 +3256,222 @@
         "output": "invalid"
       }
     ]
+  },
+  {
+    "id": "w19-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n\nstruct Hero {\n    Hero(std::string value, int health) : name{std::move(value)}, hp{health} {}\n    std::string name;\n    int hp;\n};\n\nint main() {\n    std::string name;\n    int hp{};\n    if (!(std::cin >> name >> hp) || hp < 0 || hp > 100) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    auto hero = std::make_unique<Hero>(name, hp);\n    std::cout << \"Hero: \" << hero->name << '\\n';\n    std::cout << \"HP: \" << hero->hp << '\\n';\n    return 0;\n}",
+    "debugFix": "std::unique_ptr<Hero> second{std::move(first)};",
+    "debugExplanation": "unique_ptrはコピーできません。所有権を別のunique_ptrへ移すときはムーブします。通常の生成ではmake_uniqueを使います。",
+    "tests": [
+      {
+        "input": "Aoi 72\n",
+        "output": "Hero: Aoi\nHP: 72"
+      },
+      {
+        "input": "Ren 0\n",
+        "output": "Hero: Ren\nHP: 0"
+      },
+      {
+        "input": "Kai 100\n",
+        "output": "Hero: Kai\nHP: 100"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Mira 45\n",
+        "output": "Hero: Mira\nHP: 45"
+      },
+      {
+        "input": "Aoi 101\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w19-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n\nstruct Item {\n    explicit Item(std::string value) : name{std::move(value)} {}\n    std::string name;\n};\n\nvoid equip(std::unique_ptr<Item> item) {\n    std::cout << \"equipped: \" << item->name << '\\n';\n}\n\nint main() {\n    std::string name;\n    if (!(std::cin >> name)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    auto item = std::make_unique<Item>(name);\n    equip(std::move(item));\n    std::cout << \"owner: \" << (item ? \"yes\" : \"no\") << '\\n';\n    return 0;\n}",
+    "debugFix": "equip(std::move(item));\nstd::cout << (item ? \"yes\" : \"no\");",
+    "debugExplanation": "unique_ptrはコピー渡しできません。所有権を渡した後の元ポインタは空なので、対象へアクセスせず状態を確認します。",
+    "tests": [
+      {
+        "input": "Bronze\n",
+        "output": "equipped: Bronze\nowner: no"
+      },
+      {
+        "input": "Potion\n",
+        "output": "equipped: Potion\nowner: no"
+      },
+      {
+        "input": "Key\n",
+        "output": "equipped: Key\nowner: no"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Shield\n",
+        "output": "equipped: Shield\nowner: no"
+      },
+      {
+        "input": "",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w19-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n\nstruct Hero {\n    Hero(std::string value, int health) : name{std::move(value)}, hp{health} {}\n    std::string name;\n    int hp;\n};\n\nvoid show(const Hero& hero) {\n    std::cout << hero.name << \" HP=\" << hero.hp << '\\n';\n}\n\nint main() {\n    std::string name;\n    int hp{};\n    if (!(std::cin >> name >> hp) || hp < 0 || hp > 100) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    auto hero = std::make_unique<Hero>(name, hp);\n    show(*hero);\n    std::cout << \"owner: \" << (hero ? \"active\" : \"empty\") << '\\n';\n    return 0;\n}",
+    "debugFix": "void show(const Hero& hero) {\n    std::cout << hero.name;\n}\nshow(*owner);",
+    "debugExplanation": "表示関数は所有権を受け取る必要がありません。const参照で借りれば、呼び出し元のunique_ptrが所有を続けます。",
+    "tests": [
+      {
+        "input": "Ren 30\n",
+        "output": "Ren HP=30\nowner: active"
+      },
+      {
+        "input": "Aoi 0\n",
+        "output": "Aoi HP=0\nowner: active"
+      },
+      {
+        "input": "Kai 100\n",
+        "output": "Kai HP=100\nowner: active"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Mira 64\n",
+        "output": "Mira HP=64\nowner: active"
+      },
+      {
+        "input": "Ren 101\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w19-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n\nstruct Asset {\n    Asset(std::string value, int cost) : name{std::move(value)}, price{cost} {}\n    std::string name;\n    int price;\n};\n\nint main() {\n    std::string name;\n    int price{};\n    if (!(std::cin >> name >> price) || price < 0 || price > 10000) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    auto catalog = std::make_shared<Asset>(name, price);\n    auto inventory = catalog;\n    auto equipped = inventory;\n    std::cout << \"asset: \" << equipped->name << '\\n';\n    std::cout << \"owners: \" << catalog.use_count() << '\\n';\n    return 0;\n}",
+    "debugFix": "std::shared_ptr<Asset> inventory{catalog};",
+    "debugExplanation": "共有したい同一オブジェクトのshared_ptrをコピーします。make_sharedで別に作ると異なるAssetになります。",
+    "tests": [
+      {
+        "input": "Bronze 12\n",
+        "output": "asset: Bronze\nowners: 3"
+      },
+      {
+        "input": "Potion 0\n",
+        "output": "asset: Potion\nowners: 3"
+      },
+      {
+        "input": "Gem 10000\n",
+        "output": "asset: Gem\nowners: 3"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Shield 250\n",
+        "output": "asset: Shield\nowners: 3"
+      },
+      {
+        "input": "Gem 10001\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w19-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n\nstruct Pet {\n    explicit Pet(std::string value) : name{std::move(value)} {}\n    std::string name;\n};\n\nint main() {\n    std::string name;\n    if (!(std::cin >> name)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::weak_ptr<Pet> observer;\n    {\n        auto owner = std::make_shared<Pet>(name);\n        observer = owner;\n        if (auto pet = observer.lock()) {\n            std::cout << \"pet: \" << pet->name << '\\n';\n        }\n    }\n    std::cout << (observer.lock() ? \"available\" : \"expired\") << '\\n';\n    return 0;\n}",
+    "debugFix": "if (auto pet = observer.lock()) {\n    std::cout << pet->name;\n}",
+    "debugExplanation": "expired()の確認とlock()の間に状態が変わる可能性があります。lock()の結果を直接確認してから使います。",
+    "tests": [
+      {
+        "input": "Momo\n",
+        "output": "pet: Momo\nexpired"
+      },
+      {
+        "input": "Luna\n",
+        "output": "pet: Luna\nexpired"
+      },
+      {
+        "input": "Tama\n",
+        "output": "pet: Tama\nexpired"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Nagi\n",
+        "output": "pet: Nagi\nexpired"
+      },
+      {
+        "input": "",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w19-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n\nstruct Scene;\nstruct Actor { std::weak_ptr<Scene> scene; };\nstruct Scene { std::shared_ptr<Actor> actor; };\n\nint main() {\n    std::weak_ptr<Scene> observer;\n    {\n        auto scene = std::make_shared<Scene>();\n        auto actor = std::make_shared<Actor>();\n        scene->actor = actor;\n        actor->scene = scene;\n        observer = scene;\n        std::cout << (actor->scene.lock() ? \"linked\" : \"missing\") << '\\n';\n    }\n    std::cout << (observer.expired() ? \"released\" : \"alive\") << '\\n';\n    return 0;\n}",
+    "debugFix": "struct Actor { std::weak_ptr<Scene> scene; };\nstruct Scene { std::shared_ptr<Actor> actor; };",
+    "debugExplanation": "双方向のshared_ptrは循環し得ます。所有しない逆向きリンクをweak_ptrにします。",
+    "tests": [
+      {
+        "input": "",
+        "output": "linked\nreleased"
+      },
+      {
+        "input": "ignored\n",
+        "output": "linked\nreleased"
+      },
+      {
+        "input": "1\n",
+        "output": "linked\nreleased"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "",
+        "output": "linked\nreleased"
+      },
+      {
+        "input": "anything\n",
+        "output": "linked\nreleased"
+      }
+    ]
+  },
+  {
+    "id": "w19-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <memory>\n#include <string>\n#include <utility>\n#include <vector>\n\nstruct Character {\n    Character(std::string value, int health) : name{std::move(value)}, hp{health} {}\n    std::string name;\n    int hp;\n};\n\nclass Scene {\npublic:\n    void add(std::unique_ptr<Character> character) {\n        characters_.push_back(std::move(character));\n    }\n    void show() const {\n        for (const auto& character : characters_) {\n            std::cout << character->name << \" HP=\" << character->hp << '\\n';\n        }\n    }\nprivate:\n    std::vector<std::unique_ptr<Character>> characters_;\n};\n\nint main() {\n    int count{};\n    if (!(std::cin >> count) || count < 1 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    Scene scene;\n    for (int i = 0; i < count; ++i) {\n        std::string name;\n        int hp{};\n        if (!(std::cin >> name >> hp) || hp < 0 || hp > 100) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        scene.add(std::make_unique<Character>(name, hp));\n    }\n    scene.show();\n    return 0;\n}",
+    "debugFix": "void add(std::unique_ptr<Character> character) {\n    characters_.push_back(std::move(character));\n}",
+    "debugExplanation": "生ポインタを保存すると所有権と解放責任が曖昧になります。unique_ptrを受け取ってvectorへムーブするとSceneの所有が明確になります。",
+    "tests": [
+      {
+        "input": "2 Aoi 72 Ren 45\n",
+        "output": "Aoi HP=72\nRen HP=45"
+      },
+      {
+        "input": "1 Kai 0\n",
+        "output": "Kai HP=0"
+      },
+      {
+        "input": "3 Mira 30 Nagi 60 Luna 100\n",
+        "output": "Mira HP=30\nNagi HP=60\nLuna HP=100"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 A 1 B 2 C 3 D 4 E 5\n",
+        "output": "A HP=1\nB HP=2\nC HP=3\nD HP=4\nE HP=5"
+      },
+      {
+        "input": "1 A 101\n",
+        "output": "invalid"
+      }
+    ]
   }
 ]

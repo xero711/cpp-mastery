@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-test("Weeks 9 through 18 lessons are available from the curriculum and render authored content", async ({ page }) => {
-  for (const [week, title] of [[9, "宣言と定義を見分ける"], [10, "classで状態と操作をまとめる"], [11, "デストラクタとスコープの寿命"], [12, "std::stringの長さと文字アクセス"], [13, "stringの長さと検索をまとめて確認する"], [14, "クラスに一つの責務を持たせる"], [15, "public継承で共通の役割を受け継ぐ"], [16, "部品を持つ関係をメンバーとして表す"], [17, "RAIIで取得と解放をオブジェクトの寿命に結び付ける"], [18, "コピー構築で独立した値を作る"]] as const) {
+test("Weeks 9 through 19 lessons are available from the curriculum and render authored content", async ({ page }) => {
+  for (const [week, title] of [[9, "宣言と定義を見分ける"], [10, "classで状態と操作をまとめる"], [11, "デストラクタとスコープの寿命"], [12, "std::stringの長さと文字アクセス"], [13, "stringの長さと検索をまとめて確認する"], [14, "クラスに一つの責務を持たせる"], [15, "public継承で共通の役割を受け継ぐ"], [16, "部品を持つ関係をメンバーとして表す"], [17, "RAIIで取得と解放をオブジェクトの寿命に結び付ける"], [18, "コピー構築で独立した値を作る"], [19, "std::unique_ptrとmake_uniqueで単独所有する"]] as const) {
     await page.goto("curriculum/");
     const weekLabel = "W" + String(week).padStart(2, "0");
     const row = page.locator(".week-row").filter({ has: page.getByText(weekLabel, { exact: true }) });

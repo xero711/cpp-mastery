@@ -43,7 +43,7 @@ pnpm test:e2e:runner
 
 `pnpm build` は静的サイトを `out/` に出力します。GitHub Actionsもこの出力をPagesへ公開します。
 
-WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの126レッスン（Week 1〜18）の模範解答とWeek 9以降のコード例を実コンパイルし、320件の公開テストと148件のrunner専用テストを照合できます。教材データを編集したときは `pnpm generate:lessons` を先に実行してください。
+WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの133レッスン（Week 1〜19）の模範解答とWeek 9以降のコード例を実コンパイルし、341件の公開テストと162件のrunner専用テストを照合できます。教材データを編集したときは `pnpm generate:lessons` を先に実行してください。
 
 ```powershell
 pnpm verify:lessons

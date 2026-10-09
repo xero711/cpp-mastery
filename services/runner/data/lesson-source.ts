@@ -12,6 +12,7 @@ import { week15LessonSeeds } from "./lesson-seeds/week-15.ts";
 import { week16LessonSeeds } from "./lesson-seeds/week-16.ts";
 import { week17LessonSeeds } from "./lesson-seeds/week-17.ts";
 import { week18LessonSeeds } from "./lesson-seeds/week-18.ts";
+import { week19LessonSeeds } from "./lesson-seeds/week-19.ts";
 
 export type Lesson = {
   id: string;
@@ -71,6 +72,7 @@ const weekNames = [
   "合成と継承の使い分け",
   "RAIIとリソース管理",
   "コピー・ムーブ・Rule of Zero/Five",
+  "unique_ptr、shared_ptr、weak_ptr",
 ];
 
 const starter = `#include <iostream>
@@ -131,6 +133,7 @@ const lessonSeeds: LessonSeed[][] = [
   week16LessonSeeds,
   week17LessonSeeds,
   week18LessonSeeds,
+  week19LessonSeeds,
 ];
 
 const hiddenTestsByLesson: Record<string, { input: string; output: string }[]> = {
