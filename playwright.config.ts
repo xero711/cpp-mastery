@@ -1,6 +1,9 @@
 import { defineConfig } from "@playwright/test";
 
-const baseURL = "http://localhost:3008";
+const [owner, repository] = (process.env.GITHUB_REPOSITORY ?? "").split("/");
+const isUserOrOrganizationSite = repository === `${owner}.github.io`;
+const basePath = repository && !isUserOrOrganizationSite ? `/${repository}` : "";
+const baseURL = `http://localhost:3008${basePath}/`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -18,7 +21,7 @@ export default defineConfig({
   },
   webServer: {
     command: "pnpm dev --port 3008",
-    url: `${baseURL}/dashboard/`,
+    url: `${baseURL}dashboard/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
