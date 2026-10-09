@@ -4,7 +4,7 @@
 
 The static GitHub Pages build has no server database. IndexedDB stores a versioned record for one browser profile:
 
-- `settings`: learning start date, study days, daily target, and theme. The optional runner URL is a build-time public setting, not learner data.
+- `settings`: learning start date, study days, daily target, and theme. The optional runner URL is either a build-time public setting or a browser-local override; it is kept outside learner backups.
 - `lessons`: lesson ID, draft code, quiz/debug answers, completion state, and timestamps.
 - `submissions`: source snapshot, runner status, compiler result, program output, tests, and timestamp.
 - `projects`: learner-authored project notes and status.

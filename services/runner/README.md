@@ -10,13 +10,15 @@ Requirements: Node.js 24 and Docker Desktop using the Linux container engine. Bu
 docker build --file services/runner/Dockerfile.sandbox --tag cpp-mastery-sandbox:dev services/runner
 ```
 
-Copy `services/runner/.env.example` to `services/runner/.env.private`, set a random token with at least 32 characters, then start the API from the repository root:
+Copy `services/runner/.env.example` to `services/runner/.env.private`. Set a random token with at least 32 characters and allow the exact origin that serves the site. For the current Pages custom domain, use `RUNNER_ALLOWED_ORIGINS=https://xero-x.me,http://localhost:3000`. Keep `RUNNER_HOST=127.0.0.1` so the service is reachable only on this PC. Then start the API from the repository root:
 
 ```powershell
 Copy-Item services/runner/.env.example services/runner/.env.private
 # Edit .env.private and replace the example token before starting the service.
 node --env-file=services/runner/.env.private services/runner/src/server.mjs
 ```
+
+In the GitHub Pages Settings screen, save `http://127.0.0.1:8081` as the runner URL and enter the same token. The URL override and token stay in this browser and are not part of learner backups. Chrome 142 and later may ask to let the Pages site access the local network; allow it only when connecting to your own loopback runner. This personal Windows setup uses Docker's default `runc` runtime and is not a production public runner. Use the separate gVisor deployment guide before accepting public submissions.
 
 The API binds to loopback by default. Do not expose this development configuration to the Internet.
 

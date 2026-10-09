@@ -4,7 +4,7 @@
 
 C++ Mastery is a static Next.js App Router export deployed to GitHub Pages. `next build` writes the deployable site to `out/`. The Pages project prefix is derived from `GITHUB_REPOSITORY` during CI; `owner.github.io` repositories use the root path. All routes are statically generated.
 
-GitHub Pages cannot run a Node.js API, database, compiler, or secret-bearing AI endpoint. The shipped client stores one learner's progress in IndexedDB and supports JSON backup/restore. A production C++ execution service must be a separately hosted HTTPS service configured at build time with `NEXT_PUBLIC_CPP_RUNNER_URL`. It must implement the runner protocol and allow only the published Pages origin. An unset URL means compilation is unavailable and the UI must say so.
+GitHub Pages cannot run a Node.js API, database, compiler, or secret-bearing AI endpoint. The shipped client stores one learner's progress in IndexedDB and supports JSON backup/restore. A production C++ execution service must be a separately hosted HTTPS service. Its URL can be supplied at build time with `NEXT_PUBLIC_CPP_RUNNER_URL` or overridden per browser in Settings. For owner-only local use, HTTP is accepted only for loopback addresses and the API must bind to `127.0.0.1`; a public website may trigger the browser's Local Network Access permission. The runner must allow only the exact published Pages origin. An unset URL means compilation is unavailable and the UI must say so.
 
 ## Current components
 
@@ -13,14 +13,14 @@ GitHub Pages cannot run a Node.js API, database, compiler, or secret-bearing AI 
 - `src/lib/lessons.ts` and `src/lib/lessons.public.json`: browser-safe payload for the 56 authored Week 1–8 lessons.
 - `services/runner/data/lesson-source.ts`: authoring source for private answers and test definitions; `pnpm generate:lessons` emits the browser-safe JSON and runner registry separately.
 - `src/lib/browser-store.ts`: IndexedDB-backed learner settings, drafts, answers, and evidence.
-- `src/lib/runner-client.ts`: browser client for an optional isolated runner; it never compiles on the Pages host.
+- `src/lib/runner-client.ts`: browser client for an optional isolated runner; it never compiles on the Pages host and validates browser-local endpoint overrides.
 - `.github/workflows/deploy-pages.yml`: build and publish `out/` through GitHub Pages Actions.
 
 ## Data flow
 
 1. Static lesson content is shipped with the site.
 2. The browser reads and writes learner state in IndexedDB. No account or cloud sync exists in this phase.
-3. The browser submits only source, lesson ID, and selected standard to `/v1/grade` after an explicit Submit action. It does not send test inputs or expected outputs. The runner URL is a Pages build variable; the bearer token is stored in a separate browser IndexedDB store and is excluded from learner backups.
+3. The browser submits only source, lesson ID, and selected standard to `/v1/grade` after an explicit Submit action. It does not send test inputs or expected outputs. A runner URL can come from the Pages build or a browser-local setting; the bearer token is stored in a separate browser IndexedDB store and is excluded from learner backups.
 4. The runner loads public and private cases from its own registry, compiles and runs each case in a disposable sandbox, and calculates the score server-side. It returns public case details and the aggregate verdict; hidden inputs and expected outputs stay on the runner.
 5. Quiz choices are graded against their pre-authored choice index and saved locally, so lesson checks work when the runner is unavailable. Solutions and debug fixes are requested through `/v1/reveal` only after the learner chooses to reveal them. Reference solutions, fixes, and hidden tests remain absent from the static payload.
 6. The browser records the returned result and lesson completion locally.
@@ -33,7 +33,7 @@ Production startup rejects Docker's `runc`, requires gVisor (`runsc`), an immuta
 
 ## Next architecture steps
 
-1. Deploy the runner to a dedicated, hardened HTTPS host, then configure the Pages build variable only after its origin, gVisor runtime, authentication, and ingress policy are verified.
+1. For production use, deploy the runner to a dedicated, hardened HTTPS host, then configure the Pages build variable only after its origin, gVisor runtime, authentication, and ingress policy are verified. A browser-local override is reserved for the owner's loopback-only development runner.
 2. Add an authenticated API/database only if multi-device sync or multiple learners is required; keep GitHub Pages as the static frontend.
 3. Add a server-side AI provider adapter. Never expose provider keys in the static bundle.
 

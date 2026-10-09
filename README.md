@@ -52,7 +52,9 @@ pnpm verify:lessons
 
 GitHub PagesはHTML/CSS/JavaScriptを配信するため、C++コンパイラやサーバーAPIは動かせません。現状、未設定時の採点画面は「実行ワーカー未設定」と表示します。ホストPC上で提出コードを無制限に実行するフォールバックはありません。
 
-別のHTTPSホストに隔離C++実行サービスを用意し、そのURLをGitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に `CPP_RUNNER_URL` として設定すると、Pagesのビルドへ接続先が含まれます。利用者は設定画面で各自のアクセストークンを登録します。`/v1/grade` はlesson IDとコードを受け取り、runner内の公開・非公開ケースで採点します。選択式クイズは事前教材で採点でき、runnerが未設定でも進捗を保存します。模範解答・デバッグ修正は明示操作後に `/v1/reveal` から取得し、Pagesの配信物には含めません。サービスには認証、送信元Originの許可、ソース・時間・CPU・メモリ・プロセス・出力制限が必要です。[runnerの実装と起動条件](services/runner/README.md)、[アーキテクチャ](docs/ARCHITECTURE.md)、[セキュリティ](docs/SECURITY.md) を参照してください。
+自分のWindows PCで使う場合は、Docker DesktopのLinuxコンテナを起動し、[runner READMEのローカル手順](services/runner/README.md#local-development)でAPIを開始します。GitHub Pagesの設定画面に `http://127.0.0.1:8081` とrunnerトークンを登録すると、そのブラウザーのコードだけをPC内のrunnerへ送れます。HTTP URLはlocalhost/loopbackに限定され、APIは `127.0.0.1` だけで待ち受けます。[Chromeのローカルネットワーク許可](https://developer.chrome.com/blog/local-network-access)が表示された場合は、自分のPC上のrunnerへ接続するときだけ許可してください。
+
+別のHTTPSホストにrunnerを用意する場合は、そのURLをGitHubリポジトリの **Settings → Secrets and variables → Actions → Variables** に `CPP_RUNNER_URL` として設定すると、Pagesのビルドへ接続先が含まれます。ブラウザーごとのURL設定はビルドURLを上書きできます。利用者は設定画面で各自のアクセストークンを登録します。`/v1/grade` はlesson IDとコードを受け取り、runner内の公開・非公開ケースで採点します。選択式クイズは事前教材で採点でき、runnerが未設定でも進捗を保存します。模範解答・デバッグ修正は明示操作後に `/v1/reveal` から取得し、Pagesの配信物には含めません。サービスには認証、送信元Originの許可、ソース・時間・CPU・メモリ・プロセス・出力制限が必要です。[runnerの実装と起動条件](services/runner/README.md)、[アーキテクチャ](docs/ARCHITECTURE.md)、[セキュリティ](docs/SECURITY.md) を参照してください。
 
 ## 学習データとプライバシー
 

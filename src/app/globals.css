@@ -603,6 +603,7 @@ h1, h2, h3, p { margin-top: 0; }
 .runner-token-label strong { color: var(--text); font-size: 10px; font-weight: 580; }
 .runner-token-label small { margin-top: 3px; color: var(--subtle); font-size: 8px; }
 .runner-token-input { width: min(280px, 52%); min-width: 115px; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-raised); color: var(--text); font-size: 9px; }
+.runner-url-input { width: min(390px, 68%); }
 .theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .theme-choice { display: flex; align-items: center; gap: 9px; min-height: 59px; padding: 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface-raised); color: var(--muted); text-align: left; }
 .theme-choice > span { display: flex; flex: 1; flex-direction: column; }
@@ -747,6 +748,7 @@ h1, h2, h3, p { margin-top: 0; }
   .runner-token-label { gap: 8px; }
   .runner-token-label small { max-width: 180px; }
   .runner-token-input { width: 48%; min-width: 105px; }
+  .runner-url-input { width: 58%; min-width: 130px; }
 }
 
 @media (max-width: 420px) {

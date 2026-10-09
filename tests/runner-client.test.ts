@@ -19,6 +19,39 @@ describe("runner client privacy boundary", () => {
     vi.unstubAllEnvs();
   });
 
+  it("allows HTTPS runners and HTTP only on loopback", async () => {
+    const { normalizeRunnerUrl } = await import("../src/lib/runner-client");
+
+    expect(normalizeRunnerUrl("https://runner.example.com/")).toBe("https://runner.example.com");
+    expect(normalizeRunnerUrl("http://127.0.0.1:8081")).toBe("http://127.0.0.1:8081");
+    expect(normalizeRunnerUrl("http://localhost:8081")).toBe("http://localhost:8081");
+    expect(normalizeRunnerUrl("http://[::1]:8081")).toBe("http://[::1]:8081");
+    expect(normalizeRunnerUrl("http://192.168.1.8:8081")).toBe("");
+    expect(normalizeRunnerUrl("http://localhost.example.com:8081")).toBe("");
+    expect(normalizeRunnerUrl("https://user:password@runner.example.com")).toBe("");
+    expect(normalizeRunnerUrl("https://runner.example.com?token=secret")).toBe("");
+  });
+
+  it("uses the browser-local runner URL override before the build default", async () => {
+    vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
+    vi.stubGlobal("window", {
+      localStorage: { getItem: (key: string) => key === "cpp-mastery-runner-url" ? "http://127.0.0.1:8081" : null },
+    });
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      status: "passed",
+      message: "採点成功",
+      compilerOutput: "",
+      cases: [publicCase(`${lessons[0].exercise.expectedOutput}\n`, true)],
+      score: 100,
+      durationMs: 4,
+    }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { gradeLessonCode } = await import("../src/lib/runner-client");
+    expect((await gradeLessonCode("source", lessons[0], "c++17", token)).status).toBe("passed");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:8081/v1/grade");
+  });
+
   it("sends only source, lesson id, and standard to server-owned grading", async () => {
     vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({

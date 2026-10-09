@@ -1,4 +1,5 @@
 import type { Lesson } from "@/lib/lessons";
+import { useSyncExternalStore } from "react";
 
 export type GradeResult = {
   status: "passed" | "failed" | "compile_error" | "unavailable" | "runner_error";
@@ -18,20 +19,64 @@ type ApiGradeResult = {
   durationMs: number;
 };
 
-const configuredRunner = resolveRunnerUrl(process.env.NEXT_PUBLIC_CPP_RUNNER_URL);
+const configuredRunner = normalizeRunnerUrl(process.env.NEXT_PUBLIC_CPP_RUNNER_URL);
+const runnerUrlStorageKey = "cpp-mastery-runner-url";
+const runnerUrlChangedEvent = "cpp-mastery-runner-url-changed";
 const sourceLimitBytes = 32_000;
 const responseLimitBytes = 2 * 1024 * 1024;
 
-function resolveRunnerUrl(value: string | undefined) {
+export function normalizeRunnerUrl(value: string | undefined) {
   if (!value?.trim()) return "";
   try {
     const url = new URL(value.trim());
-    const localDevelopment = url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname);
+    const localDevelopment = url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
     if ((!localDevelopment && url.protocol !== "https:") || url.username || url.password || url.search || url.hash) return "";
-    return url.toString().replace(/\/$/, "");
+    return url.toString().replace(/\/+$/, "");
   } catch {
     return "";
   }
+}
+
+export function getRunnerUrlOverride() {
+  if (typeof window === "undefined") return "";
+  try {
+    return normalizeRunnerUrl(window.localStorage.getItem(runnerUrlStorageKey) ?? undefined);
+  } catch {
+    return "";
+  }
+}
+
+export function getConfiguredRunnerUrl() {
+  return getRunnerUrlOverride() || configuredRunner;
+}
+
+export function saveRunnerUrlOverride(value: string) {
+  const normalized = normalizeRunnerUrl(value);
+  if (!normalized) throw new Error("URLはHTTPSで入力してください。HTTPを使えるのはlocalhost、127.0.0.1、または[::1]だけです。");
+  if (typeof window === "undefined") throw new Error("ブラウザーからURLを保存してください。");
+  window.localStorage.setItem(runnerUrlStorageKey, normalized);
+  window.dispatchEvent(new Event(runnerUrlChangedEvent));
+  return normalized;
+}
+
+export function clearRunnerUrlOverride() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(runnerUrlStorageKey);
+  window.dispatchEvent(new Event(runnerUrlChangedEvent));
+}
+
+function subscribeRunnerUrl(onChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onChange);
+  window.addEventListener(runnerUrlChangedEvent, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(runnerUrlChangedEvent, onChange);
+  };
+}
+
+export function useRunnerConfigured() {
+  return useSyncExternalStore(subscribeRunnerUrl, () => Boolean(getConfiguredRunnerUrl()), () => Boolean(configuredRunner));
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -74,9 +119,10 @@ function unavailable(message: string): GradeResult {
 }
 
 async function postRunner(path: string, body: unknown, apiToken: string) {
-  if (!configuredRunner) return { ok: false as const, message: "このGitHub PagesサイトにC++実行ワーカーのURLが設定されていません。" };
+  const runnerUrl = getConfiguredRunnerUrl();
+  if (!runnerUrl) return { ok: false as const, message: "設定画面で実行ワーカーのURLを登録してください。" };
   if (!apiToken.trim()) return { ok: false as const, message: "設定画面で実行ワーカーのアクセストークンを登録してください。トークンはこのブラウザーだけに保存されます。" };
-  const response = await fetch(`${configuredRunner}${path}`, {
+  const response = await fetch(`${runnerUrl}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiToken.trim()}` },
     body: JSON.stringify(body),
@@ -113,7 +159,7 @@ export async function gradeLessonCode(
   standard: "c++17" | "c++20" | "c++23" = lesson.standard,
   apiToken = "",
 ): Promise<GradeResult> {
-  if (!configuredRunner) return unavailable("このGitHub PagesサイトにC++実行ワーカーのURLが設定されていません。コードはブラウザー内に保存できますが、コンパイル・採点は停止中です。");
+  if (!getConfiguredRunnerUrl()) return unavailable("設定画面で実行ワーカーのURLを登録してください。コードはブラウザー内に保存できますが、コンパイル・採点は停止中です。");
   if (!apiToken.trim()) return unavailable("設定画面で実行ワーカーのアクセストークンを登録してください。トークンはこのブラウザーだけに保存されます。");
   if (new TextEncoder().encode(source).byteLength > sourceLimitBytes) {
     return { status: "runner_error", message: "提出コードは32 KB以下にしてください。", cases: [], score: 0, durationMs: 0 };
@@ -159,8 +205,4 @@ export async function revealLessonAnswer(lessonId: string, kind: "solution" | "d
   const response = await postRunner("/v1/reveal", { lessonId, kind }, apiToken);
   if (!response.ok) throw new Error(response.message);
   return response.raw;
-}
-
-export function hasConfiguredRunner() {
-  return Boolean(configuredRunner);
 }
