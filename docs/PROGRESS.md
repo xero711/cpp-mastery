@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 28 authored C++ reference solutions against their public test outputs, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 35 authored C++ reference solutions against 47 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
 
-Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 4.
+Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 5.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -37,3 +37,11 @@ Not yet accepted: learner code compiled and graded through an isolated service, 
 - Docker integration has not run on this PC because Docker Desktop and a WSL distribution are absent. The public runner remains undeployed; no Linux host, gVisor runtime, HTTPS endpoint, or cloud credentials are available here.
 
 Acceptance evidence for this implementation: local browser rendering of the runner credential controls, frontend and API unit tests, lint, static build, production-configuration rejection tests, successful GitHub Docker integration, and a successful Pages deployment. Pending: a production gVisor deployment, end-to-end C++ execution through the hosted site, HTTPS enforcement for the custom-domain Pages URL, and live public-page inspection beyond the Cloudflare challenge.
+
+## 2026-10-09 — Week 5 daily lessons
+
+- Authored all seven Week 5 lessons on function declarations, arguments, return values, boolean predicates, local scope, combined functions, and a short review challenge. Each lesson includes Japanese instruction, worked code/output, a quiz, a coding task and solution, hints, and a debugging task. Public test cases cover representative inputs; the review score is capped at 100.
+- The course now contains 35 complete daily lesson records with 35 reference solutions and 47 public test cases. The code exercise week filter is generated from authored lesson data and displays Week 5 only when it has lessons.
+- `pnpm test`: passed (3 Vitest files / 9 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 35 reference programs and checked all 47 public cases.
+- Local browser review confirmed Week 5 Day 1 lesson content and that the practice week filter offers Week 5 with seven Week 5 tasks.
+- Weeks 6–104 still have planned weekly topics and daily templates, not complete authored lessons. The isolated runner is implemented and passed Docker integration in GitHub Actions, but no production gVisor service is deployed.

@@ -1,3 +1,5 @@
+import { week5LessonSeeds } from "./lesson-seeds/week-05.ts";
+
 export type Lesson = {
   id: string;
   version: 1;
@@ -27,10 +29,11 @@ export type Lesson = {
   standard: "c++17";
 };
 
-type LessonSeed = Omit<Lesson, "id" | "version" | "week" | "day" | "subject" | "difficulty" | "prerequisites" | "standard" | "exercise"> & {
+export type LessonSeed = Omit<Lesson, "id" | "version" | "week" | "day" | "subject" | "difficulty" | "prerequisites" | "standard" | "exercise"> & {
   prompt: string;
   solution: string;
   input?: string;
+  tests?: { input: string; output: string }[];
   hints: [string, string, string];
 };
 
@@ -39,6 +42,7 @@ const weekNames = [
   "変数・型・初期化",
   "演算・変換・安全性",
   "条件分岐・ループ",
+  "関数・引数・戻り値",
 ];
 
 const starter = `#include <iostream>
@@ -85,6 +89,7 @@ const lessonSeeds: LessonSeed[][] = [
     { title: "break と continue", goal: "反復の終了と現在回のスキップを使い分ける。", minutes: 35, explanation: "break は最も内側のループを終了します。continue はその回の残りの処理を飛ばして、次の反復へ進みます。", example: `for (int i = 1; i <= 5; ++i) {\n    if (i == 3) continue;\n    std::cout << i << ' ';\n}`, exampleOutput: "1 2 4 5", commonMistake: "continue の後に更新式がないwhileループで、条件変数も更新せず停止しない。", quiz: { question: "continue の動作は？", choices: ["ループ全体を終える", "現在の反復を飛ばす", "プログラムを終了する"], answer: 1, explanation: "continueは現在回の残りを飛ばし、次の反復に移ります。" }, prompt: "1からnまでのうち、3の倍数だけを飛ばして表示してください。入力は 5 です。", solution: `#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    for (int i = 1; i <= n; ++i) {\n        if (i % 3 == 0) continue;\n        std::cout << i << '\\n';\n    }\n}`, input: "5\n", hints: ["1からnまでループします。", "3で割った余りが0ならcontinueします。", "それ以外の数だけ出力します。"], debug: { code: `int i{1};\nwhile (i <= 5) {\n    if (i == 3) continue;\n    std::cout << i << '\\n';\n    ++i;\n}`, fix: `if (i == 3) { ++i; continue; }`, explanation: "i==3でcontinueすると末尾の++iを飛ばし、条件が変わらないままになります。" } },
     { title: "総合：数当てゲームのロジック", goal: "入力、条件、反復をつなぎ、終了条件が明確な小課題を作る。", minutes: 50, explanation: "数当てゲームでは、入力値を目標値と比べて、正解なら終了、違えばヒントを出して続けます。今回は再現しやすいよう目標値を固定します。", example: `const int target{7};\nint guess{};\nstd::cin >> guess;\nif (guess == target) std::cout << "correct\\n";`, exampleOutput: "入力に応じて変わる", commonMistake: "正解した後もループを続ける、または不正解でループを終える。", quiz: { question: "正解時にゲームを終えるにはどんな制御が使える？", choices: ["break", "continue", "++"], answer: 0, explanation: "breakはループを終了します。" }, prompt: "目標値7の数当てを作ります。入力を読み、7なら correct、それより小さければ too low、大きければ too high と表示してください。入力は 5 です。", solution: `#include <iostream>\nint main() {\n    const int target{7};\n    int guess{};\n    std::cin >> guess;\n    if (guess == target) std::cout << "correct\\n";\n    else if (guess < target) std::cout << "too low\\n";\n    else std::cout << "too high\\n";\n}`, input: "5\n", hints: ["targetをconst intで7にします。", "guessを入力してtargetと比較します。", "等しい・小さい・大きいの3分岐にします。"], debug: { code: `if (guess < target) std::cout << "correct";\nelse std::cout << "too low";`, fix: `if (guess == target) std::cout << "correct";\nelse if (guess < target) std::cout << "too low";\nelse std::cout << "too high";`, explanation: "正解判定は == です。大きい場合の分岐も必要です。" } },
   ],
+  week5LessonSeeds,
 ];
 
 const exerciseOutputs = [
@@ -92,6 +97,7 @@ const exerciseOutputs = [
   "lives: 3", "12", "100", "S\ntrue", "14", "non-positive", "HP: 65",
   "q=3 r=2", "22", "17", "adult", "8", "cannot divide by zero", "result: 5",
   "even", "B", "pause", "3\n2\n1", "0\n1\n2\n3", "1\n2\n4\n5", "too low",
+  "ready", "damage: 18", "11", "alive", "45", "HP: 37\nalive", "80",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>
@@ -111,8 +117,8 @@ export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>
       starter,
       solution: seed.solution,
       input: seed.input ?? "",
-      expectedOutput: exerciseOutputs[weekIndex * 7 + dayIndex],
-      tests: [{ input: seed.input ?? "", output: exerciseOutputs[weekIndex * 7 + dayIndex] }],
+      expectedOutput: seed.tests?.[0]?.output ?? exerciseOutputs[weekIndex * 7 + dayIndex],
+      tests: seed.tests ?? [{ input: seed.input ?? "", output: exerciseOutputs[weekIndex * 7 + dayIndex] }],
       hints: seed.hints,
     },
     debug: seed.debug,
