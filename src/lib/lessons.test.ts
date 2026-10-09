@@ -3,10 +3,12 @@ import { lessons } from "./lessons";
 import privateRegistry from "../../services/runner/data/lesson-registry.json";
 
 describe("public lesson payload", () => {
-  it("contains no private answer or hidden grading fields", () => {
+  it("contains no code solution, debug fix, or hidden grading fields", () => {
     expect(lessons).toHaveLength(56);
     for (const lesson of lessons) {
-      expect(lesson.quiz).not.toHaveProperty("answer");
+      expect(Number.isInteger(lesson.quiz.answer)).toBe(true);
+      expect(lesson.quiz.answer).toBeGreaterThanOrEqual(0);
+      expect(lesson.quiz.answer).toBeLessThan(lesson.quiz.choices.length);
       expect(lesson.exercise).not.toHaveProperty("solution");
       expect(lesson.exercise).not.toHaveProperty("hiddenTests");
       expect(lesson.debug).not.toHaveProperty("fix");

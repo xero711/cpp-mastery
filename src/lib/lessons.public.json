@@ -31,6 +31,7 @@
         "キーボード",
         "テキストエディタ"
       ],
+      "answer": 0,
       "explanation": "コンパイラがソースを翻訳し、実行可能な形式を作ります。"
     },
     "exercise": {
@@ -86,6 +87,7 @@
         "main",
         "cout"
       ],
+      "answer": 1,
       "explanation": "C++プログラムの開始点は main 関数です。"
     },
     "exercise": {
@@ -141,6 +143,7 @@
         "10 HP",
         "コンパイルエラー"
       ],
+      "answer": 0,
       "explanation": "<< の左から順に、文字列の後へ整数10が出力されます。"
     },
     "exercise": {
@@ -196,6 +199,7 @@
         "実行時",
         "ファイル名変更時"
       ],
+      "answer": 1,
       "explanation": "プログラムの出力文は、実行時に評価されます。"
     },
     "exercise": {
@@ -251,6 +255,7 @@
         "整数に変換される",
         "必ず画面へ表示される"
       ],
+      "answer": 0,
       "explanation": "単一行コメントはコンパイラに実行される文として扱われません。"
     },
     "exercise": {
@@ -306,6 +311,7 @@
         "最初に報告されたエラー",
         "実行時間"
       ],
+      "answer": 1,
       "explanation": "最初の構文ミスが後続の診断を引き起こしていることがあります。"
     },
     "exercise": {
@@ -361,6 +367,7 @@
         "ビルドし、実行結果を確かめた",
         "コメントを書いた"
       ],
+      "answer": 1,
       "explanation": "実行まで行い、出力と終了状態を確認して初めて動作の証拠になります。"
     },
     "exercise": {
@@ -416,6 +423,7 @@
         "120",
         "未定義"
       ],
+      "answer": 1,
       "explanation": "初期化子 = 120 によって、宣言時に120が設定されます。"
     },
     "exercise": {
@@ -471,6 +479,7 @@
         "bool",
         "char"
       ],
+      "answer": 0,
       "explanation": "double は浮動小数点数を表します。"
     },
     "exercise": {
@@ -526,6 +535,7 @@
         "コンパイルエラー",
         "limit が文字列になる"
       ],
+      "answer": 1,
       "explanation": "const オブジェクトは初期化後に変更できません。"
     },
     "exercise": {
@@ -581,6 +591,7 @@
         "'A'",
         "true"
       ],
+      "answer": 1,
       "explanation": "'A' は文字リテラル、\"A\" は文字列リテラルです。"
     },
     "exercise": {
@@ -637,6 +648,7 @@
         "常に0",
         "ファイル名"
       ],
+      "answer": 0,
       "explanation": ">> が入力ストリームから値を読み、変数に格納します。"
     },
     "exercise": {
@@ -693,6 +705,7 @@
         "よくない。範囲を検討する",
         "コンパイラが必ず大きい型に変える"
       ],
+      "answer": 1,
       "explanation": "整数型の表現範囲は有限です。範囲外を避ける設計にします。"
     },
     "exercise": {
@@ -749,6 +762,7 @@
         "入力→計算→出力",
         "出力→計算→入力"
       ],
+      "answer": 1,
       "explanation": "入力が先に必要で、その値を使って計算し、結果を表示します。"
     },
     "exercise": {
@@ -805,6 +819,7 @@
         "3.5",
         "4"
       ],
+      "answer": 0,
       "explanation": "両方が整数なので小数部分が捨てられます。"
     },
     "exercise": {
@@ -861,6 +876,7 @@
         "14",
         "24"
       ],
+      "answer": 1,
       "explanation": "掛け算を先に計算するため、2 + 12 = 14です。"
     },
     "exercise": {
@@ -917,6 +933,7 @@
         "scoreに3を加える",
         "scoreが3か調べる"
       ],
+      "answer": 1,
       "explanation": "複合代入 += は現在値に右辺を足して代入します。"
     },
     "exercise": {
@@ -973,6 +990,7 @@
         "どちらか一方だけ true",
         "hp が100以上"
       ],
+      "answer": 0,
       "explanation": "論理AND && は左右両方が true のとき true です。"
     },
     "exercise": {
@@ -1029,6 +1047,7 @@
         "コンパイル時に縮小変換として拒否",
         "4になる"
       ],
+      "answer": 1,
       "explanation": "波括弧初期化は小数から整数への縮小変換を拒否します。"
     },
     "exercise": {
@@ -1085,6 +1104,7 @@
         "仕様で定められていない",
         "必ず例外"
       ],
+      "answer": 1,
       "explanation": "未定義動作の後の振る舞いは規格で保証されません。"
     },
     "exercise": {
@@ -1141,6 +1161,7 @@
         "被除数が正か",
         "出力が改行か"
       ],
+      "answer": 0,
       "explanation": "整数除算では除数が0のケースを先に処理します。"
     },
     "exercise": {
@@ -1197,6 +1218,7 @@
         "false",
         "コンパイルエラー"
       ],
+      "answer": 0,
       "explanation": "60は60以上なので条件は true です。"
     },
     "exercise": {
@@ -1253,6 +1275,7 @@
         "最初が成立するため評価されない",
         "エラーになる"
       ],
+      "answer": 1,
       "explanation": "if-else if では先に成立した枝が選ばれます。"
     },
     "exercise": {
@@ -1309,6 +1332,7 @@
         "変数を初期化する",
         "ループを開始する"
       ],
+      "answer": 0,
       "explanation": "break はswitch文から抜け、次のcaseの処理へ進まないようにします。"
     },
     "exercise": {
@@ -1365,6 +1389,7 @@
         "条件次第で無限に続く",
         "コンパイル不可"
       ],
+      "answer": 1,
       "explanation": "countが正のままなら条件が変わらず、ループが終了しません。"
     },
     "exercise": {
@@ -1421,6 +1446,7 @@
         "4回",
         "5回"
       ],
+      "answer": 1,
       "explanation": "iは0,1,2,3で条件を満たし、4では終了します。"
     },
     "exercise": {
@@ -1477,6 +1503,7 @@
         "現在の反復を飛ばす",
         "プログラムを終了する"
       ],
+      "answer": 1,
       "explanation": "continueは現在回の残りを飛ばし、次の反復に移ります。"
     },
     "exercise": {
@@ -1533,6 +1560,7 @@
         "continue",
         "++"
       ],
+      "answer": 0,
       "explanation": "breakはループを終了します。"
     },
     "exercise": {
@@ -1595,6 +1623,7 @@
         "関数名をコメントに書く",
         "return 0; を追加するだけ"
       ],
+      "answer": 0,
       "explanation": "関数本体は呼び出されたときに実行されます。定義と呼び出しは別の操作です。"
     },
     "exercise": {
@@ -1665,6 +1694,7 @@
         "0",
         "関数の行番号"
       ],
+      "answer": 0,
       "explanation": "呼び出し時に渡した整数12が、仮引数 value の初期値になります。"
     },
     "exercise": {
@@ -1743,6 +1773,7 @@
         "画面へ必ず表示する",
         "関数をもう一度呼び出す"
       ],
+      "answer": 0,
       "explanation": "return は値を呼び出し側へ返し、その関数の実行を終えます。"
     },
     "exercise": {
@@ -1821,6 +1852,7 @@
         "false",
         "0除算で未定義"
       ],
+      "answer": 1,
       "explanation": "0 > 0 は false なので、生存していない判定になります。"
     },
     "exercise": {
@@ -1899,6 +1931,7 @@
         "使えない。スコープの外にある",
         "static を付けなくても必ず残る"
       ],
+      "answer": 1,
       "explanation": "ローカル変数の名前が有効なのは、その宣言を含むブロック内です。"
     },
     "exercise": {
@@ -1977,6 +2010,7 @@
         "必ず0になる",
         "同じ名前なので自動で変わる"
       ],
+      "answer": 0,
       "explanation": "値渡しでは関数の仮引数はコピーです。新しい値を使うには戻り値を代入します。"
     },
     "exercise": {
@@ -2055,6 +2089,7 @@
         "false",
         "実行時エラー"
       ],
+      "answer": 1,
       "explanation": "100は100より大きくありません。上限ちょうどの値はそのまま返します。"
     },
     "exercise": {
@@ -2133,6 +2168,7 @@
         "1",
         "2"
       ],
+      "answer": 1,
       "explanation": "添字は0から始まるため、2番目は添字1です。"
     },
     "exercise": {
@@ -2211,6 +2247,7 @@
         "i <= 3",
         "i > 3"
       ],
+      "answer": 0,
       "explanation": "i < 3 なら i は0、1、2のときに実行されます。"
     },
     "exercise": {
@@ -2289,6 +2326,7 @@
         "常にファイル全体",
         "整数だけ"
       ],
+      "answer": 0,
       "explanation": "operator>> は空白文字で区切られた次の1語を読み取ります。"
     },
     "exercise": {
@@ -2367,6 +2405,7 @@
         "std::cout",
         "std::size"
       ],
+      "answer": 0,
       "explanation": "std::getline は区切り文字までの1行を文字列に読み取ります。"
     },
     "exercise": {
@@ -2445,6 +2484,7 @@
         "value の型名",
         "必ず0"
       ],
+      "answer": 0,
       "explanation": "&value は value のアドレスを取得し、ポインタ p に保存します。"
     },
     "exercise": {
@@ -2523,6 +2563,7 @@
         "*current",
         "&*"
       ],
+      "answer": 1,
       "explanation": "*current はポインタが指している現在の要素を表します。"
     },
     "exercise": {
@@ -2601,6 +2642,7 @@
         "C++の関数は配列を読めないため",
         "const を使えなくするため"
       ],
+      "answer": 0,
       "explanation": "通常のポインタは指し先の要素数を保持しません。処理する範囲を別に渡します。"
     },
     "exercise": {
@@ -2679,6 +2721,7 @@
         "int& alias;",
         "int alias&{score};"
       ],
+      "answer": 0,
       "explanation": "参照型は int& と書き、宣言時に参照先の score で初期化します。"
     },
     "exercise": {
@@ -2757,6 +2800,7 @@
         "変わらない",
         "参照が自動で無効になる"
       ],
+      "answer": 0,
       "explanation": "両方とも同じ score の別名なので、どちらから読んでも更新後の値です。"
     },
     "exercise": {
@@ -2835,6 +2879,7 @@
         "name の文字数を調べる",
         "name に別の文字列を代入する"
       ],
+      "answer": 2,
       "explanation": "const 参照からは読み取りができますが、参照先の文字列を変更できません。"
     },
     "exercise": {
@@ -2913,6 +2958,7 @@
         "必ず2倍になる",
         "参照先がなくなる"
       ],
+      "answer": 0,
       "explanation": "値渡しでは仮引数がコピーなので、呼び出し元の変数は変更されません。"
     },
     "exercise": {
@@ -2991,6 +3037,7 @@
         "int& score",
         "const int& score"
       ],
+      "answer": 1,
       "explanation": "非const参照は元の変数の別名なので、関数内の代入が呼び出し元にも反映されます。"
     },
     "exercise": {
@@ -3069,6 +3116,7 @@
         "int& score, const std::string& rank",
         "const int& score, std::string& rank"
       ],
+      "answer": 1,
       "explanation": "score は非const参照で更新し、読むだけの文字列 rank はconst参照で受け取ります。"
     },
     "exercise": {
@@ -3147,6 +3195,7 @@
         "const std::string&",
         "std::string* const&"
       ],
+      "answer": 1,
       "explanation": "const std::string& は変更を禁止しながら、文字列をコピーせず受け取れます。"
     },
     "exercise": {
@@ -3225,6 +3274,7 @@
         "position->x",
         "Point::x"
       ],
+      "answer": 0,
       "explanation": "オブジェクトのメンバーには . を使います。-> はポインタ経由のアクセスです。"
     },
     "exercise": {
@@ -3303,6 +3353,7 @@
         "Player p{80, \"Ada\"};",
         "Player p{\"Ada\"};"
       ],
+      "answer": 0,
       "explanation": "集成体初期化ではメンバー宣言順に対応する値を渡します。"
     },
     "exercise": {
@@ -3381,6 +3432,7 @@
         "Ready",
         "State.Ready"
       ],
+      "answer": 0,
       "explanation": "enum class の列挙子は型名で修飾し、State::Ready と書きます。"
     },
     "exercise": {
@@ -3459,6 +3511,7 @@
         "game.score()",
         "score::game()"
       ],
+      "answer": 0,
       "explanation": "名前空間名と中の名前はスコープ解決演算子 :: でつなぎます。"
     },
     "exercise": {
@@ -3537,6 +3590,7 @@
         "LifeState::Down",
         "nullptr"
       ],
+      "answer": 1,
       "explanation": "Alive はHPが正のときだけです。0以下なら Down を返します。"
     },
     "exercise": {
@@ -3615,6 +3669,7 @@
         "必ず消える",
         "呼び出し元と共有される"
       ],
+      "answer": 0,
       "explanation": "値渡しされた position はコピーです。新しい値を返し、呼び出し側が受け取ります。"
     },
     "exercise": {
@@ -3693,6 +3748,7 @@
         "const Enemy& enemy",
         "Enemy& enemy"
       ],
+      "answer": 2,
       "explanation": "Enemy& は呼び出し元オブジェクトの別名で、変更を反映できます。"
     },
     "exercise": {

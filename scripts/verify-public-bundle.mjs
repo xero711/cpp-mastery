@@ -23,7 +23,7 @@ const publicLessons = JSON.parse(publicJson);
 
 assert.equal(publicLessons.length, lessons.length);
 for (const lesson of publicLessons) {
-  assert.equal(Object.hasOwn(lesson.quiz, "answer"), false, `${lesson.id} quiz answer leaked into public JSON`);
+  assert.ok(Number.isInteger(lesson.quiz.answer) && lesson.quiz.answer >= 0 && lesson.quiz.answer < lesson.quiz.choices.length, `${lesson.id} quiz answer is invalid`);
   assert.equal(Object.hasOwn(lesson.exercise, "solution"), false, `${lesson.id} solution leaked into public JSON`);
   assert.equal(Object.hasOwn(lesson.exercise, "hiddenTests"), false, `${lesson.id} hidden tests leaked into public JSON`);
   assert.equal(Object.hasOwn(lesson.debug, "fix"), false, `${lesson.id} debug fix leaked into public JSON`);

@@ -74,19 +74,13 @@ describe("runner client privacy boundary", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("uses explicit endpoints for quiz grading and answer reveal", async () => {
+  it("uses an explicit endpoint only when revealing a private answer", async () => {
     vi.stubEnv("NEXT_PUBLIC_CPP_RUNNER_URL", "https://runner.example");
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ correct: true }), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ solution: "shown after click" }), { status: 200 }));
+    const fetchMock = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify({ solution: "shown after click" }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
-    const { gradeQuizAnswer, revealLessonAnswer } = await import("../src/lib/runner-client");
+    const { revealLessonAnswer } = await import("../src/lib/runner-client");
 
-    expect(await gradeQuizAnswer("w1-d1", 0, token)).toEqual({ correct: true, message: "" });
     expect(await revealLessonAnswer("w1-d1", "solution", token)).toEqual({ solution: "shown after click" });
-    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
-      "https://runner.example/v1/quiz",
-      "https://runner.example/v1/reveal",
-    ]);
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual(["https://runner.example/v1/reveal"]);
   });
 });

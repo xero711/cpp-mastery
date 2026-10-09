@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { createRunnerServer, loadConfig, MAX_REQUEST_BYTES, validateGradeSubmission, validateJob, validateQuizSubmission, validateRevealRequest } from "../src/server.mjs";
+import { createRunnerServer, loadConfig, MAX_REQUEST_BYTES, validateGradeSubmission, validateJob, validateRevealRequest } from "../src/server.mjs";
 
 const token = "local-test-token-0123456789-abcdefghijklmnopqrstuvwxyz";
 const origin = "http://localhost:3000";
@@ -8,7 +8,6 @@ const validJob = { source: "int main() {}", standard: "c++17", tests: [{ stdin: 
 const privateLessonRegistry = [{
   id: "w1-d1",
   solution: "SECRET_SOLUTION",
-  quizAnswer: 2,
   debugFix: "SECRET_DEBUG_FIX",
   debugExplanation: "SECRET_DEBUG_EXPLANATION",
   tests: [{ input: "public-input\n", output: "public-output" }],
@@ -101,7 +100,6 @@ describe("runner API security boundary", () => {
     assert.equal(valid.publicTestCount, 1);
     assert.equal(validateGradeSubmission({ lessonId: "w1-d1", source: "", standard: "c++17", tests: [] }, privateLessonRegistry).ok, false);
     assert.equal(validateGradeSubmission({ lessonId: "missing", source: "", standard: "c++17" }, privateLessonRegistry).ok, false);
-    assert.equal(validateQuizSubmission({ lessonId: "w1-d1", choice: 2 }, privateLessonRegistry).ok, true);
     assert.equal(validateRevealRequest({ lessonId: "w1-d1", kind: "solution" }, privateLessonRegistry).ok, true);
   });
 
@@ -145,10 +143,8 @@ describe("runner API security boundary", () => {
     });
   });
 
-  it("reveals quiz grading and answer content only through explicit authenticated calls", async () => {
+  it("reveals answer content only through explicit authenticated calls", async () => {
     await withServer({ executeJob: async () => { throw new Error("sandbox should not run"); } }, async (url) => {
-      const quiz = await post(url, { path: "/v1/quiz", body: { lessonId: "w1-d1", choice: 2 } });
-      assert.deepEqual(await quiz.json(), { correct: true });
       const solution = await post(url, { path: "/v1/reveal", body: { lessonId: "w1-d1", kind: "solution" } });
       assert.deepEqual(await solution.json(), { solution: "SECRET_SOLUTION" });
       const debug = await post(url, { path: "/v1/reveal", body: { lessonId: "w1-d1", kind: "debug" } });

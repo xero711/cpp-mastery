@@ -15,7 +15,7 @@ export type Lesson = {
   example: string;
   exampleOutput: string;
   commonMistake: string;
-  quiz: { question: string; choices: string[]; explanation: string };
+  quiz: { question: string; choices: string[]; answer: number; explanation: string };
   exercise: {
     prompt: string;
     starter: string;

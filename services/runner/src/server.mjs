@@ -99,17 +99,6 @@ export function validateGradeSubmission(value, registry = privateLessonRegistry)
   return { ok: true, lesson, publicTestCount: lesson.tests.length, job: validation.job };
 }
 
-export function validateQuizSubmission(value, registry = privateLessonRegistry) {
-  if (!isRecord(value) || !hasExactKeys(value, ["lessonId", "choice"])) {
-    return { ok: false, message: "クイズ回答の形式が正しくありません。" };
-  }
-  const lesson = registry.find((item) => item.id === value.lessonId);
-  if (!lesson || !Number.isSafeInteger(value.choice) || value.choice < 0 || value.choice > 15) {
-    return { ok: false, message: "クイズ回答を確認できませんでした。" };
-  }
-  return { ok: true, lesson, choice: value.choice };
-}
-
 export function validateRevealRequest(value, registry = privateLessonRegistry) {
   if (!isRecord(value) || !hasExactKeys(value, ["lessonId", "kind"])) {
     return { ok: false, message: "解答表示リクエストの形式が正しくありません。" };
@@ -292,7 +281,7 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
       writeJson(response, 200, { status: "ok" });
       return;
     }
-    if (request.method !== "POST" || !["/v1/execute", "/v1/grade", "/v1/quiz", "/v1/reveal"].includes(request.url)) {
+    if (request.method !== "POST" || !["/v1/execute", "/v1/grade", "/v1/reveal"].includes(request.url)) {
       rejectEarly(request, response, 404, { error: "指定されたAPIはありません。" });
       return;
     }
@@ -340,15 +329,6 @@ export function createRunnerServer({ config, executeJob = (job, options) => runS
       return;
     }
 
-    if (request.url === "/v1/quiz") {
-      const validation = validateQuizSubmission(parsed, lessonRegistry);
-      if (!validation.ok) {
-        writeJson(response, 400, { error: validation.message });
-        return;
-      }
-      writeJson(response, 200, { correct: validation.choice === validation.lesson.quizAnswer });
-      return;
-    }
     if (request.url === "/v1/reveal") {
       const validation = validateRevealRequest(parsed, lessonRegistry);
       if (!validation.ok) {

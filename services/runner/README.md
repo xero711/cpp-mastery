@@ -1,6 +1,6 @@
 # Isolated C++ runner
 
-This service is separate from the GitHub Pages frontend. It compiles bounded C++ source in disposable containers. Lesson grading, quiz checking, and explicit answer reveals use runner-owned records; reference solutions, quiz answers, and hidden tests are not included in the static browser payload.
+This service is separate from the GitHub Pages frontend. It compiles bounded C++ source in disposable containers. Code grading and explicit answer reveals use runner-owned records; reference solutions, debug fixes, and hidden tests are not included in the static browser payload. Multiple-choice checks work from the pre-authored lesson data without this service.
 
 ## Local development
 
@@ -32,7 +32,7 @@ The API binds to loopback by default. Do not expose this development configurati
 }
 ```
 
-`POST /v1/grade` accepts `{ "lessonId", "source", "standard" }`. The API looks up public and private cases in `data/lesson-registry.json`, runs both groups, compares expected output on the server, and returns the score plus public case details only. The browser cannot supply tests or expected answers to this endpoint. `POST /v1/quiz` accepts a lesson ID and choice, and returns only whether the choice is correct. `POST /v1/reveal` returns a solution or debug explanation only after an explicit request. All endpoints require the bearer token and an allowlisted request Origin.
+`POST /v1/grade` accepts `{ "lessonId", "source", "standard" }`. The API looks up public and private cases in `data/lesson-registry.json`, runs both groups, compares expected output on the server, and returns the score plus public case details only. The browser cannot supply tests or expected answers to this endpoint. `POST /v1/reveal` returns a solution or debug explanation only after an explicit request. All endpoints require the bearer token and an allowlisted request Origin. Multiple-choice checks use pre-authored lesson data and do not need this service.
 
 The API validates C++17/20/23, caps source at 32 KB, accepts at most 12 runner-owned cases with 8 KB input per case and 64 KB total input, and caps requests at 768 KB. The sandbox caps each output stream at 8 KB, compilation at 12 seconds, and each case at 2 seconds. The service allows at most four concurrent jobs (default two) and 20 accepted requests per minute per token. HTTP errors represent authentication, validation, rate-limit, or infrastructure failures; they do not count as failed answers.
 

@@ -155,18 +155,6 @@ export async function gradeLessonCode(
   }
 }
 
-export async function gradeQuizAnswer(lessonId: string, choice: number, apiToken: string) {
-  try {
-    const response = await postRunner("/v1/quiz", { lessonId, choice }, apiToken);
-    if (!response.ok) return { correct: null, message: response.message };
-    return typeof response.raw.correct === "boolean"
-      ? { correct: response.raw.correct, message: "" }
-      : { correct: null, message: "クイズ応答の形式を確認できませんでした。" };
-  } catch {
-    return { correct: null, message: "実行ワーカーへ接続できません。" };
-  }
-}
-
 export async function revealLessonAnswer(lessonId: string, kind: "solution" | "debug", apiToken: string) {
   const response = await postRunner("/v1/reveal", { lessonId, kind }, apiToken);
   if (!response.ok) throw new Error(response.message);

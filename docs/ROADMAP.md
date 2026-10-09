@@ -26,7 +26,7 @@
 - [x] Implement the external runner protocol as a separate authenticated Node service.
 - [x] Implement disposable Docker execution, no-network/non-root/read-only sandbox flags, and request, CPU, memory, process, address-space, timeout, and output limits.
 - [x] Pass Docker-backed compile/run and isolation integration tests in GitHub Actions; the current host has neither Docker CLI nor a WSL distribution.
-- [x] Keep solutions, quiz answers, and hidden test cases out of the GitHub Pages payload; grade with runner-owned data.
+- [x] Keep reference solutions, debug fixes, and hidden tests out of the GitHub Pages payload; run multiple-choice checks from pre-authored lesson data so they work offline.
 - [ ] Deploy runner independently with gVisor over HTTPS and verify cross-origin access from GitHub Pages.
 
 ## Phase 4 — AI and adaptive instruction

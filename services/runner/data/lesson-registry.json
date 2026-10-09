@@ -3,7 +3,6 @@
     "id": "w1-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, C++!\\n\";\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "#include <iostream>\nint main() {\n    std::cout << \"Hello, C++!\\n\";\n}",
     "debugExplanation": "文の末尾にセミコロンが必要です。閉じ波括弧の前に main の閉じ括弧も置きます。",
     "tests": [
@@ -23,7 +22,6 @@
     "id": "w1-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    std::cout << \"start\\n\";\n    std::cout << \"end\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "#include <iostream>\nint main() {\n    std::cout << \"ready\\n\";\n    return 0;\n}",
     "debugExplanation": "std::cout を使う前に <iostream> をインクルードします。",
     "tests": [
@@ -43,7 +41,6 @@
     "id": "w1-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    std::cout << \"name: Ada\\n\";\n    std::cout << \"level: 3\\n\";\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << \"HP \" << 10;",
     "debugExplanation": "数値との間に空白が必要なら、文字列側に空白を含めます。",
     "tests": [
@@ -63,7 +60,6 @@
     "id": "w1-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    std::cout << \"Ready\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "int main() {\n    std::cout << \"Ready\\n\";\n    return 0;\n}",
     "debugExplanation": "この課題では正常終了コード0を返します。ヘッダーも忘れずに追加します。",
     "tests": [
@@ -83,7 +79,6 @@
     "id": "w1-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    // 学習開始時の状態を表示する\n    std::cout << \"Training\\n\";\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << \"Start\\n\";",
     "debugExplanation": "先頭の // があるため、出力文はコメントとして無視されています。",
     "tests": [
@@ -103,7 +98,6 @@
     "id": "w1-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    std::cout << \"Build OK\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "#include <iostream>\nint main() {\n    std::cout << \"Build OK\\n\";\n    return 0;\n}",
     "debugExplanation": "出力文の最後のセミコロンが抜けています。",
     "tests": [
@@ -123,7 +117,6 @@
     "id": "w1-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    std::cout << \"Game Start\\n\";\n    std::cout << \"Player ready\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "std::cout << \"Game Start\\nPlayer ready\\n\";",
     "debugExplanation": "2行目の後ろに改行がなく、末尾までの出力形式が指定と一致しません。",
     "tests": [
@@ -143,7 +136,6 @@
     "id": "w2-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int lives = 3;\n    std::cout << \"lives: \" << lives << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "int lives = 3;\nstd::cout << lives;",
     "debugExplanation": "初期化前のローカルな整数を読むことはできません。値を設定してから使います。",
     "tests": [
@@ -163,7 +155,6 @@
     "id": "w2-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int coins = 8;\n    double bonus = 1.5;\n    std::cout << coins * bonus << '\\n';\n}",
-    "quizAnswer": 0,
     "debugFix": "double half = 5.0 / 2.0;\nstd::cout << half;",
     "debugExplanation": "整数同士の除算は小数部分を切り捨てます。小数が必要なら少なくとも一方を浮動小数点数にします。",
     "tests": [
@@ -183,7 +174,6 @@
     "id": "w2-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    const int maxHp{100};\n    std::cout << maxHp << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "int stage{1};\nstage = 2;",
     "debugExplanation": "stage を変えるなら const を付けません。固定値のままなら代入文を削除します。",
     "tests": [
@@ -203,7 +193,6 @@
     "id": "w2-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    char rank{'S'};\n    bool cleared{true};\n    std::cout << rank << '\\n' << std::boolalpha << cleared << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "char key{'W'};",
     "debugExplanation": "char の初期値は単一引用符で囲む1文字です。",
     "tests": [
@@ -223,7 +212,6 @@
     "id": "w2-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int value{};\n    std::cin >> value;\n    std::cout << value * 2 << '\\n';\n}",
-    "quizAnswer": 0,
     "debugFix": "int value{};\nstd::cin >> value;\nstd::cout << value * 2;",
     "debugExplanation": "入力を出力より先に読み取ります。",
     "tests": [
@@ -247,7 +235,6 @@
     "id": "w2-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int value{};\n    std::cin >> value;\n    if (value > 0) std::cout << \"positive\\n\";\n    else std::cout << \"non-positive\\n\";\n}",
-    "quizAnswer": 1,
     "debugFix": "int hp{100};\n// 想定範囲に合う型を選び、上限を検査してから加算する",
     "debugExplanation": "大きな値を無条件で加える設計は範囲を超える恐れがあります。先に上限を検査します。",
     "tests": [
@@ -271,7 +258,6 @@
     "id": "w2-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int hp{};\n    int damage{};\n    std::cin >> hp >> damage;\n    std::cout << \"HP: \" << hp - damage << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "std::cout << \"HP: \" << hp - damage;",
     "debugExplanation": "引き算の順序が逆です。残りHPは現在HPから受けたダメージを引きます。",
     "tests": [
@@ -295,7 +281,6 @@
     "id": "w3-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int a{}, b{};\n    std::cin >> a >> b;\n    std::cout << \"q=\" << a / b << \" r=\" << a % b << '\\n';\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << seconds / 60 << ':' << seconds % 60;",
     "debugExplanation": "秒の残りは60で割った余りです。",
     "tests": [
@@ -319,7 +304,6 @@
     "id": "w3-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int w{}, h{};\n    std::cin >> w >> h;\n    std::cout << 2 * (w + h) << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "std::cout << 2 * (w + h);",
     "debugExplanation": "周の長さでは幅と高さの合計を2倍にします。",
     "tests": [
@@ -343,7 +327,6 @@
     "id": "w3-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int score{};\n    std::cin >> score;\n    score += 5;\n    std::cout << score << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "score += 5;",
     "debugExplanation": "=+ は加算代入ではありません。複合代入は += の順です。",
     "tests": [
@@ -367,7 +350,6 @@
     "id": "w3-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int age{};\n    std::cin >> age;\n    std::cout << (age >= 18 ? \"adult\\n\" : \"minor\\n\");\n}",
-    "quizAnswer": 0,
     "debugFix": "if (hp == 0) {\n    std::cout << \"down\";\n}",
     "debugExplanation": "条件で値を比較するには == を使います。= は代入です。",
     "tests": [
@@ -391,7 +373,6 @@
     "id": "w3-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int a{}, b{}, c{};\n    std::cin >> a >> b >> c;\n    double average = (a + b + c) / 3.0;\n    std::cout << average << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "double avg = sum / 3.0;",
     "debugExplanation": "sum / 3 は整数同士なので、double に代入する前に小数が切り捨てられます。",
     "tests": [
@@ -411,7 +392,6 @@
     "id": "w3-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int value{}, divisor{};\n    std::cin >> value >> divisor;\n    if (divisor == 0) std::cout << \"cannot divide by zero\\n\";\n    else std::cout << value / divisor << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "if (divisor == 0) std::cout << \"error\";\nelse std::cout << value / divisor;",
     "debugExplanation": "0除算を防ぐ検査より先に割り算が実行されています。",
     "tests": [
@@ -435,7 +415,6 @@
     "id": "w3-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int a{}, b{};\n    char op{};\n    std::cin >> a >> op >> b;\n    int result = (op == '+') ? a + b : a - b;\n    std::cout << \"result: \" << result << '\\n';\n}",
-    "quizAnswer": 0,
     "debugFix": "if (op == '+')",
     "debugExplanation": "char は単一引用符の文字リテラルと比較します。",
     "tests": [
@@ -459,7 +438,6 @@
     "id": "w4-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int number{};\n    std::cin >> number;\n    if (number % 2 == 0) std::cout << \"even\\n\";\n    else std::cout << \"odd\\n\";\n}",
-    "quizAnswer": 0,
     "debugFix": "if (score >= 60) std::cout << \"pass\";",
     "debugExplanation": "60点を含めるなら >= を使います。",
     "tests": [
@@ -483,7 +461,6 @@
     "id": "w4-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int score{};\n    std::cin >> score;\n    if (score >= 80) std::cout << \"A\\n\";\n    else if (score >= 60) std::cout << \"B\\n\";\n    else std::cout << \"C\\n\";\n}",
-    "quizAnswer": 1,
     "debugFix": "if (score >= 80) grade = 'A';\nelse if (score >= 60) grade = 'B';",
     "debugExplanation": "80以上も先の60以上で分類されるため、境界が高い条件を先に判定します。",
     "tests": [
@@ -511,7 +488,6 @@
     "id": "w4-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int command{};\n    std::cin >> command;\n    switch (command) {\n    case 1: std::cout << \"start\\n\"; break;\n    case 2: std::cout << \"pause\\n\"; break;\n    default: std::cout << \"unknown\\n\";\n    }\n}",
-    "quizAnswer": 0,
     "debugFix": "switch (command) {\ncase 1: std::cout << \"start\"; break;\ncase 2: std::cout << \"pause\"; break;\n}",
     "debugExplanation": "case 1 に break がなく、case 2 の処理も続けて実行されます。",
     "tests": [
@@ -535,7 +511,6 @@
     "id": "w4-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    while (n > 0) {\n        std::cout << n << '\\n';\n        --n;\n    }\n}",
-    "quizAnswer": 1,
     "debugFix": "--n;",
     "debugExplanation": "n が減らず、n > 0 がずっとtrueのままです。",
     "tests": [
@@ -559,7 +534,6 @@
     "id": "w4-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    for (int i = 0; i < n; ++i) std::cout << i << '\\n';\n}",
-    "quizAnswer": 1,
     "debugFix": "for (int i = 0; i < n; ++i) std::cout << i << '\\n';",
     "debugExplanation": "n個を0から表示する場合はn未満までです。<=だとnも含まれます。",
     "tests": [
@@ -583,7 +557,6 @@
     "id": "w4-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    int n{};\n    std::cin >> n;\n    for (int i = 1; i <= n; ++i) {\n        if (i % 3 == 0) continue;\n        std::cout << i << '\\n';\n    }\n}",
-    "quizAnswer": 1,
     "debugFix": "if (i == 3) { ++i; continue; }",
     "debugExplanation": "i==3でcontinueすると末尾の++iを飛ばし、条件が変わらないままになります。",
     "tests": [
@@ -607,7 +580,6 @@
     "id": "w4-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\nint main() {\n    const int target{7};\n    int guess{};\n    std::cin >> guess;\n    if (guess == target) std::cout << \"correct\\n\";\n    else if (guess < target) std::cout << \"too low\\n\";\n    else std::cout << \"too high\\n\";\n}",
-    "quizAnswer": 0,
     "debugFix": "if (guess == target) std::cout << \"correct\";\nelse if (guess < target) std::cout << \"too low\";\nelse std::cout << \"too high\";",
     "debugExplanation": "正解判定は == です。大きい場合の分岐も必要です。",
     "tests": [
@@ -631,7 +603,6 @@
     "id": "w5-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nvoid printReady() {\n    std::cout << \"ready\\n\";\n}\n\nint main() {\n    printReady();\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "#include <iostream>\n\nvoid printReady() {\n    std::cout << \"ready\\n\";\n}\n\nint main() {\n    printReady();\n    return 0;\n}",
     "debugExplanation": "関数は定義しただけでは動きません。main から呼び出す文が必要です。",
     "tests": [
@@ -651,7 +622,6 @@
     "id": "w5-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nvoid printDamage(int amount) {\n    std::cout << \"damage: \" << amount << '\\n';\n}\n\nint main() {\n    int amount{};\n    std::cin >> amount;\n    printDamage(amount);\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "printDamage(amount);",
     "debugExplanation": "printDamage は int の引数を1つ必要とします。読み取った amount を渡します。",
     "tests": [
@@ -679,7 +649,6 @@
     "id": "w5-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint add(int left, int right) {\n    return left + right;\n}\n\nint main() {\n    int left{}, right{};\n    std::cin >> left >> right;\n    const int result = add(left, right);\n    std::cout << result << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "return left + right;",
     "debugExplanation": "関数の形と戻り値型は正しいため、計算式の演算子を確認します。",
     "tests": [
@@ -707,7 +676,6 @@
     "id": "w5-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nbool isAlive(int hp) {\n    return hp > 0;\n}\n\nint main() {\n    int hp{};\n    std::cin >> hp;\n    if (isAlive(hp)) std::cout << \"alive\\n\";\n    else std::cout << \"down\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "return hp > 0;",
     "debugExplanation": "hp をそのまま bool に変換すると、負数も true になります。生存条件を明示します。",
     "tests": [
@@ -735,7 +703,6 @@
     "id": "w5-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint addBonus(int base) {\n    const int bonus{10};\n    return base + bonus;\n}\n\nint main() {\n    int base{};\n    std::cin >> base;\n    std::cout << addBonus(base) << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "int addBonus(int base) {\n    int bonus{10};\n    return base + bonus;\n}",
     "debugExplanation": "base と bonus は addBonus 内の名前です。計算と return も同じ関数内で行います。",
     "tests": [
@@ -763,7 +730,6 @@
     "id": "w5-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint applyDamage(int hp, int damage) {\n    return hp - damage;\n}\n\nbool isAlive(int hp) {\n    return hp > 0;\n}\n\nint main() {\n    int hp{}, damage{};\n    std::cin >> hp >> damage;\n    const int updatedHp = applyDamage(hp, damage);\n    std::cout << \"HP: \" << updatedHp << '\\n';\n    std::cout << (isAlive(updatedHp) ? \"alive\\n\" : \"down\\n\");\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "int applyDamage(int hp, int damage) {\n    return hp - damage;\n}",
     "debugExplanation": "計算結果を呼び出し側で使うので、void ではなく int を返す関数にします。",
     "tests": [
@@ -791,7 +757,6 @@
     "id": "w5-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint finalScore(int base, int bonus) {\n    const int total = base + bonus;\n    if (total > 100) return 100;\n    return total;\n}\n\nint main() {\n    int base{}, bonus{};\n    std::cin >> base >> bonus;\n    std::cout << finalScore(base, bonus) << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "    return total;",
     "debugExplanation": "上限を超えない場合の戻り値がありません。すべての経路で int を返します。",
     "tests": [
@@ -819,7 +784,6 @@
     "id": "w6-d1",
     "standard": "c++17",
     "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    std::cin >> values[0] >> values[1] >> values[2];\n    std::cout << values[1] << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "std::cout << values[2];",
     "debugExplanation": "有効な添字は0、1、2です。values[3] は3要素の範囲外です。",
     "tests": [
@@ -847,7 +811,6 @@
     "id": "w6-d2",
     "standard": "c++17",
     "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    int total{};\n    for (int i = 0; i < 3; ++i) {\n        total += values[i];\n    }\n    std::cout << total << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "for (int i = 0; i < 3; ++i) {\n    total += values[i];\n}",
     "debugExplanation": "<= 3 では添字3まで処理します。3要素の有効な添字は0から2です。",
     "tests": [
@@ -875,7 +838,6 @@
     "id": "w6-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    std::cout << \"Hello, \" << name << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "#include <iostream>\n#include <string>\nint main() {\n    std::string name;\n    std::cin >> name;\n}",
     "debugExplanation": "std::string を宣言するには <string> をインクルードします。",
     "tests": [
@@ -903,7 +865,6 @@
     "id": "w6-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nint main() {\n    std::string text;\n    std::getline(std::cin, text);\n    std::cout << \"text: \" << text << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::string text;\nstd::getline(std::cin, text);\nstd::cout << text;",
     "debugExplanation": ">> は空白で止まります。行全体が必要なら getline を使います。",
     "tests": [
@@ -931,7 +892,6 @@
     "id": "w6-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint main() {\n    int value{};\n    std::cin >> value;\n    int* valueAddress{&value};\n    std::cout << *valueAddress << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << *address;",
     "debugExplanation": "address を出力するとアドレス値が表示されます。値を読むには間接参照の * を使います。",
     "tests": [
@@ -959,7 +919,6 @@
     "id": "w6-d6",
     "standard": "c++17",
     "solution": "#include <array>\n#include <iostream>\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    int* current{values.data()};\n    for (int i = 0; i < 3; ++i) {\n        if (i > 0) std::cout << ' ';\n        std::cout << *current;\n        ++current;\n    }\n    std::cout << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "for (int i = 0; i < 3; ++i) {\n    std::cout << *current << ' ';\n    ++current;\n}",
     "debugExplanation": "3要素ならポインタを間接参照するのは3回です。4回目は配列外です。",
     "tests": [
@@ -987,7 +946,6 @@
     "id": "w6-d7",
     "standard": "c++17",
     "solution": "#include <array>\n#include <iostream>\n\nint sum(const int* values, int count) {\n    int total{};\n    for (int i = 0; i < count; ++i) {\n        total += values[i];\n    }\n    return total;\n}\n\nint main() {\n    std::array<int, 3> values{};\n    for (int i = 0; i < 3; ++i) {\n        std::cin >> values[i];\n    }\n    std::cout << sum(values.data(), static_cast<int>(values.size())) << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "for (int i = 0; i < count; ++i) total += values[i];",
     "debugExplanation": "count 個の要素の有効な添字は0から count-1 です。<= count だと1つ範囲を超えます。",
     "tests": [
@@ -1015,7 +973,6 @@
     "id": "w7-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    int& alias{score};\n    alias += bonus;\n    std::cout << score << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "int score{10};\nint& alias{score};",
     "debugExplanation": "参照は宣言時に初期化が必要です。後から代入して参照先を設定することはできません。",
     "tests": [
@@ -1043,7 +1000,6 @@
     "id": "w7-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nint main() {\n    int value{}, delta{};\n    std::cin >> value >> delta;\n    int& first{value};\n    int& second{value};\n    first += delta;\n    std::cout << second << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "int value{20};\nint& first{value};\nvalue = other;\nstd::cout << first;",
     "debugExplanation": "参照に値を代入すると、参照先の value が更新されます。別の変数へ参照先を付け替える操作ではありません。",
     "tests": [
@@ -1071,7 +1027,6 @@
     "id": "w7-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nvoid printName(const std::string& name) {\n    std::cout << \"name: \" << name << '\\n';\n}\n\nint main() {\n    std::string name;\n    std::cin >> name;\n    printName(name);\n    return 0;\n}",
-    "quizAnswer": 2,
     "debugFix": "void printName(const std::string& name) {\n    std::cout << name;\n}",
     "debugExplanation": "const 参照で受け取った name は読み取り専用です。値を変えずに使います。",
     "tests": [
@@ -1099,7 +1054,6 @@
     "id": "w7-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nvoid addBonus(int score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    addBonus(score, bonus);\n    std::cout << score << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "int addBonus(int score, int bonus) {\n    return score + bonus;\n}\n\nint main() {\n    int score{10};\n    score = addBonus(score, 5);\n    std::cout << score;\n}",
     "debugExplanation": "値渡しの関数内だけを変更しても呼び出し元は変わりません。戻り値を受け取って代入します。",
     "tests": [
@@ -1127,7 +1081,6 @@
     "id": "w7-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nvoid addBonus(int& score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    int score{}, bonus{};\n    std::cin >> score >> bonus;\n    addBonus(score, bonus);\n    std::cout << score << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "void addBonus(int& score, int bonus) {\n    score += bonus;\n}",
     "debugExplanation": "score を値渡しから非const参照へ変更すると、元の変数を更新できます。",
     "tests": [
@@ -1155,7 +1108,6 @@
     "id": "w7-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nvoid applyRankBonus(int& score, const std::string& rank) {\n    if (rank == \"S\") score += 10;\n}\n\nint main() {\n    std::string rank;\n    int score{};\n    std::cin >> rank >> score;\n    applyRankBonus(score, rank);\n    std::cout << score << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "void applyRankBonus(int& score, const std::string& rank) {\n    if (rank == \"S\") score += 10;\n}",
     "debugExplanation": "score を呼び出し元へ反映するため、int& で受け取ります。rank は読み取りだけなのでconst参照を保ちます。",
     "tests": [
@@ -1183,7 +1135,6 @@
     "id": "w7-d7",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nint bonusForRank(const std::string& rank) {\n    if (rank == \"S\") return 10;\n    if (rank == \"A\") return 5;\n    return 0;\n}\n\nvoid applyBonus(int& score, int bonus) {\n    score += bonus;\n}\n\nint main() {\n    std::string rank;\n    int score{};\n    std::cin >> rank >> score;\n    applyBonus(score, bonusForRank(rank));\n    std::cout << score << '\\n';\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "void applyBonus(int& score, int bonus) {\n    score += bonus;\n}",
     "debugExplanation": "参照を使わず値渡しのままでは、呼び出し元の score は変わりません。",
     "tests": [
@@ -1211,7 +1162,6 @@
     "id": "w8-d1",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nstruct Point { int x; int y; };\n\nint main() {\n    int x{}, y{};\n    std::cin >> x >> y;\n    const Point position{x, y};\n    std::cout << \"x: \" << position.x << \" y: \" << position.y << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << position.x;",
     "debugExplanation": "position はポインタではなく Point オブジェクトなので、メンバーへは . でアクセスします。",
     "tests": [
@@ -1239,7 +1189,6 @@
     "id": "w8-d2",
     "standard": "c++17",
     "solution": "#include <iostream>\n#include <string>\n\nstruct Player { std::string name; int hp; };\n\nint main() {\n    Player player;\n    std::cin >> player.name >> player.hp;\n    std::cout << \"name: \" << player.name << '\\n';\n    std::cout << \"hp: \" << player.hp << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "Player player{\"Ada\", 80};",
     "debugExplanation": "値はメンバー宣言順に name、hp と並べます。",
     "tests": [
@@ -1267,7 +1216,6 @@
     "id": "w8-d3",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nenum class Menu { Start, Pause, Unknown };\n\nint main() {\n    int code{};\n    std::cin >> code;\n    Menu selected{Menu::Unknown};\n    if (code == 1) selected = Menu::Start;\n    else if (code == 2) selected = Menu::Pause;\n    switch (selected) {\n    case Menu::Start: std::cout << \"start\\n\"; break;\n    case Menu::Pause: std::cout << \"pause\\n\"; break;\n    case Menu::Unknown: std::cout << \"unknown\\n\"; break;\n    }\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "Menu selected{Menu::Start};",
     "debugExplanation": "enum class の値は列挙型の名前で修飾する必要があります。",
     "tests": [
@@ -1295,7 +1243,6 @@
     "id": "w8-d4",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nnamespace rules {\nint clampScore(int score) {\n    if (score < 0) return 0;\n    if (score > 100) return 100;\n    return score;\n}\n}\n\nint main() {\n    int score{};\n    std::cin >> score;\n    std::cout << rules::clampScore(score) << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "std::cout << rules::clampScore(80);",
     "debugExplanation": "名前空間のスコープ解決にはドットではなく :: を使います。",
     "tests": [
@@ -1323,7 +1270,6 @@
     "id": "w8-d5",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nenum class LifeState { Alive, Down };\nstruct Character { int hp; };\n\nLifeState stateOf(const Character& character) {\n    if (character.hp > 0) return LifeState::Alive;\n    return LifeState::Down;\n}\n\nint main() {\n    Character player{};\n    std::cin >> player.hp;\n    const LifeState state{stateOf(player)};\n    if (state == LifeState::Alive) std::cout << \"alive\\n\";\n    else std::cout << \"down\\n\";\n    return 0;\n}",
-    "quizAnswer": 1,
     "debugFix": "if (player.hp > 0) return LifeState::Alive;",
     "debugExplanation": "enum class の列挙子を返すときも型名で修飾します。",
     "tests": [
@@ -1351,7 +1297,6 @@
     "id": "w8-d6",
     "standard": "c++17",
     "solution": "#include <iostream>\n\nstruct Vector2 { int x; int y; };\n\nVector2 moveBy(Vector2 position, Vector2 delta) {\n    return {position.x + delta.x, position.y + delta.y};\n}\n\nint main() {\n    Vector2 position{};\n    Vector2 delta{};\n    std::cin >> position.x >> position.y >> delta.x >> delta.y;\n    const Vector2 result{moveBy(position, delta)};\n    std::cout << result.x << ' ' << result.y << '\\n';\n    return 0;\n}",
-    "quizAnswer": 0,
     "debugFix": "Vector2 moveBy(Vector2 position, Vector2 delta) {\n    return {position.x + delta.x, position.y + delta.y};\n}",
     "debugExplanation": "戻り値型が Vector2 なので、関数は計算した新しい Vector2 を return します。",
     "tests": [
@@ -1379,7 +1324,6 @@
     "id": "w8-d7",
     "standard": "c++17",
     "solution": "#include <algorithm>\n#include <iostream>\n\nenum class Weapon { Sword, Magic };\nstruct Enemy { int hp; };\n\nnamespace battle {\nint damageFor(Weapon weapon) {\n    if (weapon == Weapon::Sword) return 5;\n    return 12;\n}\nvoid attack(Enemy& enemy, Weapon weapon) {\n    enemy.hp = std::max(0, enemy.hp - damageFor(weapon));\n}\n}\n\nint main() {\n    Enemy enemy{};\n    int weaponCode{};\n    std::cin >> enemy.hp >> weaponCode;\n    const Weapon weapon{weaponCode == 1 ? Weapon::Sword : Weapon::Magic};\n    battle::attack(enemy, weapon);\n    std::cout << enemy.hp << '\\n';\n    return 0;\n}",
-    "quizAnswer": 2,
     "debugFix": "namespace battle {\nvoid attack(Enemy& enemy, int damage) { enemy.hp = std::max(0, enemy.hp - damage); }\n}\nbattle::attack(enemy, 12);",
     "debugExplanation": "呼び出し元を更新するには Enemy& で受け取り、名前空間内の関数は battle::attack と呼びます。",
     "tests": [

@@ -3,12 +3,6 @@ import { expect, test } from "@playwright/test";
 
 test("learner backup restores quiz progress without exporting the runner token", async ({ page }) => {
   const token = "e2e-test-runner-token-not-a-real-secret-0123456789";
-  const quizRequests: unknown[] = [];
-  await page.route("https://runner.example/v1/quiz", async (route) => {
-    const body = route.request().postDataJSON() as { lessonId: string; choice: number };
-    quizRequests.push(body);
-    await route.fulfill({ json: { correct: body.lessonId === "w1-d1" && body.choice === 0 } });
-  });
 
   await page.goto("settings/");
   await page.getByLabel("実行ワーカーのアクセストークン").fill(token);
@@ -18,7 +12,6 @@ test("learner backup restores quiz progress without exporting the runner token",
   await page.goto("learn/1/1/");
   await page.getByRole("button", { name: /B キーボード/ }).click();
   await expect(page.getByText(/もう一度考えてみよう/)).toBeVisible();
-  expect(quizRequests).toEqual([{ lessonId: "w1-d1", choice: 1 }]);
 
   await page.goto("settings/");
   const downloadPromise = page.waitForEvent("download");
@@ -39,7 +32,6 @@ test("learner backup restores quiz progress without exporting the runner token",
   await page.goto("learn/1/1/");
   await page.getByRole("button", { name: /A コンパイラ/ }).click();
   await expect(page.getByText(/正解/)).toBeVisible();
-  expect(quizRequests).toEqual([{ lessonId: "w1-d1", choice: 1 }, { lessonId: "w1-d1", choice: 0 }]);
   await page.reload();
   await expect(page.getByText(/正解/)).toBeVisible();
 

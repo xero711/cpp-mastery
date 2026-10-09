@@ -7,7 +7,7 @@ import { curriculumWeeks } from "@/lib/curriculum";
 import { dateInJapan, lessonSlotForDate } from "@/lib/calendar";
 import { readRunnerApiToken, readLearnerState, recordSubmission, saveLessonAnswer, saveLessonDraft, saveQuizChoice, type LearnerState } from "@/lib/browser-store";
 import { findLesson } from "@/lib/lessons";
-import { gradeLessonCode, gradeQuizAnswer, revealLessonAnswer, type GradeResult } from "@/lib/runner-client";
+import { gradeLessonCode, revealLessonAnswer, type GradeResult } from "@/lib/runner-client";
 import { CodeEditorPanel } from "@/components/code-editor-panel";
 
 type Standard = "c++17" | "c++20" | "c++23";
@@ -78,13 +78,7 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
   async function chooseQuiz(index: number) {
     if (!lesson) return;
     setActionMessages((current) => ({ ...current, [lesson.id]: "" }));
-    const runnerToken = await readRunnerApiToken().catch(() => "");
-    const graded = await gradeQuizAnswer(lesson.id, index, runnerToken);
-    if (graded.correct === null) {
-      setActionMessages((current) => ({ ...current, [lesson.id]: graded.message }));
-      return;
-    }
-    const updated = await saveQuizChoice(lesson.id, index, graded.correct);
+    const updated = await saveQuizChoice(lesson.id, index, index === lesson.quiz.answer);
     setState(updated);
   }
 

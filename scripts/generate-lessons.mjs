@@ -8,7 +8,7 @@ const publicLessons = lessons.map((lesson) => {
   const { quiz, exercise, debug, ...publicLesson } = lesson;
   return {
     ...publicLesson,
-    quiz: { question: quiz.question, choices: quiz.choices, explanation: quiz.explanation },
+    quiz: { question: quiz.question, choices: quiz.choices, answer: quiz.answer, explanation: quiz.explanation },
     exercise: {
       prompt: exercise.prompt,
       starter: exercise.starter,
@@ -24,7 +24,6 @@ const privateLessons = lessons.map((lesson) => ({
   id: lesson.id,
   standard: lesson.standard,
   solution: lesson.exercise.solution,
-  quizAnswer: lesson.quiz.answer,
   debugFix: lesson.debug.fix,
   debugExplanation: lesson.debug.explanation,
   tests: lesson.exercise.tests,
