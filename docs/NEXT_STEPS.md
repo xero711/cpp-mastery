@@ -2,7 +2,7 @@
 
 ## C++ runner
 
-1. Confirm `.github/workflows/runner-ci.yml` builds the pinned image and passes real C++17/20/23 compile/run, network, memory, timeout, output-limit, and per-case isolation checks on GitHub's Linux runner; fix any failures before treating the service as verified.
+1. Done: runner CI run [37903323633](https://github.com/xero711/cpp-mastery/actions/runs/37903323633) builds the pinned image and passes real C++17/20/23 compile/run, network, memory, timeout, output-limit, and per-case isolation checks on GitHub's Linux runner. This validates CI only.
 2. Choose a separately hosted Linux deployment target with Docker and gVisor (`runsc`), HTTPS, private ingress controls, egress policy, monitoring, and an abuse-response plan. Production startup rejects `runc` and mutable sandbox image tags.
 3. Deploy the runner and verify its public HTTPS URL, origin allowlist, bearer authentication, rate limits, sandbox image digest, and real cross-origin compile/run before setting the repository variable `CPP_RUNNER_URL`.
 4. Configure the frontend build and enter the per-user token in Settings only after the service is reachable. The token is stored separately in browser IndexedDB and is excluded from learning backups.
@@ -14,5 +14,5 @@ The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI
 1. Author and review detailed daily lessons beyond Week 4. Week 5–104 currently provides the weekly plan and daily templates.
 2. Add assessments, review scheduling, adaptive planning, projects, portfolio export, and real-evidence analytics from the product brief.
 3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
-4. Expand the test suite with authenticated runner integration in the hosted Docker CI and browser E2E flows for learner progress, backup/restore, code submission, and error handling.
+4. Expand browser E2E coverage for learner progress, backup/restore, code submission, and error handling; Docker-backed runner integration already runs in CI.
 5. Continue route-by-route accessibility and responsive review on the deployed Pages site. The custom domain currently presents a Cloudflare browser challenge to this automated review environment.
