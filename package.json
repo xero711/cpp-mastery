@@ -9,7 +9,7 @@
     "prebuild": "node scripts/copy-monaco.mjs && node scripts/generate-lessons.mjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run && node --test services/runner/test/server.node.mjs",
+    "test": "vitest run && node --test services/runner/test/server.node.mjs services/mentor/test/server.node.mjs",
     "test:e2e": "playwright test",
     "test:e2e:runner": "playwright test --config=playwright.runner.config.ts",
     "verify:lessons": "scripts\\verify-lessons.cmd",

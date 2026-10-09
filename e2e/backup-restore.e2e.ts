@@ -4,18 +4,27 @@ import { expect, test } from "@playwright/test";
 test("learner backup restores quiz progress without exporting runner settings", async ({ page }) => {
   const token = "e2e-test-runner-token-not-a-real-secret-0123456789";
   const runnerUrl = "http://127.0.0.1:8081";
+  const mentorToken = "e2e-test-mentor-token-not-a-real-secret-0123456789";
+  const mentorUrl = "http://127.0.0.1:8082";
 
   await page.goto("settings/");
   await page.getByLabel("実行ワーカーのURL").fill(runnerUrl);
-  await page.getByRole("button", { name: "URLを保存" }).click();
+  await page.getByRole("button", { name: "URLを保存", exact: true }).click();
   await expect(page.getByText("実行ワーカーURLをこのブラウザーに保存しました。")).toBeVisible();
   await expect(page.getByText("URL設定済み · トークン未登録")).toBeVisible();
   await page.getByLabel("実行ワーカーのアクセストークン").fill(token);
-  await page.getByRole("button", { name: "トークンを保存" }).click();
+  await page.getByRole("button", { name: "トークンを保存", exact: true }).click();
   await expect(page.getByText("実行ワーカーのトークンをこのブラウザーへ保存しました。")).toBeVisible();
   await expect(page.getByText("URL設定済み · トークン登録済み")).toBeVisible();
+  await page.getByLabel("AIサービスURL").fill(mentorUrl);
+  await page.getByRole("button", { name: "AI URLを保存" }).click();
+  await expect(page.getByText("AIサービスURLをこのブラウザーに保存しました。")).toBeVisible();
+  await page.getByLabel("AIサービスのアクセストークン").fill(mentorToken);
+  await page.getByRole("button", { name: "AIトークンを保存" }).click();
+  await expect(page.getByText("AIサービスのトークンをこのブラウザーへ保存しました。")).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("実行ワーカーのURL")).toHaveValue(runnerUrl);
+  await expect(page.getByLabel("AIサービスURL")).toHaveValue(mentorUrl);
   await expect(page.getByText("このブラウザーに保存済み").first()).toBeVisible();
 
   await page.goto("learn/1/1/");
@@ -32,6 +41,8 @@ test("learner backup restores quiz progress without exporting runner settings", 
   const backupText = await readFile(backupPath!, "utf8");
   expect(backupText).not.toContain(token);
   expect(backupText).not.toContain(runnerUrl);
+  expect(backupText).not.toContain(mentorToken);
+  expect(backupText).not.toContain(mentorUrl);
   const backup = JSON.parse(backupText) as {
     format: string;
     state: { lessons: Record<string, { quizChoice?: number; quizCorrect?: boolean }> };
@@ -55,5 +66,6 @@ test("learner backup restores quiz progress without exporting runner settings", 
   await page.goto("settings/");
   await page.reload();
   await expect(page.getByLabel("実行ワーカーのURL")).toHaveValue(runnerUrl);
+  await expect(page.getByLabel("AIサービスURL")).toHaveValue(mentorUrl);
   await expect(page.getByText("このブラウザーに保存済み").first()).toBeVisible();
 });

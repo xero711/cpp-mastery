@@ -31,9 +31,12 @@
 
 ## Phase 4 — AI and adaptive instruction
 
-- [ ] Add a server-side provider adapter with optional OpenAI/local-provider support.
+- [x] Add a separate streaming service for OpenAI Responses API and Ollama; keep provider keys server-side.
+- [x] Add eight selectable mentor modes, explicit optional context attachment, local chat history, and usage/cost reporting.
+- [x] Cover auth, Origin allowlisting, bounded inputs, provider streaming, and response privacy with automated tests.
+- [ ] Deploy the mentor behind HTTPS with per-user authorization, budget limits, monitoring, and abuse response before public access.
 - [ ] Add structured lesson generation and validation jobs.
-- [ ] Add context-limited mentor modes and user-confirmed plan changes.
+- [ ] Add learner-confirmed plan changes; the current Planner mode only proposes changes in conversation.
 
 ## Phase 5 — projects and career practice
 

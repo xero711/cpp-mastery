@@ -5,11 +5,16 @@ import { addCalendarDays } from "../src/lib/review-schedule";
 import {
   exportLearnerState,
   clearRunnerApiToken,
+  clearMentorApiToken,
   importLearnerState,
   isLearnerState,
+  readMentorApiToken,
+  readMentorConversation,
   readLearnerState,
   readRunnerApiToken,
   recordSubmission,
+  saveMentorApiToken,
+  saveMentorConversation,
   saveLessonDraft,
   saveQuizChoice,
   saveRunnerApiToken,
@@ -75,6 +80,34 @@ describe("browser learner state", () => {
     await clearRunnerApiToken();
     expect(await readRunnerApiToken()).toBe("");
     await expect(saveRunnerApiToken("short")).rejects.toThrow(/32〜512文字/);
+  });
+
+  it("backs up chat history but keeps mentor credentials separate", async () => {
+    const token = "private-mentor-token-0123456789-abcdefghijklmnopqrstuvwxyz";
+    await saveMentorApiToken(token);
+    await saveMentorConversation([
+      { id: "mentor-user-1", role: "user", content: "std::vectorの再確保を教えて", createdAt: new Date().toISOString(), mode: "teacher" },
+      {
+        id: "mentor-assistant-1", role: "assistant", content: "容量を超えて要素を追加すると再確保が起きます。", createdAt: new Date().toISOString(), mode: "teacher",
+        usage: { provider: "ollama", model: "local-model", inputTokens: 18, outputTokens: 12, estimatedCostUsd: 0 },
+      },
+    ]);
+
+    const backup = await exportLearnerState();
+    expect(backup).toContain("mentorConversation");
+    expect(backup).toContain("std::vectorの再確保を教えて");
+    expect(backup).not.toContain(token);
+
+    await saveMentorConversation([]);
+    await importLearnerState(backup);
+    expect(await readMentorConversation()).toHaveLength(2);
+    expect(await readMentorApiToken()).toBe(token);
+
+    const legacyBackup = JSON.stringify({ state: await readLearnerState() });
+    await importLearnerState(legacyBackup);
+    expect(await readMentorConversation()).toEqual([]);
+    await clearMentorApiToken();
+    expect(await readMentorApiToken()).toBe("");
   });
 
   it("saves failed checks into a dated review plan and preserves it in backups", async () => {

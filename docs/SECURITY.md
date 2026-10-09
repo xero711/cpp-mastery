@@ -24,4 +24,8 @@ The Docker-backed integration test runs in GitHub Actions because this Windows h
 
 ## AI
 
-GitHub Pages cannot protect secrets. Any future AI integration must go through a separate server that stores keys privately, rate-limits requests, limits context, and treats learner code and lesson text as untrusted data rather than instructions.
+GitHub Pages cannot protect secrets. The AI mentor therefore uses `services/mentor/` as a separate service. OpenAI keys and optional Ollama credentials are read only from server environment variables. The service requires a 32-character bearer token, exact Origin allowlist, request/history/context/output bounds, per-token rate limit, and a concurrency limit. It binds to loopback by default and rejects non-loopback binds; a production deployment needs a local HTTPS reverse proxy.
+
+The browser sends no chat content during health checks. A submitted question sends the recent conversation turns; optional lesson/code context stays off unless the learner enables it. The service treats all messages, lesson material, and source as untrusted user data and never uses them as developer instructions. It does not persist or log prompt contents. OpenAI Responses requests set `store: false`. Browser conversations are stored locally and can be exported; AI service tokens remain in a separate IndexedDB store and are excluded from backups.
+
+The service token is an owner credential, not per-user authentication. Do not distribute a shared token to public visitors. A public deployment still needs per-user identities or another access-control boundary, budget controls, monitoring, and abuse response. AI responses are not compiler/test evidence. Provider transport tests use mocks. A real local Ollama request returned a streamed answer through the service in CPU-only mode; its default GPU path failed during CUDA startup. OpenAI has not been called, and no public mentor service is deployed.

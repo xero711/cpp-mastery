@@ -22,4 +22,4 @@ Pages serves static HTML, CSS, and JavaScript. It does not host the app's API, d
 
 ## Current delivery boundary
 
-This initial delivery establishes the static product shell, curriculum, browser persistence, and first lessons. The external execution service, AI mentor, account sync, and remaining learning modules are tracked in `ROADMAP.md` and `NEXT_STEPS.md`; they are not represented as complete.
+The static product, curriculum, browser persistence, first lessons, isolated C++ runner implementation, and a separately configured AI mentor service are implemented. The runner and mentor are not publicly hosted from this repository. Mentor provider transport is covered with mocked tests; a real local Ollama CPU-only inference succeeded, but GPU inference failed during CUDA startup, OpenAI has not been called, and a public per-user access boundary is not configured. Account sync and the remaining learning modules are tracked in `ROADMAP.md` and `NEXT_STEPS.md` and are not represented as complete.

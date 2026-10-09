@@ -9,6 +9,9 @@ The static GitHub Pages build has no server database. IndexedDB stores a version
 - `submissions`: source snapshot, runner status, compiler result, program output, tests, and timestamp.
 - `projects`: learner-authored project notes and status.
 - `portfolio`: learner-authored entries.
+- `mentor-conversations`: up to 200 local user/assistant messages, mode, timestamp, and provider token-usage/cost evidence. These messages are included in explicit JSON backups; service tokens remain in the separate `private-secrets` object store and are never exported.
+
+The AI endpoint URL override is browser-local and is not part of learner backups. Provider keys are not browser settings; they are read only from the separate mentor service environment.
 
 Content definitions and versions are bundled separately from progress. Import validates the export version and data shape before replacing local state. Export is a JSON snapshot that learners can copy between browsers manually. There is no automatic cloud sync.
 

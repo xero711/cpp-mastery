@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { AlertCircle, Check, Download, FileDown, FileUp, HardDrive, Link2, Moon, Sun } from "lucide-react";
-import { clearRunnerApiToken, exportLearnerState, importLearnerState, readLearnerState, readRunnerApiToken, saveRunnerApiToken, updateLearnerState, type LearnerState } from "@/lib/browser-store";
+import { clearMentorApiToken, clearRunnerApiToken, exportLearnerState, importLearnerState, readLearnerState, readMentorApiToken, readRunnerApiToken, saveMentorApiToken, saveRunnerApiToken, updateLearnerState, type LearnerState } from "@/lib/browser-store";
 import { clearRunnerUrlOverride, getConfiguredRunnerUrl, getRunnerUrlOverride, saveRunnerUrlOverride, useRunnerConfigured } from "@/lib/runner-client";
+import { clearMentorUrlOverride, getConfiguredMentorUrl, getMentorUrlOverride, saveMentorUrlOverride, useMentorConfigured } from "@/lib/mentor-client";
 
 export function SettingsPage() {
   const runnerConfigured = useRunnerConfigured();
+  const mentorConfigured = useMentorConfigured();
   const [state, setState] = useState<LearnerState | null>(null);
   const [notice, setNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -15,13 +17,20 @@ export function SettingsPage() {
   const [runnerTokenSaved, setRunnerTokenSaved] = useState(false);
   const [runnerUrl, setRunnerUrl] = useState("");
   const [runnerUrlOverrideSaved, setRunnerUrlOverrideSaved] = useState(false);
+  const [mentorToken, setMentorToken] = useState("");
+  const [mentorTokenSaved, setMentorTokenSaved] = useState(false);
+  const [mentorUrl, setMentorUrl] = useState("");
+  const [mentorUrlOverrideSaved, setMentorUrlOverrideSaved] = useState(false);
   useEffect(() => {
-    Promise.all([readLearnerState(), readRunnerApiToken()])
-      .then(([loaded, token]) => {
+    Promise.all([readLearnerState(), readRunnerApiToken(), readMentorApiToken()])
+      .then(([loaded, token, aiToken]) => {
         setState(loaded);
         setRunnerTokenSaved(Boolean(token));
         setRunnerUrl(getConfiguredRunnerUrl());
         setRunnerUrlOverrideSaved(Boolean(getRunnerUrlOverride()));
+        setMentorTokenSaved(Boolean(aiToken));
+        setMentorUrl(getConfiguredMentorUrl());
+        setMentorUrlOverrideSaved(Boolean(getMentorUrlOverride()));
       })
       .catch((error) => setNotice({ type: "error", message: error.message }));
   }, []);
@@ -87,6 +96,54 @@ export function SettingsPage() {
     } finally { setBusy(false); }
   }
 
+  async function storeMentorUrl() {
+    setBusy(true);
+    try {
+      const saved = saveMentorUrlOverride(mentorUrl);
+      setMentorUrl(saved);
+      setMentorUrlOverrideSaved(true);
+      setNotice({ type: "success", message: "AIサービスURLをこのブラウザーに保存しました。" });
+    } catch (error) {
+      setNotice({ type: "error", message: error instanceof Error ? error.message : "URLを保存できませんでした。" });
+    } finally { setBusy(false); }
+  }
+
+  async function removeMentorUrl() {
+    setBusy(true);
+    try {
+      clearMentorUrlOverride();
+      setMentorUrl(getConfiguredMentorUrl());
+      setMentorUrlOverrideSaved(false);
+      setNotice({ type: "success", message: "このブラウザーのAIサービスURL設定を削除しました。" });
+    } catch {
+      setNotice({ type: "error", message: "URL設定を削除できませんでした。" });
+    } finally { setBusy(false); }
+  }
+
+  async function storeMentorToken() {
+    setBusy(true);
+    try {
+      await saveMentorApiToken(mentorToken);
+      setMentorToken("");
+      setMentorTokenSaved(true);
+      setNotice({ type: "success", message: "AIサービスのトークンをこのブラウザーへ保存しました。" });
+    } catch (error) {
+      setNotice({ type: "error", message: error instanceof Error ? error.message : "トークンを保存できませんでした。" });
+    } finally { setBusy(false); }
+  }
+
+  async function removeMentorToken() {
+    setBusy(true);
+    try {
+      await clearMentorApiToken();
+      setMentorToken("");
+      setMentorTokenSaved(false);
+      setNotice({ type: "success", message: "AIサービスのトークンを削除しました。" });
+    } catch {
+      setNotice({ type: "error", message: "AIサービスのトークンを削除できませんでした。" });
+    } finally { setBusy(false); }
+  }
+
   async function downloadBackup() {
     try {
       const content = await exportLearnerState();
@@ -133,10 +190,25 @@ export function SettingsPage() {
           <input className="runner-token-input" type="password" autoComplete="off" spellCheck={false} maxLength={512} value={runnerToken} onChange={(event) => setRunnerToken(event.target.value)} placeholder="32文字以上" aria-label="実行ワーカーのアクセストークン" />
         </label>
         <div className="backup-actions"><button className="button button-primary" onClick={() => void storeRunnerToken()} disabled={busy || !runnerToken.trim()}>トークンを保存</button><button className="button button-secondary" onClick={() => void removeRunnerToken()} disabled={busy || !runnerTokenSaved}>トークンを削除</button></div>
-        <div className="settings-privacy"><AlertCircle size={14} /><span>トークンは別のIndexedDB領域に保存し、バックアップには含めません。入力したURLのサービスへコードとトークンを送るため、信頼できるランナーだけを登録してください。</span></div>
+      <div className="settings-privacy"><AlertCircle size={14} /><span>トークンは別のIndexedDB領域に保存し、バックアップには含めません。入力したURLのサービスへコードとトークンを送るため、信頼できるランナーだけを登録してください。</span></div>
       </section>
-      <section className="settings-card panel"><div className="panel-heading"><div><span className="section-kicker">BACKUP</span><h2>学習データの移行</h2></div><FileDown size={17} className="muted-icon" /></div><p className="settings-description">設定、回答、提出コード、作品情報をJSONにまとめます。別のブラウザーへ移すには、書き出したファイルを復元してください。</p><div className="backup-actions"><button className="button button-primary" onClick={downloadBackup}><Download size={15} />JSONを書き出す</button><label className="button button-secondary file-input-label"><FileUp size={15} />JSONから復元<input type="file" accept="application/json,.json" onChange={restoreBackup} /></label></div><div className="settings-privacy"><AlertCircle size={14} /><span>バックアップには学習コードやメモが含まれることがあります。GitHubへコミットせず、個人用に保管してください。</span></div></section>
-    </div><aside className="settings-aside"><section className="service-status-card panel"><span className="section-kicker">CONNECTED SERVICES</span><h2>外部サービス</h2><div className="service-row"><span className={`service-status-mark ${runnerConfigured ? "service-on" : ""}`} /> <span><strong>C++実行ワーカー</strong><small>{runnerConfigured ? `URL設定済み · トークン${runnerTokenSaved ? "登録済み" : "未登録"}` : "接続先URL未設定"}</small></span></div><div className="service-row"><span className="service-status-mark" /> <span><strong>AI講師</strong><small>APIサーバー未接続</small></span></div><p className="service-description">GitHub Pagesにはサーバー機能がありません。C++実行は認証付きの隔離ワーカーへ送ります。</p><Link href="/mentor/" className="text-link">セキュリティについて<ArrowRightIcon /></Link></section><section className="data-status-card panel"><span className="section-kicker">LOCAL DATA</span><h2>保存先</h2><div className="data-status"><HardDrive size={16} /><div><strong>このブラウザー</strong><small>IndexedDB · クラウド同期なし</small></div></div><p>ブラウザーのデータ削除や別端末への切り替えに備えて、定期的にバックアップしてください。</p></section></aside></div>
+      <section className="settings-card panel">
+        <div className="panel-heading"><div><span className="section-kicker">AI MENTOR</span><h2>AI講師サービス接続</h2></div><HardDrive size={17} className="muted-icon" /></div>
+        <p className="settings-description">GitHub Pagesから独立したAIサービスへ接続します。OpenAIのAPIキーやOllamaの接続設定はサーバー環境に置き、ここには入力しません。</p>
+        <label className="runner-token-label">
+          <span><strong>AIサービスURL</strong><small>{mentorUrlOverrideSaved ? "このブラウザーに保存済み" : mentorConfigured ? "サイトのビルド設定を使用中" : "このブラウザーでは未設定"}</small></span>
+          <input className="runner-token-input runner-url-input" type="url" autoComplete="url" spellCheck={false} maxLength={2_048} value={mentorUrl} onChange={(event) => setMentorUrl(event.target.value)} placeholder="https://mentor.example.com または http://127.0.0.1:8082" aria-label="AIサービスURL" />
+        </label>
+        <div className="backup-actions"><button className="button button-primary" onClick={() => void storeMentorUrl()} disabled={busy || !mentorUrl.trim()}>AI URLを保存</button><button className="button button-secondary" onClick={() => void removeMentorUrl()} disabled={busy || !mentorUrlOverrideSaved}>AI URLを削除</button></div>
+        <label className="runner-token-label">
+          <span><strong>アクセストークン</strong><small>{mentorTokenSaved ? "このブラウザーに保存済み" : "このブラウザーには未登録"}</small></span>
+          <input className="runner-token-input" type="password" autoComplete="off" spellCheck={false} maxLength={512} value={mentorToken} onChange={(event) => setMentorToken(event.target.value)} placeholder="32文字以上" aria-label="AIサービスのアクセストークン" />
+        </label>
+        <div className="backup-actions"><button className="button button-primary" onClick={() => void storeMentorToken()} disabled={busy || !mentorToken.trim()}>AIトークンを保存</button><button className="button button-secondary" onClick={() => void removeMentorToken()} disabled={busy || !mentorTokenSaved}>AIトークンを削除</button></div>
+        <div className="settings-privacy"><AlertCircle size={14} /><span>会話はこの端末に保存します。質問を送ったときだけAIへ送信し、教材やコードは任意のチェックを選んだときだけ添付します。トークンは学習バックアップに含めません。公開サイト利用者へ共通の所有者トークンを配布しないでください。</span></div>
+      </section>
+      <section className="settings-card panel"><div className="panel-heading"><div><span className="section-kicker">BACKUP</span><h2>学習データの移行</h2></div><FileDown size={17} className="muted-icon" /></div><p className="settings-description">設定、回答、提出コード、作品情報、AI会話履歴をJSONにまとめます。別のブラウザーへ移すには、書き出したファイルを復元してください。</p><div className="backup-actions"><button className="button button-primary" onClick={downloadBackup}><Download size={15} />JSONを書き出す</button><label className="button button-secondary file-input-label"><FileUp size={15} />JSONから復元<input type="file" accept="application/json,.json" onChange={restoreBackup} /></label></div><div className="settings-privacy"><AlertCircle size={14} /><span>バックアップには学習コード、メモ、AI会話が含まれることがあります。GitHubへコミットせず、個人用に保管してください。</span></div></section>
+    </div><aside className="settings-aside"><section className="service-status-card panel"><span className="section-kicker">CONNECTED SERVICES</span><h2>外部サービス</h2><div className="service-row"><span className={`service-status-mark ${runnerConfigured ? "service-on" : ""}`} /> <span><strong>C++実行ワーカー</strong><small>{runnerConfigured ? `URL設定済み · トークン${runnerTokenSaved ? "登録済み" : "未登録"}` : "接続先URL未設定"}</small></span></div><div className="service-row"><span className={`service-status-mark ${mentorConfigured ? "service-on" : ""}`} /> <span><strong>AI講師</strong><small>{mentorConfigured ? `URL設定済み · トークン${mentorTokenSaved ? "登録済み" : "未登録"}` : "接続先URL未設定"}</small></span></div><p className="service-description">GitHub Pagesにはサーバー機能がありません。C++実行は認証付きの隔離ワーカーへ、AI講師は別のAIサービスへ接続します。</p><Link href="/mentor/" className="text-link">AI講師を開く<ArrowRightIcon /></Link></section><section className="data-status-card panel"><span className="section-kicker">LOCAL DATA</span><h2>保存先</h2><div className="data-status"><HardDrive size={16} /><div><strong>このブラウザー</strong><small>IndexedDB · クラウド同期なし</small></div></div><p>ブラウザーのデータ削除や別端末への切り替えに備えて、定期的にバックアップしてください。</p></section></aside></div>
   </div>;
 }
 
