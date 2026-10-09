@@ -3,9 +3,10 @@ import { randomBytes } from "node:crypto";
 import { startRunnerService } from "../src/server.mjs";
 
 const token = randomBytes(32).toString("base64url");
-const origin = "http://localhost:3000";
+const production = process.env.NODE_ENV === "production";
+const origin = production ? "https://cpp.example" : "http://localhost:3000";
 const env = {
-  NODE_ENV: "development",
+  NODE_ENV: process.env.NODE_ENV ?? "development",
   RUNNER_API_TOKEN: token,
   RUNNER_ALLOWED_ORIGINS: origin,
   RUNNER_DOCKER_RUNTIME: process.env.RUNNER_DOCKER_RUNTIME ?? "runc",

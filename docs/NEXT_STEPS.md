@@ -3,7 +3,7 @@
 ## C++ runner
 
 1. Done: runner CI run [37903323633](https://github.com/xero711/cpp-mastery/actions/runs/37903323633) builds the pinned image and passes real C++17/20/23 compile/run, network, memory, timeout, output-limit, and per-case isolation checks on GitHub's Linux runner. This validates CI only.
-2. Choose a separately hosted Linux deployment target with Docker and gVisor (`runsc`), HTTPS, private ingress controls, egress policy, monitoring, and an abuse-response plan. Production startup rejects `runc` and mutable sandbox image tags.
+2. Choose a separately hosted Linux deployment target with Docker and gVisor (`runsc`), HTTPS, private ingress controls, egress policy, monitoring, and an abuse-response plan. Production startup rejects `runc` and mutable image tags; the host can pin a local image ID, so a separate image registry is optional. Follow [the deployment runbook](../services/runner/DEPLOYMENT.md).
 3. Deploy the runner and verify its public HTTPS URL, origin allowlist, bearer authentication, rate limits, sandbox image digest, and real cross-origin compile/run before setting the repository variable `CPP_RUNNER_URL`.
 4. Configure the frontend build and enter the per-user token in Settings only after the service is reachable. The token is stored separately in browser IndexedDB and is excluded from learning backups.
 

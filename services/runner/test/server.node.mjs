@@ -32,7 +32,7 @@ function post(url, { body = validJob, authorization = `Bearer ${token}`, request
 }
 
 describe("runner API security boundary", () => {
-  it("requires a long token and production gVisor with an immutable image digest", () => {
+  it("requires a long token and production gVisor with an immutable SHA-256 image reference", () => {
     assert.throws(() => loadConfig({
       NODE_ENV: "production",
       RUNNER_API_TOKEN: "short-token",
@@ -53,7 +53,7 @@ describe("runner API security boundary", () => {
       RUNNER_ALLOWED_ORIGINS: "https://cpp.example",
       RUNNER_DOCKER_RUNTIME: "runsc",
       RUNNER_SANDBOX_IMAGE: "ghcr.io/example/sandbox:latest",
-    }), /digest/);
+    }), /SHA-256 digest or local Docker image ID/);
     const config = loadConfig({
       NODE_ENV: "production",
       RUNNER_API_TOKEN: token,
@@ -62,6 +62,16 @@ describe("runner API security boundary", () => {
       RUNNER_SANDBOX_IMAGE: `ghcr.io/example/sandbox@sha256:${"a".repeat(64)}`,
     });
     assert.equal(config.runtime, "runsc");
+
+    const localImage = `sha256:${"b".repeat(64)}`;
+    const localImageConfig = loadConfig({
+      NODE_ENV: "production",
+      RUNNER_API_TOKEN: token,
+      RUNNER_ALLOWED_ORIGINS: "https://cpp.example",
+      RUNNER_DOCKER_RUNTIME: "runsc",
+      RUNNER_SANDBOX_IMAGE: localImage,
+    });
+    assert.equal(localImageConfig.image, localImage);
   });
 
   it("validates standards, source bytes, test count, and cumulative stdin bytes", () => {

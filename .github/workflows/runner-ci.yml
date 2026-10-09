@@ -26,6 +26,8 @@ jobs:
         run: docker build --file services/runner/Dockerfile.sandbox --tag cpp-mastery-sandbox:ci services/runner
       - name: Test API validation and authentication
         run: node --test services/runner/test/server.node.mjs
+      - name: Pin the built image by its Docker image ID
+        run: echo "RUNNER_SANDBOX_IMAGE=$(docker image inspect --format '{{.Id}}' cpp-mastery-sandbox:ci)" >> "$GITHUB_ENV"
       - name: Compile and run code in disposable containers
         run: node services/runner/test/integration.mjs
         env:

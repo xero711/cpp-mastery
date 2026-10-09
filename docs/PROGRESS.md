@@ -89,3 +89,10 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Pages run [37909059029](https://github.com/xero711/cpp-mastery/actions/runs/37909059029) exposed a Playwright readiness timeout because project-page testing must include the `/cpp-mastery` base path. The test now derives that prefix from `GITHUB_REPOSITORY`; local E2E passes with `GITHUB_REPOSITORY=xero711/cpp-mastery`, matching the Pages build environment.
 - Corrected commit `8ef4a17` deployed successfully in [Pages run 37909519368](https://github.com/xero711/cpp-mastery/actions/runs/37909519368), including Chromium E2E and the 743-page static build. The browser test now reloads after both quiz changes and backup restore to verify IndexedDB persistence.
 - Manual browser verification also confirmed backup export/import behavior. Week 9–104 lesson authoring, broader browser E2E coverage, production runner hosting, live public-page inspection through the Cloudflare challenge, and HTTPS enforcement remain open.
+
+## 2026-10-09 — runner production deployment preparation
+
+- Added an Ubuntu + gVisor production host runbook covering runtime installation, a dedicated API service account, a private token file, loopback-only API binding, HTTPS reverse proxy, host integration checks, and the GitHub Pages URL/token handoff. The runbook is preparatory and has not been executed on a production host.
+- Production runner config now accepts either a registry manifest digest or Docker's immutable local `sha256:<image-id>`. This permits building the pinned sandbox on the dedicated host without publishing the large compiler image to a registry.
+- Runner CI now obtains the built image ID and exercises the integration suite using that ID. The integration test can also run with `NODE_ENV=production` and `RUNNER_DOCKER_RUNTIME=runsc` on a future host; the Windows machine still lacks Docker and a WSL distro.
+- Local `pnpm test` passes (14 Vitest and 9 runner API tests) and `pnpm lint` passes. Production gVisor execution remains unverified until a Linux host is supplied; GitHub Actions variables and secrets are still empty.

@@ -39,7 +39,11 @@ export function loadConfig(env = process.env) {
   if (!Number.isInteger(port) || port < 0 || port > 65_535) throw new Error("RUNNER_PORT is invalid.");
   if (production) {
     if (runtime !== "runsc") throw new Error("Production requires the gVisor Docker runtime (`runsc`).");
-    if (!/@sha256:[a-f0-9]{64}$/.test(image)) throw new Error("Production requires a sandbox image pinned by SHA-256 digest.");
+    const hasRegistryDigest = /@sha256:[a-f0-9]{64}$/.test(image);
+    const hasLocalImageId = /^sha256:[a-f0-9]{64}$/.test(image);
+    if (!hasRegistryDigest && !hasLocalImageId) {
+      throw new Error("Production requires a sandbox image pinned by a registry SHA-256 digest or local Docker image ID.");
+    }
   }
   return { apiToken, origins: new Set(origins), runtime, image, maxConcurrentJobs, port, host, production };
 }
