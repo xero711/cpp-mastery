@@ -22,6 +22,7 @@ COMPILE_TIMEOUT_SECONDS = 12
 CASE_TIMEOUT_SECONDS = 2
 WORK_DIR = "/work"
 STANDARD_FLAGS = {"c++17": "c++17", "c++20": "c++20", "c++23": "c++23"}
+CURRENT_STAGE = "startup"
 
 
 def emit(result: dict[str, object]) -> None:
@@ -171,17 +172,22 @@ def run_bounded(
 
 
 def main() -> int:
+    global CURRENT_STAGE
+    CURRENT_STAGE = "read-request"
     try:
         request = input_request()
     except Exception:
+        print("C++ worker rejected malformed input", file=sys.stderr, flush=True)
         emit({"status": "runner_error", "compilerOutput": "実行リクエストの形式が不正です。", "cases": []})
         return 0
 
+    CURRENT_STAGE = "write-source"
     source_path = os.path.join(WORK_DIR, "main.cpp")
     binary_path = os.path.join(WORK_DIR, "program")
     with open(source_path, "x", encoding="utf-8", newline="") as source_file:
         source_file.write(request["source"])
 
+    CURRENT_STAGE = "compile"
     compile_result = run_bounded(
         [
             "g++",
@@ -205,6 +211,7 @@ def main() -> int:
         COMPILE_TIMEOUT_SECONDS + 1,
         448 * 1024 * 1024,
     )
+    CURRENT_STAGE = "check-compiler-result"
     compiler_output = compile_result["stderr"] + compile_result["stdout"]
     if compile_result["timedOut"] or compile_result["outputLimited"] or compile_result["exitCode"] is None or compile_result["exitCode"] < 0 or "virtual memory exhausted" in compiler_output:
         emit({
@@ -218,7 +225,8 @@ def main() -> int:
         return 0
 
     cases = []
-    for test in request["tests"]:
+    for index, test in enumerate(request["tests"], start=1):
+        CURRENT_STAGE = f"execute-case-{index}"
         case = run_bounded(
             [binary_path],
             test["stdin"].encode("utf-8"),
@@ -237,6 +245,12 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except Exception as error:
-        print(f"C++ worker internal error ({error!r})"[:240], file=sys.stderr, flush=True)
+        details = {
+            "stage": CURRENT_STAGE,
+            "error": repr(error)[:160],
+            "errno": getattr(error, "errno", None),
+            "filename": getattr(error, "filename", None),
+        }
+        print(f"C++ worker internal error ({json.dumps(details, ensure_ascii=True)})", file=sys.stderr, flush=True)
         emit({"status": "runner_error", "compilerOutput": "実行ワーカーで内部エラーが発生しました。", "cases": []})
         raise SystemExit(0)
