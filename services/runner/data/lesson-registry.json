@@ -3063,5 +3063,198 @@
         "output": "opened: backup\nsaved\nclosed: backup"
       }
     ]
+  },
+  {
+    "id": "w18-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nvoid show(const char* label, const std::vector<int>& values) {\n    std::cout << label << ':';\n    for (int value : values) std::cout << ' ' << value;\n    std::cout << '\\n';\n}\n\nint main() {\n    int count{};\n    if (!(std::cin >> count) || count < 1 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::vector<int> original;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        if (!(std::cin >> value) || value < -10000 || value > 10000) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        original.push_back(value);\n    }\n    std::vector<int> duplicate{original};\n    ++duplicate[0];\n    show(\"original\", original);\n    show(\"copy\", duplicate);\n    return 0;\n}",
+    "debugFix": "std::vector<int> copy{original};",
+    "debugExplanation": "参照は同じvectorへの別名です。独立した値を作りたいときは参照ではなくコピー構築します。",
+    "tests": [
+      {
+        "input": "2 4 7\n",
+        "output": "original: 4 7\ncopy: 5 7"
+      },
+      {
+        "input": "1 0\n",
+        "output": "original: 0\ncopy: 1"
+      },
+      {
+        "input": "3 -2 5 8\n",
+        "output": "original: -2 5 8\ncopy: -1 5 8"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 1 2 3 4 5\n",
+        "output": "original: 1 2 3 4 5\ncopy: 2 2 3 4 5"
+      }
+    ]
+  },
+  {
+    "id": "w18-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <vector>\n\nint main() {\n    int first{};\n    int second{};\n    if (!(std::cin >> first >> second) || first == -1 || second == -1) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    const std::vector<int> source{first, second};\n    std::vector<int> target{99};\n    target = source;\n    target[0] = -1;\n    std::cout << \"source: \" << source[0] << ' ' << source[1] << '\\n';\n    std::cout << \"target: \" << target[0] << ' ' << target[1] << '\\n';\n    return 0;\n}",
+    "debugFix": "target = source;",
+    "debugExplanation": "代入対象targetがすでにある場合は再宣言せず、=で値をコピーします。",
+    "tests": [
+      {
+        "input": "3 8\n",
+        "output": "source: 3 8\ntarget: -1 8"
+      },
+      {
+        "input": "0 4\n",
+        "output": "source: 0 4\ntarget: -1 4"
+      },
+      {
+        "input": "-2 7\n",
+        "output": "source: -2 7\ntarget: -1 7"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "-1 4\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w18-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <utility>\n#include <vector>\n\nint main() {\n    int count{};\n    if (!(std::cin >> count) || count < 1 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::vector<int> source;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        if (!(std::cin >> value)) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        source.push_back(value);\n    }\n    std::vector<int> destination{std::move(source)};\n    std::cout << \"moved:\";\n    for (int value : destination) std::cout << ' ' << value;\n    std::cout << '\\n';\n    return 0;\n}",
+    "debugFix": "std::cout << moved[0];",
+    "debugExplanation": "移動元のvectorは有効ですが、内容は決めつけられません。ムーブ構築後はdestinationの要素を使います。",
+    "tests": [
+      {
+        "input": "3 2 5 8\n",
+        "output": "moved: 2 5 8"
+      },
+      {
+        "input": "1 -4\n",
+        "output": "moved: -4"
+      },
+      {
+        "input": "2 0 9\n",
+        "output": "moved: 0 9"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 1 3 5 7 9\n",
+        "output": "moved: 1 3 5 7 9"
+      }
+    ]
+  },
+  {
+    "id": "w18-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <utility>\n#include <vector>\n\nint main() {\n    int count{};\n    if (!(std::cin >> count) || count < 1 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    std::vector<int> source;\n    for (int i = 0; i < count; ++i) {\n        int value{};\n        if (!(std::cin >> value)) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        source.push_back(value);\n    }\n    std::vector<int> target{99, 99};\n    target = std::move(source);\n    std::cout << \"target:\";\n    for (int value : target) std::cout << ' ' << value;\n    std::cout << '\\n';\n    return 0;\n}",
+    "debugFix": "= std::move(source)",
+    "debugExplanation": "targetがすでに存在するなら、宣言し直さずムーブ代入だけを行います。",
+    "tests": [
+      {
+        "input": "2 4 6\n",
+        "output": "target: 4 6"
+      },
+      {
+        "input": "1 -2\n",
+        "output": "target: -2"
+      },
+      {
+        "input": "3 0 1 5\n",
+        "output": "target: 0 1 5"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 1 2 3 4 5\n",
+        "output": "target: 1 2 3 4 5"
+      }
+    ]
+  },
+  {
+    "id": "w18-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n#include <utility>\n\nvoid select(const std::string&) { std::cout << \"lvalue\\n\"; }\nvoid select(std::string&&) { std::cout << \"rvalue\\n\"; }\n\nint main() {\n    std::string name;\n    if (!(std::cin >> name)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    select(name);\n    select(std::move(name));\n    std::cout << \"name: \" << name << '\\n';\n    return 0;\n}",
+    "debugFix": "use(std::move(name));",
+    "debugExplanation": "nameは名前付きの左辺値なので、右辺値参照を取る関数へ渡すときはstd::moveを使います。",
+    "tests": [
+      {
+        "input": "Aoi\n",
+        "output": "lvalue\nrvalue\nname: Aoi"
+      },
+      {
+        "input": "Kenta\n",
+        "output": "lvalue\nrvalue\nname: Kenta"
+      },
+      {
+        "input": "Ren\n",
+        "output": "lvalue\nrvalue\nname: Ren"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Player42\n",
+        "output": "lvalue\nrvalue\nname: Player42"
+      }
+    ]
+  },
+  {
+    "id": "w18-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n#include <vector>\n\nclass SaveData {\npublic:\n    SaveData(std::string name, std::vector<int> scores)\n        : name_{name}, scores_{scores} {}\n    const std::string& name() const { return name_; }\n    int score(std::size_t index) const { return scores_[index]; }\n    void setScore(std::size_t index, int value) { scores_[index] = value; }\nprivate:\n    std::string name_;\n    std::vector<int> scores_;\n};\n\nint main() {\n    std::string name;\n    int first{};\n    int second{};\n    if (!(std::cin >> name >> first >> second)) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    SaveData original{name, {first, second}};\n    SaveData copy{name, {0}};\n    copy = original;\n    copy.setScore(0, first + 1);\n    std::cout << \"original: \" << original.name() << ' ' << original.score(0) << ' ' << original.score(1) << '\\n';\n    std::cout << \"copy: \" << copy.name() << ' ' << copy.score(0) << ' ' << copy.score(1) << '\\n';\n    return 0;\n}",
+    "debugFix": "~SaveData() = default;",
+    "debugExplanation": "vectorは自身のメモリを破棄時に解放します。手動deleteを追加せず、Rule of Zeroではデストラクターも自作しません。",
+    "tests": [
+      {
+        "input": "Aoi 10 20\n",
+        "output": "original: Aoi 10 20\ncopy: Aoi 11 20"
+      },
+      {
+        "input": "Ren 0 5\n",
+        "output": "original: Ren 0 5\ncopy: Ren 1 5"
+      },
+      {
+        "input": "Kai -3 8\n",
+        "output": "original: Kai -3 8\ncopy: Kai -2 8"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Mira 100 100\n",
+        "output": "original: Mira 100 100\ncopy: Mira 101 100"
+      }
+    ]
+  },
+  {
+    "id": "w18-d7",
+    "standard": "c++17",
+    "solution": "#include <cstddef>\n#include <iostream>\n#include <utility>\n\nclass Buffer {\npublic:\n    explicit Buffer(std::size_t size)\n        : data_{size == 0 ? nullptr : new int[size]{}}, size_{size} {}\n    ~Buffer() { delete[] data_; }\n    Buffer(const Buffer& other) : Buffer{other.size_} {\n        for (std::size_t i = 0; i < size_; ++i) data_[i] = other.data_[i];\n    }\n    Buffer& operator=(const Buffer& other) {\n        if (this != &other) {\n            Buffer copy{other};\n            swap(copy);\n        }\n        return *this;\n    }\n    Buffer(Buffer&& other) noexcept : data_{other.data_}, size_{other.size_} {\n        other.data_ = nullptr;\n        other.size_ = 0;\n    }\n    Buffer& operator=(Buffer&& other) noexcept {\n        if (this != &other) {\n            delete[] data_;\n            data_ = other.data_;\n            size_ = other.size_;\n            other.data_ = nullptr;\n            other.size_ = 0;\n        }\n        return *this;\n    }\n    std::size_t size() const { return size_; }\n    int get(std::size_t index) const { return data_[index]; }\n    void set(std::size_t index, int value) { data_[index] = value; }\nprivate:\n    void swap(Buffer& other) noexcept {\n        int* data = data_;\n        data_ = other.data_;\n        other.data_ = data;\n        std::size_t size = size_;\n        size_ = other.size_;\n        other.size_ = size;\n    }\n    int* data_{};\n    std::size_t size_{};\n};\n\nvoid show(const char* label, const Buffer& buffer) {\n    std::cout << label << ':';\n    for (std::size_t i = 0; i < buffer.size(); ++i) {\n        std::cout << ' ' << buffer.get(i);\n    }\n    std::cout << '\\n';\n}\n\nint main() {\n    std::size_t count{};\n    if (!(std::cin >> count) || count < 1 || count > 5) {\n        std::cout << \"invalid\\n\";\n        return 0;\n    }\n    Buffer original{count};\n    for (std::size_t i = 0; i < count; ++i) {\n        int value{};\n        if (!(std::cin >> value)) {\n            std::cout << \"invalid\\n\";\n            return 0;\n        }\n        original.set(i, value);\n    }\n    Buffer copy{original};\n    copy.set(0, copy.get(0) + 1);\n    Buffer assigned{1};\n    assigned = original;\n    Buffer moved{std::move(copy)};\n    assigned = std::move(moved);\n    show(\"original\", original);\n    show(\"assigned\", assigned);\n    return 0;\n}",
+    "debugFix": "data_ = new int[other.size_];",
+    "debugExplanation": "ポインターをそのままコピーせず、コピー先が所有する新しい配列を確保して要素を複製します。",
+    "tests": [
+      {
+        "input": "3 4 7 9\n",
+        "output": "original: 4 7 9\nassigned: 5 7 9"
+      },
+      {
+        "input": "1 0\n",
+        "output": "original: 0\nassigned: 1"
+      },
+      {
+        "input": "2 -3 8\n",
+        "output": "original: -3 8\nassigned: -2 8"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "5 1 2 3 4 5\n",
+        "output": "original: 1 2 3 4 5\nassigned: 2 2 3 4 5"
+      },
+      {
+        "input": "6 1 2 3 4 5 6\n",
+        "output": "invalid"
+      }
+    ]
   }
 ]
