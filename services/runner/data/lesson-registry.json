@@ -1535,5 +1535,194 @@
         "output": "total: 297\naverage: 99"
       }
     ]
+  },
+  {
+    "id": "w10-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\nclass Score { public: void set(int value) { score_ = value; } int value() const { return score_; } private: int score_{}; };\nint main() { int input{}; std::cin >> input; Score score{}; score.set(input); std::cout << \"score: \" << score.value() << std::endl; return 0; }\n",
+    "debugFix": "class Score { public: int value() const { return value_; } private: int value_{10}; }; int main() { Score s; return s.value(); }",
+    "debugExplanation": "value_ は private なので外から直接読めません。公開メンバー関数を通して値を読みます。",
+    "tests": [
+      {
+        "input": "42\n",
+        "output": "score: 42"
+      },
+      {
+        "input": "0\n",
+        "output": "score: 0"
+      },
+      {
+        "input": "-8\n",
+        "output": "score: -8"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "135\n",
+        "output": "score: 135"
+      }
+    ]
+  },
+  {
+    "id": "w10-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\nclass Counter { public: void add(int n) { value_ += n; } int value() const { return value_; } private: int value_{}; };\nint main() { int a{}, da{}, b{}, db{}; std::cin >> a >> da >> b >> db; Counter first{}, second{}; first.add(a); first.add(da); second.add(b); second.add(db); std::cout << \"first: \" << first.value() << std::endl << \"second: \" << second.value() << std::endl; return 0; }\n",
+    "debugFix": "void add(int amount) { value_ += amount; }",
+    "debugExplanation": "代入では前の状態を上書きします。加算操作なら現在値へ変更量を足します。",
+    "tests": [
+      {
+        "input": "10 5 20 -3\n",
+        "output": "first: 15\nsecond: 17"
+      },
+      {
+        "input": "0 0 0 0\n",
+        "output": "first: 0\nsecond: 0"
+      },
+      {
+        "input": "-2 7 4 6\n",
+        "output": "first: 5\nsecond: 10"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "100 -40 -5 2\n",
+        "output": "first: 60\nsecond: -3"
+      }
+    ]
+  },
+  {
+    "id": "w10-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\nclass Weapon { public: Weapon(const std::string& n, int a) : name_(n), attack_(a) {} const std::string& name() const { return name_; } int attack() const { return attack_; } private: std::string name_; int attack_{}; };\nint main() { std::string n; int a{}; std::cin >> n >> a; const Weapon w{n, a}; std::cout << \"weapon: \" << w.name() << std::endl << \"attack: \" << w.attack() << std::endl; return 0; }\n",
+    "debugFix": "Weapon(const std::string& name, int power) : name_(name), power_(power) {}",
+    "debugExplanation": "初期化子リストなら、本体へ入る前にメンバーを初期化できます。",
+    "tests": [
+      {
+        "input": "Bronze 9\n",
+        "output": "weapon: Bronze\nattack: 9"
+      },
+      {
+        "input": "Laser 120\n",
+        "output": "weapon: Laser\nattack: 120"
+      },
+      {
+        "input": "Stick 0\n",
+        "output": "weapon: Stick\nattack: 0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Claw 37\n",
+        "output": "weapon: Claw\nattack: 37"
+      }
+    ]
+  },
+  {
+    "id": "w10-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\nclass Inventory { public: explicit Inventory(int n) : stock_(n < 0 ? 0 : n) {} bool remove(int n) { if (n < 0 || n > stock_) return false; stock_ -= n; return true; } int stock() const { return stock_; } private: int stock_{}; };\nint main() { int n{}, request{}; std::cin >> n >> request; Inventory items{n}; bool ok = items.remove(request); std::cout << (ok ? \"ok \" : \"rejected \") << items.stock() << std::endl; return 0; }\n",
+    "debugFix": "bool remove(int n) {\n    if (n < 0 || n > stock_) return false;\n    stock_ -= n;\n    return true;\n}",
+    "debugExplanation": "先に減算すると無効な要求で不正な残数になります。成功時だけ状態を変えます。",
+    "tests": [
+      {
+        "input": "12 5\n",
+        "output": "ok 7"
+      },
+      {
+        "input": "3 8\n",
+        "output": "rejected 3"
+      },
+      {
+        "input": "10 -2\n",
+        "output": "rejected 10"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0 0\n",
+        "output": "ok 0"
+      }
+    ]
+  },
+  {
+    "id": "w10-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\nclass Player { public: Player(const std::string& n, int h) : name_(n), hp_(h) {} const std::string& name() const { return name_; } bool alive() const { return hp_ > 0; } private: std::string name_; int hp_{}; };\nint main() { std::string n; int h{}; std::cin >> n >> h; const Player p{n, h}; std::cout << p.name() << (p.alive() ? \": alive\" : \": out\") << std::endl; return 0; }\n",
+    "debugFix": "bool alive() const {\n    return hp_ > 0;\n}",
+    "debugExplanation": "const オブジェクトから呼ぶ読み取り関数には、メンバー関数末尾の const が必要です。",
+    "tests": [
+      {
+        "input": "Mira 80\n",
+        "output": "Mira: alive"
+      },
+      {
+        "input": "Ghost 0\n",
+        "output": "Ghost: out"
+      },
+      {
+        "input": "Slime -2\n",
+        "output": "Slime: out"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Knight 1\n",
+        "output": "Knight: alive"
+      }
+    ]
+  },
+  {
+    "id": "w10-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\nclass Potion { public: explicit Potion(int n) : Potion(\"Potion\", n) {} Potion(const std::string& name, int n) : name_(name), amount_(n) {} const std::string& name() const { return name_; } int amount() const { return amount_; } private: std::string name_; int amount_{}; };\nint main() { std::string mode; std::cin >> mode; if (mode == \"default\") { int n{}; std::cin >> n; const Potion p{n}; std::cout << p.name() << \": \" << p.amount() << std::endl; } else { std::string name; int n{}; std::cin >> name >> n; const Potion p{name, n}; std::cout << p.name() << \": \" << p.amount() << std::endl; } return 0; }\n",
+    "debugFix": "explicit Potion(int n) : Potion(\"Potion\", n) {}",
+    "debugExplanation": "本体で別の Potion を作っても現在のオブジェクトは初期化されません。委譲は初期化子リストに書きます。",
+    "tests": [
+      {
+        "input": "default 20\n",
+        "output": "Potion: 20"
+      },
+      {
+        "input": "custom Mega 60\n",
+        "output": "Mega: 60"
+      },
+      {
+        "input": "custom Tiny 1\n",
+        "output": "Tiny: 1"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "default 0\n",
+        "output": "Potion: 0"
+      }
+    ]
+  },
+  {
+    "id": "w10-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\nclass Character { public: Character(const std::string& n, int m, int h) : name_(n), max_(m > 0 ? m : 1), hp_(h < 0 ? 0 : (h > max_ ? max_ : h)) {} void damage(int n) { if (n > 0) hp_ = n >= hp_ ? 0 : hp_ - n; } void heal(int n) { if (n > 0) hp_ = n > max_ - hp_ ? max_ : hp_ + n; } const std::string& name() const { return name_; } int hp() const { return hp_; } int maxHp() const { return max_; } private: std::string name_; int max_{}; int hp_{}; };\nint main() { std::string name; int m{}, h{}, d{}, recovery{}; std::cin >> name >> m >> h >> d >> recovery; Character c{name, m, h}; c.damage(d); c.heal(recovery); std::cout << \"name: \" << c.name() << std::endl << \"hp: \" << c.hp() << \"/\" << c.maxHp() << std::endl; return 0; }\n",
+    "debugFix": "void heal(int n) {\n    if (n <= 0) return;\n    hp_ = n > max_ - hp_ ? max_ : hp_ + n;\n}",
+    "debugExplanation": "無条件の加算は負数や最大HP超過を許します。正の量だけ受け付け、加算前に上限を確認します。",
+    "tests": [
+      {
+        "input": "Mira 100 80 30 10\n",
+        "output": "name: Mira\nhp: 60/100"
+      },
+      {
+        "input": "Slime 40 10 50 12\n",
+        "output": "name: Slime\nhp: 12/40"
+      },
+      {
+        "input": "Knight 60 80 0 20\n",
+        "output": "name: Knight\nhp: 60/60"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "Ghost 30 15 15 0\n",
+        "output": "name: Ghost\nhp: 0/30"
+      }
+    ]
   }
 ]

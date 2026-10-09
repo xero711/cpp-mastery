@@ -17,12 +17,15 @@ async function walk(directory) {
 }
 
 await walk(outputRoot);
-const payload = (await Promise.all(assets.map((path) => readFile(path, "utf8")))).join("\n");
 const publicJson = await readFile(join(root, "src", "lib", "lessons.public.json"), "utf8");
 const publicLessons = JSON.parse(publicJson);
+const payload = (await Promise.all(assets.map((path) => readFile(path, "utf8")))).join("\n");
 
 assert.equal(publicLessons.length, lessons.length);
 for (const lesson of publicLessons) {
+  assert.equal(Object.hasOwn(lesson, "solution"), false, `${lesson.id} top-level solution leaked into public JSON`);
+  assert.equal(Object.hasOwn(lesson, "hiddenTests"), false, `${lesson.id} top-level hidden tests leaked into public JSON`);
+  assert.equal(Object.hasOwn(lesson, "debugFix"), false, `${lesson.id} debug fix leaked into public JSON`);
   assert.ok(Number.isInteger(lesson.quiz.answer) && lesson.quiz.answer >= 0 && lesson.quiz.answer < lesson.quiz.choices.length, `${lesson.id} quiz answer is invalid`);
   assert.equal(Object.hasOwn(lesson.exercise, "solution"), false, `${lesson.id} solution leaked into public JSON`);
   assert.equal(Object.hasOwn(lesson.exercise, "hiddenTests"), false, `${lesson.id} hidden tests leaked into public JSON`);

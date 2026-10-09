@@ -5,19 +5,31 @@ import { lessons } from "../services/runner/data/lesson-source.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publicLessons = lessons.map((lesson) => {
-  const { quiz, exercise, debug, ...publicLesson } = lesson;
   return {
-    ...publicLesson,
-    quiz: { question: quiz.question, choices: quiz.choices, answer: quiz.answer, explanation: quiz.explanation },
+    id: lesson.id,
+    version: lesson.version,
+    week: lesson.week,
+    day: lesson.day,
+    title: lesson.title,
+    subject: lesson.subject,
+    difficulty: lesson.difficulty,
+    prerequisites: lesson.prerequisites,
+    goal: lesson.goal,
+    minutes: lesson.minutes,
+    explanation: lesson.explanation,
+    example: lesson.example,
+    exampleOutput: lesson.exampleOutput,
+    commonMistake: lesson.commonMistake,
+    quiz: { question: lesson.quiz.question, choices: lesson.quiz.choices, answer: lesson.quiz.answer, explanation: lesson.quiz.explanation },
     exercise: {
-      prompt: exercise.prompt,
-      starter: exercise.starter,
-      input: exercise.input,
-      expectedOutput: exercise.expectedOutput,
-      tests: exercise.tests,
-      hints: exercise.hints,
+      prompt: lesson.exercise.prompt,
+      starter: lesson.exercise.starter,
+      input: lesson.exercise.input,
+      expectedOutput: lesson.exercise.expectedOutput,
+      tests: lesson.exercise.tests,
+      hints: lesson.exercise.hints,
     },
-    debug: { code: debug.code },
+    debug: { code: lesson.debug.code },
   };
 });
 const privateLessons = lessons.map((lesson) => ({

@@ -3,6 +3,7 @@ import { week6LessonSeeds } from "./lesson-seeds/week-06.ts";
 import { week7LessonSeeds } from "./lesson-seeds/week-07.ts";
 import { week8LessonSeeds } from "./lesson-seeds/week-08.ts";
 import { week9LessonSeeds } from "./lesson-seeds/week-09.ts";
+import { week10LessonSeeds } from "./lesson-seeds/week-10.ts";
 
 export type Lesson = {
   id: string;
@@ -53,6 +54,7 @@ const weekNames = [
   "参照・const・引数の渡し方",
   "構造体・列挙型・名前空間",
   "ヘッダー・翻訳単位・リンケージ",
+  "クラス・コンストラクター・アクセス制御",
 ];
 
 const starter = `#include <iostream>
@@ -104,6 +106,7 @@ const lessonSeeds: LessonSeed[][] = [
   week7LessonSeeds,
   week8LessonSeeds,
   week9LessonSeeds,
+  week10LessonSeeds,
 ];
 
 const hiddenTestsByLesson: Record<string, { input: string; output: string }[]> = {
@@ -175,6 +178,7 @@ const exerciseOutputs = [
   "15", "21", "name: Ada", "10", "15", "80", "75",
   "3 4", "name: Ada\nhp: 80", "pause", "100", "alive", "3 4", "18",
   "score: 150", "room: Boss", "stage: 3", "55", "100", "7", "total: 240\naverage: 80",
+  "score: 42", "first: 15\nsecond: 17", "weapon: Bronze\nattack: 9", "ok 7", "Mira: alive", "Potion: 20", "name: Mira\nhp: 60/100",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>

@@ -57,8 +57,8 @@ try {
       }
     }
 
-    // Week 9 examples are complete standalone programs; earlier weeks also use illustrative snippets.
-    if (lesson.week === 9) {
+    // Week 9 onward uses complete standalone programs; earlier weeks also use illustrative snippets.
+    if (lesson.week >= 9) {
       if (/\b(system|popen|CreateProcess|WinExec|ShellExecute)\s*\(/i.test(lesson.example)) {
         failures.push(`${lesson.id}: blocked unsafe example`);
         continue;
@@ -99,4 +99,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${lessons.length} reference solutions, ${verifiedExamples} standalone Week 9 examples, and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);
+console.log(`Verified ${lessons.length} reference solutions, ${verifiedExamples} standalone Week 9–10 examples, and ${lessons.reduce((count, lesson) => count + lesson.exercise.tests.length, 0)} public plus ${lessons.reduce((count, lesson) => count + lesson.exercise.hiddenTests.length, 0)} hidden test cases with Visual Studio C++.`);

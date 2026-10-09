@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 63 authored C++ reference solutions against 131 public and 80 hidden test cases, seven standalone Week 9 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 70 authored C++ reference solutions against 152 public and 87 hidden test cases, 14 standalone Week 9–10 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The current static-bundle scan checks 904 assets and rejects private answers or hidden grading cases.
 
-Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 10–104.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 11–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -181,3 +181,12 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - `pnpm lint` passed. `pnpm test` passed (24 Vitest tests and 21 Node service/API tests). `pnpm verify:lessons` passed with Visual Studio C++: 63 reference solutions and all 131 public / 80 hidden cases, plus seven standalone Week 9 code examples and their output checks. `GITHUB_REPOSITORY=xero711/cpp-mastery pnpm build` produced all 743 static routes. `pnpm verify:public-bundle` scanned 904 Pages assets without finding private answers or hidden tests. `pnpm test:e2e` passed all three Chromium flows, including Week 9 lesson availability and rendering.
 - Commit `9102681` deployed to GitHub Pages in [run 37925324489](https://github.com/xero711/cpp-mastery/actions/runs/37925324489); the Pages build, tests, browser E2E, private-data scan, artifact upload, and deployment all passed. Runner run [37925324490](https://github.com/xero711/cpp-mastery/actions/runs/37925324490) also passed sandbox compilation/isolation and browser-to-runner grading. GitHub reports workflow-based Pages publishing (`build_type=workflow`) at `http://xero-x.me/cpp-mastery/`; the domain's HTTPS enforcement remains disabled while GitHub awaits a valid Pages certificate.
 - Still open: detailed daily lessons for Weeks 10–104, production gVisor runner hosting and a real public grading endpoint, Windows Docker/WSL runner setup, and custom-domain HTTPS eligibility. CI uses `runc` only on GitHub's isolated VM and does not establish production runner acceptance.
+
+## 2026-10-09 — Week 10 daily lessons
+
+- Authored seven lessons on classes and encapsulation, member functions, constructors and initializer lists, access control and invariants, const member functions, overloaded/delegating constructors, and an integrated bounded `Character` class.
+- The course now contains 70 daily lessons and reference solutions, 152 public grading cases, and 87 runner-only hidden cases. The curriculum marks Week 10 available from the lesson data, and the Chromium curriculum E2E opens and checks Weeks 9 and 10.
+- Tightened lesson export to an explicit public-field allowlist after detecting duplicate top-level answer and hidden-test fields in the generated JSON. The public-bundle verifier now checks the generated JSON schema as well as all 904 static assets; the final scan found no private answers or hidden grading cases.
+- `pnpm lint` passed. `pnpm test` passed (24 Vitest tests and 21 Node service/API tests). `pnpm verify:lessons` passed with Visual Studio C++: all 70 reference solutions, 152 public cases, 87 hidden cases, and 14 standalone Week 9–10 examples. `GITHUB_REPOSITORY=xero711/cpp-mastery pnpm build` generated all 743 static routes. `pnpm verify:public-bundle` scanned 904 assets. `pnpm test:e2e` passed all three Chromium flows.
+- GitHub Pages is the frontend host and is deployed from the Actions workflow. The pending commit still needs its deployment run. Custom-domain HTTPS eligibility and public isolated runner hosting remain separate open items; CI runner checks use `runc` on GitHub's isolated VM.
+- Still open: detailed daily lessons for Weeks 11–104, production gVisor runner hosting and a public grading endpoint, Windows Docker/WSL runner setup, and custom-domain HTTPS eligibility.
