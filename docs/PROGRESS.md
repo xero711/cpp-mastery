@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 105 authored C++ reference solutions against 257 public and 122 hidden test cases, 49 standalone Week 9–15 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
+Verified: static export, lint, current automated tests, 112 authored C++ reference solutions against 278 public and 132 hidden test cases, 56 standalone Week 9–16 examples with Visual Studio C++, root and project-prefix asset/link generation, local browser rendering, IndexedDB persistence, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments. The static-bundle scan checks each generated asset for private answers and hidden grading cases.
 
-Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 16–104.
+Not yet accepted: learner code compiled and graded through a production isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content for Weeks 17–104.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -229,4 +229,11 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - The course now contains 105 daily lessons and reference solutions, 257 public grading cases, and 122 runner-only hidden cases. The Chromium curriculum E2E checks authored lessons through Week 15.
 - `pnpm verify:lessons` passed with Visual Studio C++ for all 105 reference solutions, 49 standalone Week 9–15 examples, 257 public cases, and 122 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production build generated 743 static routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed.
 - Playwright now reads the project base path from the build's `.next/routes-manifest.json`, so local E2E uses the same `/cpp-mastery/` prefix as the exported site when `GITHUB_REPOSITORY` is unset.
-- GitHub Pages publication and runner CI for Week 15 are pending. Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 16–104.
+- Commit `c833c52` was published successfully by [GitHub Pages run 37936452441](https://github.com/xero711/cpp-mastery/actions/runs/37936452441) and [Runner CI run 37936452551](https://github.com/xero711/cpp-mastery/actions/runs/37936452551). Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 16–104.
+
+## 2026-10-09 — Week 16 composition and inheritance choices
+
+- Authored seven lessons on member composition, delegation, substitutable inheritance, representing equipment as a component, replacing composed parts, separating state invariants, and combining abstract interfaces with owned components.
+- The course now contains 112 daily lessons and reference solutions, 278 public grading cases, and 132 runner-only hidden cases. The Chromium curriculum E2E checks authored lessons through Week 16.
+- `pnpm verify:lessons` passed with Visual Studio C++ for all 112 reference solutions, 56 standalone Week 9–16 examples, 278 public cases, and 132 hidden cases. `pnpm test` passed (24 Vitest and 21 service/API tests); `pnpm lint` passed; the production build generated 743 static routes; `pnpm verify:public-bundle` found no private answers or hidden tests across 904 assets; and all three Chromium E2E flows passed.
+- GitHub Pages publication and runner CI for Week 16 are pending. Remaining external requirements are production gVisor runner hosting and a public grading endpoint, HTTPS/public-page acceptance beyond the Cloudflare challenge, and detailed daily lessons for Weeks 17–104.

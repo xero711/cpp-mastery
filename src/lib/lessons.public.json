@@ -5646,5 +5646,397 @@
     "debug": {
       "code": "void showAction(const Slash& action)"
     }
+  },
+  {
+    "id": "w16-d1",
+    "version": 1,
+    "week": 16,
+    "day": 1,
+    "title": "部品を持つ関係をメンバーとして表す",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "オブジェクトが別の部品を持ち、その部品へ仕事を任せる設計を書く。",
+    "minutes": 40,
+    "explanation": "合成は、あるオブジェクトが別のオブジェクトを部品として持つ関係です。PlayerがHealthを持つなら、PlayerはHealthの一種なのではなく、HP管理の部品を使います。C++ではHealth型のデータメンバーで表せます。\n\nHealthはHPと下限の規則を持ち、PlayerはHealthを使うゲーム上の操作を表します。Healthをprivateメンバーにしておけば、呼び出し側から内部のHPを直接変更できません。Playerのコンストラクターで部品を初期化し、必要な操作だけを外へ公開します。",
+    "example": "#include <iostream>\n\nclass Health {\npublic:\n    explicit Health(int hp) : hp_{hp} {}\n    void damage(int amount) { hp_ = amount >= hp_ ? 0 : hp_ - amount; }\n    int value() const { return hp_; }\nprivate:\n    int hp_{};\n};\n\nclass Player {\npublic:\n    explicit Player(int hp) : health_{hp} {}\n    void receiveDamage(int amount) { health_.damage(amount); }\n    int hp() const { return health_.value(); }\nprivate:\n    Health health_;\n};\n\nint main() {\n    Player player{20};\n    player.receiveDamage(6);\n    std::cout << \"hp: \" << player.hp() << std::endl;\n}",
+    "exampleOutput": "hp: 14",
+    "commonMistake": "PlayerとHealthの両方へHPの下限処理を書く。HPを守る規則は一つの部品に集め、Playerはその操作を使います。",
+    "quiz": {
+      "question": "PlayerがHealthを部品として持つ関係を表す方法は？",
+      "choices": [
+        "PlayerにHealth型のメンバーを置く",
+        "PlayerをHealthから継承する",
+        "HealthをPlayerの基底型にする"
+      ],
+      "answer": 0,
+      "explanation": "HealthがPlayerの部品なら、メンバーとして持たせる合成が関係を直接表します。"
+    },
+    "exercise": {
+      "prompt": "HealthはHPを保持し、damage()で0未満にならないようにします。PlayerはHealthをメンバーとして持ち、ダメージ処理を委譲します。最大HP（0〜1000）とダメージ（0〜2000）を読み、範囲内なら残りHPを表示し、範囲外なら invalid と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "20 6\n",
+      "expectedOutput": "hp: 14",
+      "tests": [
+        {
+          "input": "20 6\n",
+          "output": "hp: 14"
+        },
+        {
+          "input": "5 10\n",
+          "output": "hp: 0"
+        },
+        {
+          "input": "1001 1\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "HPの値と下限処理をHealthにまとめます。",
+        "PlayerにHealth型のprivateメンバーを置きます。",
+        "PlayerのreceiveDamage()からhealth_.damage()を呼び、値はvalue()経由で取得します。"
+      ]
+    },
+    "debug": {
+      "code": "class Player : Health"
+    }
+  },
+  {
+    "id": "w16-d2",
+    "version": 1,
+    "week": 16,
+    "day": 2,
+    "title": "部品の操作を公開APIへ委譲する",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "内部部品の詳細を利用側へ漏らさず、Playerの意味のある操作を公開する。",
+    "minutes": 40,
+    "explanation": "部品を持つだけでなく、外からの要求を適切な部品へ委譲すると責務を分けられます。Playerのattack()はWeaponのdamage()を利用します。呼び出し側はPlayerが武器の情報をどう保存しているか知る必要がありません。\n\nPlayerは攻撃というゲーム上の操作を受け付け、Weaponは威力を返すという部品の役割を担当します。APIを小さく保てば、Weaponの内部を変えても呼び出し側を変更せずに済みます。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Weapon {\npublic:\n    Weapon(std::string name, int damage) : name_{name}, damage_{damage} {}\n    int damage() const { return damage_; }\nprivate:\n    std::string name_;\n    int damage_{};\n};\n\nclass Player {\npublic:\n    explicit Player(Weapon weapon) : weapon_{weapon} {}\n    int attack() const { return weapon_.damage(); }\nprivate:\n    Weapon weapon_;\n};\n\nint main() {\n    const Player player{Weapon{\"bow\", 12}};\n    std::cout << \"damage: \" << player.attack() << std::endl;\n}",
+    "exampleOutput": "damage: 12",
+    "commonMistake": "呼び出し側がPlayerのprivateなweapon_へ直接アクセスする。Playerの公開操作を通して、攻撃する意図を表します。",
+    "quiz": {
+      "question": "Weaponの内部表現を知らずにPlayerの攻撃威力を得る方法は？",
+      "choices": [
+        "player.attack()を呼ぶ",
+        "privateなweapon_を読む",
+        "PlayerをWeaponとして扱う"
+      ],
+      "answer": 0,
+      "explanation": "Playerの公開APIが攻撃を表し、内部でWeaponへ委譲します。"
+    },
+    "exercise": {
+      "prompt": "Weaponは名前と威力を持ち、PlayerはWeaponをメンバーとして保持します。Player::attack()は武器の威力を返します。武器名と威力を読み、威力が0〜500なら weapon: 名前 と damage: 威力 を2行で表示し、範囲外なら invalid と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "bow 12\n",
+      "expectedOutput": "weapon: bow\ndamage: 12",
+      "tests": [
+        {
+          "input": "bow 12\n",
+          "output": "weapon: bow\ndamage: 12"
+        },
+        {
+          "input": "staff 0\n",
+          "output": "weapon: staff\ndamage: 0"
+        },
+        {
+          "input": "axe 501\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Weaponは名前と威力をprivateで持ちます。",
+        "PlayerはWeaponを値メンバーとして受け取ります。",
+        "Playerのattack()がweapon_.damage()へ委譲し、利用側はPlayerのAPIだけを呼びます。"
+      ]
+    },
+    "debug": {
+      "code": "player.weapon_.damage()"
+    }
+  },
+  {
+    "id": "w16-d3",
+    "version": 1,
+    "week": 16,
+    "day": 3,
+    "title": "継承は同じ役割として置き換えられる型に使う",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "基底型の契約を保ち、派生型を同じ操作へ置き換えられる場合に継承を選ぶ。",
+    "minutes": 40,
+    "explanation": "継承を選ぶときは、派生型が基底型の公開契約を守り、利用側から同じ種類のものとして扱えるか確かめます。SlimeはEnemyの一種として敵の行動を提供できます。一方、WeaponはEnemyの一種ではないため、同じ継承関係には当てはまりません。\n\nEnemyのattack()をvirtualにすると、共通の呼び出し関数はEnemyへのconst参照だけに依存できます。型の名前だけで継承を決めず、利用側が基底型に期待する動作を派生型が守れるか考えます。",
+    "example": "#include <iostream>\n\nclass Enemy {\npublic:\n    virtual int attack() const { return 0; }\n};\n\nclass Slime : public Enemy {\npublic:\n    int attack() const override { return 4; }\n};\n\nvoid showAttack(const Enemy& enemy) {\n    std::cout << \"attack: \" << enemy.attack() << std::endl;\n}\n\nint main() {\n    const Slime slime;\n    showAttack(slime);\n}",
+    "exampleOutput": "attack: 4",
+    "commonMistake": "コードを再利用したいという理由だけで継承する。派生型が基底型の契約を守って置き換えられるか確認し、部品を持つ関係なら合成を使います。",
+    "quiz": {
+      "question": "継承を選ぶ判断で最も重要なのは？",
+      "choices": [
+        "派生型を基底型の一種として置き換えられる",
+        "継承すると必ず実行速度が上がる",
+        "名前に同じ単語が含まれる"
+      ],
+      "answer": 0,
+      "explanation": "派生型が基底型の契約を保ち、利用側で置き換え可能かを考えます。"
+    },
+    "exercise": {
+      "prompt": "Enemy基底クラスにvirtualなattack() constを用意し、Slimeは4、Batは7を返します。showAttack(const Enemy&)は attack: 威力 を表示します。入力SまたはBで対応する敵を作り、同じshowAttackへ渡してください。異なる文字は invalid とします。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "S\n",
+      "expectedOutput": "attack: 4",
+      "tests": [
+        {
+          "input": "S\n",
+          "output": "attack: 4"
+        },
+        {
+          "input": "B\n",
+          "output": "attack: 7"
+        },
+        {
+          "input": "X\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Enemyが利用側へ約束する共通操作を決めます。",
+        "SlimeとBatはEnemyとして扱える種類なのでpublic継承します。",
+        "showAttackはEnemy参照だけを使い、威力の違いはvirtual dispatchへ任せます。"
+      ]
+    },
+    "debug": {
+      "code": "class Slime : public Weapon"
+    }
+  },
+  {
+    "id": "w16-d4",
+    "version": 1,
+    "week": 16,
+    "day": 4,
+    "title": "武器は継承し、プレイヤーは武器を持つ",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "武器の種類と、Playerが武器を部品として持つ関係を区別する。",
+    "minutes": 40,
+    "explanation": "関係の向きは型ごとに考えます。SwordはWeaponの一種なので、SwordをWeaponからpublic継承できます。PlayerはWeaponの一種ではなく、ゲーム内で武器を装備するため、Weapon型の部品を持ちます。\n\nこの例ではPlayerはSwordを一つ持ち、攻撃をSwordへ委譲します。剣以外の武器へ交換する仕組みは次の課題で扱います。派生クラスを値メンバーとして基底クラス型へ代入すると派生部分が失われるため、この例ではSword型をそのまま保持しています。",
+    "example": "#include <iostream>\n\nclass Weapon {\npublic:\n    explicit Weapon(int damage) : damage_{damage} {}\n    int damage() const { return damage_; }\nprivate:\n    int damage_{};\n};\n\nclass Sword : public Weapon {\npublic:\n    explicit Sword(int damage) : Weapon{damage} {}\n};\n\nclass Player {\npublic:\n    explicit Player(int damage) : sword_{damage} {}\n    int attack() const { return sword_.damage(); }\nprivate:\n    Sword sword_;\n};\n\nint main() {\n    const Player player{12};\n    std::cout << \"damage: \" << player.attack() << std::endl;\n}",
+    "exampleOutput": "damage: 12",
+    "commonMistake": "PlayerをWeaponから継承し、Playerは武器の一種だと表す。SwordはWeaponの一種ですが、PlayerはSwordを装備する側です。",
+    "quiz": {
+      "question": "SwordとPlayerそれぞれに適した関係は？",
+      "choices": [
+        "SwordはWeaponを継承し、PlayerはSwordを持つ",
+        "PlayerとSwordの両方がWeaponを継承する",
+        "WeaponがPlayerを継承する"
+      ],
+      "answer": 0,
+      "explanation": "SwordはWeaponの一種で、Playerはゲーム内でSwordを持つため、継承と合成を使い分けます。"
+    },
+    "exercise": {
+      "prompt": "Weaponは威力を保持し、SwordはWeaponからpublic継承します。PlayerはSword型のメンバーを持ち、attack()をSwordへ委譲します。入力された威力が0〜500なら damage: 威力 を表示し、範囲外なら invalid と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "12\n",
+      "expectedOutput": "damage: 12",
+      "tests": [
+        {
+          "input": "12\n",
+          "output": "damage: 12"
+        },
+        {
+          "input": "0\n",
+          "output": "damage: 0"
+        },
+        {
+          "input": "501\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "SwordはWeaponとして扱える種類か、PlayerはWeaponそのものか考えます。",
+        "Swordの基底クラスをWeaponにし、PlayerにはSword型のprivateメンバーを置きます。",
+        "Player::attack()はsword_.damage()を呼び、呼び出し側に内部メンバーを見せません。"
+      ]
+    },
+    "debug": {
+      "code": "class Player : Weapon"
+    }
+  },
+  {
+    "id": "w16-d5",
+    "version": 1,
+    "week": 16,
+    "day": 5,
+    "title": "部品の交換を合成したクラスの操作にする",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "合成された部品を交換する操作を作り、Playerの利用側を内部構造から切り離す。",
+    "minutes": 40,
+    "explanation": "合成では部品をメンバーとして持ち、必要に応じて別の値へ交換できます。装備の切り替えはPlayerの操作として公開し、利用側は内部のフィールドを書き換えません。\n\nこの例のequip()はWeaponを値で受け取り、weapon_へ代入します。Weaponが値としてコピーできる設計なので交換が簡単です。部品がファイルやネットワーク資源を持つ場合は、コピーや所有権の設計が変わります。その話題はRAIIとムーブを扱う週で学びます。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Weapon {\npublic:\n    Weapon(std::string name, int damage) : name_{name}, damage_{damage} {}\n    int damage() const { return damage_; }\n    const std::string& name() const { return name_; }\nprivate:\n    std::string name_;\n    int damage_{};\n};\n\nclass Player {\npublic:\n    explicit Player(Weapon weapon) : weapon_{weapon} {}\n    void equip(Weapon weapon) { weapon_ = weapon; }\n    const Weapon& weapon() const { return weapon_; }\nprivate:\n    Weapon weapon_;\n};\n\nint main() {\n    Player player{Weapon{\"bow\", 8}};\n    player.equip(Weapon{\"spear\", 11});\n    std::cout << player.weapon().name() << \" damage: \" << player.weapon().damage() << std::endl;\n}",
+    "exampleOutput": "spear damage: 11",
+    "commonMistake": "装備を替えるたびに利用側がPlayer内部のweapon_を書き換える。変更操作をequipへ集めれば、装備ルールを一か所に追加できます。",
+    "quiz": {
+      "question": "装備交換をPlayerの公開操作にする理由は？",
+      "choices": [
+        "内部保存方法を隠し、交換ルールを一か所に置く",
+        "Weaponの型をなくす",
+        "Playerのデータをすべて公開する"
+      ],
+      "answer": 0,
+      "explanation": "equip()を通せば利用側は変更手順を知らず、Player側でルールを守れます。"
+    },
+    "exercise": {
+      "prompt": "Weaponは名前と威力を持ちます。Playerは最初のWeaponを保持し、equip()で次のWeaponへ交換できます。初期装備の名前と威力、交換後の名前と威力を読みます。両方の威力が0〜500なら交換後の武器名と威力を2行で表示し、範囲外なら invalid としてください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "bow 8 spear 11\n",
+      "expectedOutput": "weapon: spear\ndamage: 11",
+      "tests": [
+        {
+          "input": "bow 8 spear 11\n",
+          "output": "weapon: spear\ndamage: 11"
+        },
+        {
+          "input": "wand 0 staff 0\n",
+          "output": "weapon: staff\ndamage: 0"
+        },
+        {
+          "input": "axe 10 axe 501\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "Playerがweapon_をprivateで持ちます。",
+        "装備交換はPlayer::equip()にまとめます。",
+        "交換後の情報はconst参照を返すweapon()から読み取ります。"
+      ]
+    },
+    "debug": {
+      "code": "player.weapon_ = nextWeapon;"
+    }
+  },
+  {
+    "id": "w16-d6",
+    "version": 1,
+    "week": 16,
+    "day": 6,
+    "title": "独立した状態ルールを部品へ分ける",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "独立した状態と不変条件を部品へ分け、Playerの操作を読みやすくする。",
+    "minutes": 45,
+    "explanation": "クラスが複数の状態や規則を直接抱えすぎると、変更の影響範囲が広がります。HPの下限はHealthが守り、武器威力はWeaponが保持し、Playerはそれらを組み合わせた操作を提供します。状態が独立した規則を持つなら、別の部品に切り分ける理由になります。\n\n分割しすぎても呼び出し関係が複雑になります。値が1か所でしか使われず、独立した規則もないなら、クラスを増やす必要はありません。状態の所有者と、それを正しく保つ規則がどこにあると自然か確認します。",
+    "example": "#include <iostream>\n\nclass Health {\npublic:\n    explicit Health(int value) : value_{value} {}\n    void damage(int amount) { value_ = amount >= value_ ? 0 : value_ - amount; }\n    int value() const { return value_; }\nprivate:\n    int value_{};\n};\n\nclass Player {\npublic:\n    explicit Player(int hp) : health_{hp} {}\n    void receiveDamage(int amount) { health_.damage(amount); }\n    int hp() const { return health_.value(); }\nprivate:\n    Health health_;\n};\n\nint main() {\n    Player player{9};\n    player.receiveDamage(20);\n    std::cout << \"hp: \" << player.hp() << std::endl;\n}",
+    "exampleOutput": "hp: 0",
+    "commonMistake": "HPの範囲処理をPlayerとHealthの両方へ書く。規則を一つの所有者に置き、Playerは公開操作を組み合わせます。",
+    "quiz": {
+      "question": "HPを0未満にしない規則を持つのに自然なクラスは？",
+      "choices": [
+        "HPを保持するHealth",
+        "入力を読むmainだけ",
+        "画面表示関数"
+      ],
+      "answer": 0,
+      "explanation": "HPを保持して変更するHealthが下限を守れば、呼び出し元ごとの重複を避けられます。"
+    },
+    "exercise": {
+      "prompt": "Healthは現在HPを持ち、damage()で0未満にしません。PlayerはHealthをメンバーとして持ち、ダメージを委譲します。HPとダメージを読み、どちらも0〜10000なら残りHPを表示し、範囲外なら invalid と表示してください。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "9 20\n",
+      "expectedOutput": "hp: 0",
+      "tests": [
+        {
+          "input": "9 20\n",
+          "output": "hp: 0"
+        },
+        {
+          "input": "100 30\n",
+          "output": "hp: 70"
+        },
+        {
+          "input": "10001 0\n",
+          "output": "invalid"
+        }
+      ],
+      "hints": [
+        "HPをprivateに持つHealthに下限ルールを置きます。",
+        "PlayerはHealthをメンバーにしてreceiveDamage()を委譲します。",
+        "入力範囲を確認してからPlayerを作り、残りHPは問い合わせ操作で取得します。"
+      ]
+    },
+    "debug": {
+      "code": "hp = hp - damage;"
+    }
+  },
+  {
+    "id": "w16-d7",
+    "version": 1,
+    "week": 16,
+    "day": 7,
+    "title": "総合設計：継承と合成を別の関係に使う",
+    "subject": "合成と継承の使い分け",
+    "difficulty": "基礎",
+    "prerequisites": [
+      "Week 15の内容"
+    ],
+    "goal": "同じ基底契約を持つ型を継承で表し、それぞれが必要な部品を合成する。",
+    "minutes": 55,
+    "explanation": "継承と合成は違う関係を表します。HeroとSlimeはActionとして同じshowAction()へ渡せるため継承を使います。HeroがWeaponを持つ関係、SlimeがHealthを持つ関係にはメンバーを使います。\n\n呼び出し側はHeroやSlimeの具体型ではなく、Actionの契約だけを使います。各派生型は必要な部品を組み合わせます。共通操作と個別部品の境界を確認し、型ごとに違う状態を無理に基底クラスへ押し込めないようにします。",
+    "example": "#include <iostream>\n#include <string>\n\nclass Action {\npublic:\n    virtual std::string name() const = 0;\n    virtual int power() const = 0;\n    virtual ~Action() = default;\n};\n\nclass Weapon {\npublic:\n    explicit Weapon(int power) : power_{power} {}\n    int power() const { return power_; }\nprivate:\n    int power_{};\n};\n\nclass Hero : public Action {\npublic:\n    explicit Hero(int power) : weapon_{power} {}\n    std::string name() const override { return \"hero\"; }\n    int power() const override { return weapon_.power(); }\nprivate:\n    Weapon weapon_;\n};\n\nvoid showAction(const Action& action) {\n    std::cout << action.name() << \" power: \" << action.power() << std::endl;\n}\n\nint main() {\n    const Hero hero{13};\n    showAction(hero);\n}",
+    "exampleOutput": "hero power: 13",
+    "commonMistake": "HeroをWeaponから継承し、HeroはWeaponの一種だと表す。Heroは武器を持つのでWeaponをメンバーにし、共通の行動契約だけをActionとして継承します。",
+    "quiz": {
+      "question": "HeroがActionとして扱え、Weaponを装備する関係はどう表す？",
+      "choices": [
+        "Actionは継承し、Weaponはメンバーとして持つ",
+        "ActionとWeaponの両方から継承する",
+        "すべてpublic変数にする"
+      ],
+      "answer": 0,
+      "explanation": "置き換え可能な共通役割は継承で表し、所有する部品は合成で表します。"
+    },
+    "exercise": {
+      "prompt": "抽象基底Actionにname() constとpower() constを用意します。HeroはWeaponを合成し、武器の威力を返します。SlimeはHealthを合成し、HPが0より大きければ威力6、そうでなければ0を返します。入力HまたはSと値を読み、共通関数で hero power: 値 または slime power: 値 を表示します。値が0〜1000の範囲外、種類が不正なら invalid とします。",
+      "starter": "#include <iostream>\n\nint main() {\n    // ここに処理を書く\n    return 0;\n}",
+      "input": "H 13\n",
+      "expectedOutput": "hero power: 13",
+      "tests": [
+        {
+          "input": "H 13\n",
+          "output": "hero power: 13"
+        },
+        {
+          "input": "S 100\n",
+          "output": "slime power: 6"
+        },
+        {
+          "input": "S 0\n",
+          "output": "slime power: 0"
+        }
+      ],
+      "hints": [
+        "HeroとSlimeの共通操作をActionの抽象契約にします。",
+        "HeroはWeaponを、SlimeはHealthをメンバーとして持ちます。",
+        "showActionはAction参照だけを受け取り、各部品は派生型の内部に隠します。"
+      ]
+    },
+    "debug": {
+      "code": "class Hero : public Weapon"
+    }
   }
 ]

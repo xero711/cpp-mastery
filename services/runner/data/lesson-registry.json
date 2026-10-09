@@ -2669,5 +2669,206 @@
         "output": "spell power: 12"
       }
     ]
+  },
+  {
+    "id": "w16-d1",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Health {\npublic:\n    explicit Health(int hp) : hp_{hp} {}\n    void damage(int amount) { hp_ = amount >= hp_ ? 0 : hp_ - amount; }\n    int value() const { return hp_; }\nprivate:\n    int hp_{};\n};\n\nclass Player {\npublic:\n    explicit Player(int hp) : health_{hp} {}\n    void receiveDamage(int amount) { health_.damage(amount); }\n    int hp() const { return health_.value(); }\nprivate:\n    Health health_;\n};\n\nint main() {\n    int maximum{};\n    int damage{};\n    std::cin >> maximum >> damage;\n    if (maximum < 0 || maximum > 1000 || damage < 0 || damage > 2000) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    Player player{maximum};\n    player.receiveDamage(damage);\n    std::cout << \"hp: \" << player.hp() << std::endl;\n    return 0;\n}",
+    "debugFix": "Health health_;",
+    "debugExplanation": "HealthはPlayerの種類ではなく内部で使う部品です。メンバーとして持たせ、操作を委譲します。",
+    "tests": [
+      {
+        "input": "20 6\n",
+        "output": "hp: 14"
+      },
+      {
+        "input": "5 10\n",
+        "output": "hp: 0"
+      },
+      {
+        "input": "1001 1\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "1000 1\n",
+        "output": "hp: 999"
+      },
+      {
+        "input": "0 0\n",
+        "output": "hp: 0"
+      },
+      {
+        "input": "5 -1\n",
+        "output": "invalid"
+      },
+      {
+        "input": "5 2001\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w16-d2",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Weapon {\npublic:\n    Weapon(std::string name, int damage) : name_{name}, damage_{damage} {}\n    const std::string& name() const { return name_; }\n    int damage() const { return damage_; }\nprivate:\n    std::string name_;\n    int damage_{};\n};\n\nclass Player {\npublic:\n    explicit Player(Weapon weapon) : weapon_{weapon} {}\n    const std::string& weaponName() const { return weapon_.name(); }\n    int attack() const { return weapon_.damage(); }\nprivate:\n    Weapon weapon_;\n};\n\nint main() {\n    std::string name;\n    int damage{};\n    std::cin >> name >> damage;\n    if (damage < 0 || damage > 500) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    const Player player{Weapon{name, damage}};\n    std::cout << \"weapon: \" << player.weaponName() << std::endl;\n    std::cout << \"damage: \" << player.attack() << std::endl;\n    return 0;\n}",
+    "debugFix": "player.attack()",
+    "debugExplanation": "部品の保存場所を呼び出し側へ漏らさず、Playerの公開操作を使います。",
+    "tests": [
+      {
+        "input": "bow 12\n",
+        "output": "weapon: bow\ndamage: 12"
+      },
+      {
+        "input": "staff 0\n",
+        "output": "weapon: staff\ndamage: 0"
+      },
+      {
+        "input": "axe 501\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "wand 500\n",
+        "output": "weapon: wand\ndamage: 500"
+      }
+    ]
+  },
+  {
+    "id": "w16-d3",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Enemy {\npublic:\n    virtual int attack() const { return 0; }\n};\n\nclass Slime : public Enemy {\npublic:\n    int attack() const override { return 4; }\n};\n\nclass Bat : public Enemy {\npublic:\n    int attack() const override { return 7; }\n};\n\nvoid showAttack(const Enemy& enemy) {\n    std::cout << \"attack: \" << enemy.attack() << std::endl;\n}\n\nint main() {\n    char type{};\n    std::cin >> type;\n    if (type == 'S') {\n        const Slime enemy;\n        showAttack(enemy);\n    } else if (type == 'B') {\n        const Bat enemy;\n        showAttack(enemy);\n    } else {\n        std::cout << \"invalid\" << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "public Enemy",
+    "debugExplanation": "Slimeは武器の一種ではなく敵の一種です。継承先は利用側が求める共通役割に合わせます。",
+    "tests": [
+      {
+        "input": "S\n",
+        "output": "attack: 4"
+      },
+      {
+        "input": "B\n",
+        "output": "attack: 7"
+      },
+      {
+        "input": "X\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "b\n",
+        "output": "invalid"
+      }
+    ]
+  },
+  {
+    "id": "w16-d4",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Weapon {\npublic:\n    explicit Weapon(int damage) : damage_{damage} {}\n    int damage() const { return damage_; }\nprivate:\n    int damage_{};\n};\n\nclass Sword : public Weapon {\npublic:\n    explicit Sword(int damage) : Weapon{damage} {}\n};\n\nclass Player {\npublic:\n    explicit Player(int damage) : sword_{damage} {}\n    int attack() const { return sword_.damage(); }\nprivate:\n    Sword sword_;\n};\n\nint main() {\n    int damage{};\n    std::cin >> damage;\n    if (damage < 0 || damage > 500) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    const Player player{damage};\n    std::cout << \"damage: \" << player.attack() << std::endl;\n    return 0;\n}",
+    "debugFix": "Sword sword_;",
+    "debugExplanation": "PlayerはWeaponの一種ではありません。Playerの内部に装備品の部品を持たせます。",
+    "tests": [
+      {
+        "input": "12\n",
+        "output": "damage: 12"
+      },
+      {
+        "input": "0\n",
+        "output": "damage: 0"
+      },
+      {
+        "input": "501\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "500\n",
+        "output": "damage: 500"
+      }
+    ]
+  },
+  {
+    "id": "w16-d5",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Weapon {\npublic:\n    Weapon(std::string name, int damage) : name_{name}, damage_{damage} {}\n    int damage() const { return damage_; }\n    const std::string& name() const { return name_; }\nprivate:\n    std::string name_;\n    int damage_{};\n};\n\nclass Player {\npublic:\n    explicit Player(Weapon weapon) : weapon_{weapon} {}\n    void equip(Weapon weapon) { weapon_ = weapon; }\n    const Weapon& weapon() const { return weapon_; }\nprivate:\n    Weapon weapon_;\n};\n\nint main() {\n    std::string firstName;\n    std::string nextName;\n    int firstDamage{};\n    int nextDamage{};\n    std::cin >> firstName >> firstDamage >> nextName >> nextDamage;\n    if (firstDamage < 0 || firstDamage > 500 || nextDamage < 0 || nextDamage > 500) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    Player player{Weapon{firstName, firstDamage}};\n    player.equip(Weapon{nextName, nextDamage});\n    std::cout << \"weapon: \" << player.weapon().name() << std::endl;\n    std::cout << \"damage: \" << player.weapon().damage() << std::endl;\n    return 0;\n}",
+    "debugFix": "player.equip(nextWeapon);",
+    "debugExplanation": "privateメンバーを直接変更せず、装備交換というPlayerの操作を呼びます。",
+    "tests": [
+      {
+        "input": "bow 8 spear 11\n",
+        "output": "weapon: spear\ndamage: 11"
+      },
+      {
+        "input": "wand 0 staff 0\n",
+        "output": "weapon: staff\ndamage: 0"
+      },
+      {
+        "input": "axe 10 axe 501\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "knife 500 sword 499\n",
+        "output": "weapon: sword\ndamage: 499"
+      }
+    ]
+  },
+  {
+    "id": "w16-d6",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n\nclass Health {\npublic:\n    explicit Health(int value) : value_{value} {}\n    void damage(int amount) { value_ = amount >= value_ ? 0 : value_ - amount; }\n    int value() const { return value_; }\nprivate:\n    int value_{};\n};\n\nclass Player {\npublic:\n    explicit Player(int hp) : health_{hp} {}\n    void receiveDamage(int amount) { health_.damage(amount); }\n    int hp() const { return health_.value(); }\nprivate:\n    Health health_;\n};\n\nint main() {\n    int hp{};\n    int damage{};\n    std::cin >> hp >> damage;\n    if (hp < 0 || hp > 10000 || damage < 0 || damage > 10000) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    Player player{hp};\n    player.receiveDamage(damage);\n    std::cout << \"hp: \" << player.hp() << std::endl;\n    return 0;\n}",
+    "debugFix": "health_.damage(amount);",
+    "debugExplanation": "HPの範囲を守る処理をHealthへ集め、Playerからは責務を表す操作を呼びます。",
+    "tests": [
+      {
+        "input": "9 20\n",
+        "output": "hp: 0"
+      },
+      {
+        "input": "100 30\n",
+        "output": "hp: 70"
+      },
+      {
+        "input": "10001 0\n",
+        "output": "invalid"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "0 10000\n",
+        "output": "hp: 0"
+      }
+    ]
+  },
+  {
+    "id": "w16-d7",
+    "standard": "c++17",
+    "solution": "#include <iostream>\n#include <string>\n\nclass Action {\npublic:\n    virtual std::string name() const = 0;\n    virtual int power() const = 0;\n    virtual ~Action() = default;\n};\n\nclass Weapon {\npublic:\n    explicit Weapon(int power) : power_{power} {}\n    int power() const { return power_; }\nprivate:\n    int power_{};\n};\n\nclass Health {\npublic:\n    explicit Health(int hp) : hp_{hp} {}\n    int value() const { return hp_; }\nprivate:\n    int hp_{};\n};\n\nclass Hero : public Action {\npublic:\n    explicit Hero(int power) : weapon_{power} {}\n    std::string name() const override { return \"hero\"; }\n    int power() const override { return weapon_.power(); }\nprivate:\n    Weapon weapon_;\n};\n\nclass Slime : public Action {\npublic:\n    explicit Slime(int hp) : health_{hp} {}\n    std::string name() const override { return \"slime\"; }\n    int power() const override { return health_.value() > 0 ? 6 : 0; }\nprivate:\n    Health health_;\n};\n\nvoid showAction(const Action& action) {\n    std::cout << action.name() << \" power: \" << action.power() << std::endl;\n}\n\nint main() {\n    char type{};\n    int value{};\n    std::cin >> type >> value;\n    if (value < 0 || value > 1000) {\n        std::cout << \"invalid\" << std::endl;\n        return 0;\n    }\n    if (type == 'H') {\n        const Hero hero{value};\n        showAction(hero);\n    } else if (type == 'S') {\n        const Slime slime{value};\n        showAction(slime);\n    } else {\n        std::cout << \"invalid\" << std::endl;\n    }\n    return 0;\n}",
+    "debugFix": "Weapon weapon_;",
+    "debugExplanation": "HeroはWeaponの一種ではありません。装備する部品として合成し、共通の行動契約とは別の関係にします。",
+    "tests": [
+      {
+        "input": "H 13\n",
+        "output": "hero power: 13"
+      },
+      {
+        "input": "S 100\n",
+        "output": "slime power: 6"
+      },
+      {
+        "input": "S 0\n",
+        "output": "slime power: 0"
+      }
+    ],
+    "hiddenTests": [
+      {
+        "input": "X 1\n",
+        "output": "invalid"
+      }
+    ]
   }
 ]

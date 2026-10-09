@@ -4,7 +4,7 @@ import privateRegistry from "../../services/runner/data/lesson-registry.json";
 
 describe("public lesson payload", () => {
   it("contains no code solution, debug fix, or hidden grading fields", () => {
-    expect(lessons).toHaveLength(105);
+    expect(lessons).toHaveLength(112);
     for (const lesson of lessons) {
       expect(Number.isInteger(lesson.quiz.answer)).toBe(true);
       expect(lesson.quiz.answer).toBeGreaterThanOrEqual(0);
