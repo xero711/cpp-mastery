@@ -7,13 +7,12 @@ const baseURL = `http://localhost:3008${basePath}/`;
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: "**/*.e2e.ts",
-  testIgnore: "runner-integration.e2e.ts",
+  testMatch: "runner-integration.e2e.ts",
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
   reporter: "list",
-  outputDir: "test-results/playwright",
+  outputDir: "test-results/playwright-runner",
   use: {
     baseURL,
     browserName: "chromium",
@@ -22,7 +21,7 @@ export default defineConfig({
   },
   webServer: {
     command: "pnpm dev --port 3008",
-    url: `${baseURL}dashboard/`,
+    url: `${baseURL}settings/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

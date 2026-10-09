@@ -61,3 +61,11 @@ pnpm generate:lessons
 The Pages workflow runs a post-build scan that rejects private solutions, debug fixes, and hidden case data in the exported HTML, JavaScript, and JSON assets.
 
 The full Docker-backed integration suite is `node services/runner/test/integration.mjs`. It compiles and runs C++17/20/23, then checks compile errors, timeouts, output caps, and the network namespace. `.github/workflows/runner-ci.yml` builds the pinned sandbox image and runs both suites on trusted pushes to `main`.
+
+The runner CI also starts the API and uses Playwright to submit the Week 1 Day 1 program through the browser workspace. For local execution, start the API with the same token as `CPP_RUNNER_E2E_TOKEN`, allow `http://localhost:3008` in `RUNNER_ALLOWED_ORIGINS`, then run:
+
+```powershell
+$env:GITHUB_REPOSITORY = 'xero711/cpp-mastery'
+$env:CPP_RUNNER_E2E_TOKEN = '<same token as RUNNER_API_TOKEN>'
+pnpm test:e2e:runner
+```

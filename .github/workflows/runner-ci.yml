@@ -6,6 +6,15 @@ on:
     paths:
       - "services/runner/**"
       - ".github/workflows/runner-ci.yml"
+      - "e2e/runner-integration.e2e.ts"
+      - "playwright.runner.config.ts"
+      - "playwright.config.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "src/lib/runner-client.ts"
+      - "src/components/settings-page.tsx"
+      - "src/components/workspace-page.tsx"
+      - "src/components/code-editor-panel.tsx"
   workflow_dispatch:
 
 permissions:
@@ -14,7 +23,7 @@ permissions:
 jobs:
   runner:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -22,6 +31,12 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.25.0
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
       - name: Build pinned C++ sandbox image
         run: docker build --file services/runner/Dockerfile.sandbox --tag cpp-mastery-sandbox:ci services/runner
       - name: Test API validation and authentication
@@ -32,3 +47,36 @@ jobs:
         run: node services/runner/test/integration.mjs
         env:
           RUNNER_DOCKER_RUNTIME: runc
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Grade a browser submission through the isolated runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$RUNNER_SANDBOX_IMAGE"
+          runner_log="$RUNNER_TEMP/cpp-mastery-runner-e2e.log"
+          RUNNER_API_TOKEN="ci-runner-token-0123456789-abcdef0123456789" \
+          RUNNER_ALLOWED_ORIGINS="http://localhost:3008" \
+          RUNNER_HOST="127.0.0.1" \
+          RUNNER_PORT="8081" \
+          RUNNER_DOCKER_RUNTIME="runc" \
+          RUNNER_SANDBOX_IMAGE="$RUNNER_SANDBOX_IMAGE" \
+          NODE_ENV="development" \
+          node services/runner/src/server.mjs >"$runner_log" 2>&1 &
+          runner_pid=$!
+          trap 'kill "$runner_pid" 2>/dev/null || true; wait "$runner_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8081/healthz >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat "$runner_log"
+            exit 1
+          fi
+          CPP_RUNNER_E2E_TOKEN="ci-runner-token-0123456789-abcdef0123456789" \
+          GITHUB_REPOSITORY=xero711/cpp-mastery \
+          pnpm test:e2e:runner

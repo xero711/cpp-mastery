@@ -31,6 +31,14 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
+実runnerにブラウザーから提出し、実際のC++コンパイルとサーバー採点まで確認するE2Eは、Docker sandboxとrunner APIを起動してから実行します。CIではrunner用ワークフローがこの一連のテストを準備・実行します。
+
+```powershell
+$env:GITHUB_REPOSITORY = 'xero711/cpp-mastery'
+$env:CPP_RUNNER_E2E_TOKEN = '<runner .env.private と同じトークン>'
+pnpm test:e2e:runner
+```
+
 `pnpm build` は静的サイトを `out/` に出力します。GitHub Actionsもこの出力をPagesへ公開します。
 
 WindowsでVisual Studio C++ Build Toolsが使える場合は、作成済みの56レッスン（Week 1〜8）の模範解答を実コンパイルし、110件の公開テストと73件のrunner専用テストを照合できます。教材データを編集したときは `pnpm generate:lessons` を先に実行してください。
