@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 42 authored C++ reference solutions against 68 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 49 authored C++ reference solutions against 89 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
 
-Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 6.
+Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 7.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -62,3 +62,12 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - `pnpm test`: passed (3 Vitest files / 9 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 42 reference programs and checked all 68 public cases.
 - Local browser review confirmed the Week 6 Day 1 Japanese lesson, C++ example, quiz, debugging task, exercise, public-test count, and editor loaded. The runner-unavailable state remains explicit because no production runner endpoint is configured.
 - Weeks 7–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed.
+
+## 2026-10-09 — Week 7 daily lessons
+
+- Authored all seven lessons on reference aliases, multiple references to one object, const references, value-copy parameters, mutable reference parameters, parameter intent, and a weekly score-update exercise.
+- The course now contains 49 complete daily lessons and reference solutions, with 89 public test cases. The exercises distinguish caller-visible changes from local copies and use `const std::string&` for read-only string parameters.
+- `pnpm test`: passed (4 Vitest files / 14 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 49 reference programs and checked all 89 public cases. `git diff --check`: passed.
+- Local browser review confirmed the Week 7 Day 1 Japanese lesson, code example, quiz, debugging task, exercise, public-test count, and editor loaded. The practice page offered Week 7 and filtering it displayed exactly seven tasks.
+- The site continues to publish through GitHub Pages. This update is awaiting its Pages workflow run.
+- Weeks 8–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed.
