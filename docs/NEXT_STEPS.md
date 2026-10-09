@@ -14,5 +14,5 @@ The current Windows host has no Docker Desktop/CLI or WSL distribution. The GitH
 1. Author and review detailed daily lessons beyond Week 8. Week 9–104 currently provides the weekly plan and daily templates.
 2. Add adaptive planning, a skill map, projects, portfolio export, and richer measured analytics. The browser-local review schedule now advances only after a correct quiz and passing test.
 3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
-4. Add browser E2E coverage for review sessions. Runner-backed compile/grade, saved submission history, and authenticated answer/debug reveal now pass against the static export in CI; the separate Chromium backup/restore E2E confirms the runner token stays out of backup JSON.
+4. Extend review E2E coverage for a missed review attempt and backup-restored review state. CI now verifies due-date presentation, a correct quiz plus passing isolated C++ submission advancing the interval, and persistence after reload. The separate Chromium backup/restore E2E confirms the runner token stays out of backup JSON.
 5. Continue route-by-route accessibility and responsive review on the deployed GitHub Pages site. The custom domain currently presents a Cloudflare browser challenge to this automated review environment.

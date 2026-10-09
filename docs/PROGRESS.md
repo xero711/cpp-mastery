@@ -140,3 +140,11 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Pages workflow [37918479537](https://github.com/xero711/cpp-mastery/actions/runs/37918479537) passed the static browser backup/restore test, export scan, and deployment of commit `4ae9963`.
 - Local checks passed: `pnpm lint`, `pnpm test` (18 Vitest and 13 runner API tests), static `pnpm build` (743 routes), `pnpm verify:public-bundle`, and `pnpm test:e2e` (1 browser test).
 - Production gVisor hosting remains unverified. CI runs `runc` only on GitHub's isolated VM. The Windows machine still has no Docker/WSL runner, and no production host/provider has been selected.
+
+## 2026-10-09 — browser review-session acceptance
+
+- Added a second static-export Playwright flow with a fixed browser clock: a missed Week 1 quiz is scheduled for the next day, appears in the due queue on that day, and advances to a three-day interval only after a correct quiz and a real isolated C++ submission passes.
+- The E2E reloads the Review Center and confirms the new interval and repetition count persist in IndexedDB. Runner workflow [37919220763](https://github.com/xero711/cpp-mastery/actions/runs/37919220763) passed both browser-to-runner E2Es plus the Docker sandbox isolation suite; the review flow completed in 4.8 seconds.
+- Pages workflow [37919220802](https://github.com/xero711/cpp-mastery/actions/runs/37919220802) passed the static export build, backup/restore browser E2E, private-data scan, and deployment of commit `1fe9e88`.
+- Local checks on this checkout passed: lint, 18 Vitest tests, 13 runner API tests, all 743 static routes, 902-asset private-data scan, and static backup/restore E2E. The separate lesson verifier also compiled all 56 reference solutions and checked all 183 public/hidden cases.
+- Still unresolved: production gVisor host/HTTPS endpoint selection, local Docker/WSL setup, and GitHub Pages HTTPS enforcement for the configured domain.
