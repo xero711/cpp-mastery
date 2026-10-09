@@ -1,4 +1,5 @@
 import { week5LessonSeeds } from "./lesson-seeds/week-05.ts";
+import { week6LessonSeeds } from "./lesson-seeds/week-06.ts";
 
 export type Lesson = {
   id: string;
@@ -43,6 +44,7 @@ const weekNames = [
   "演算・変換・安全性",
   "条件分岐・ループ",
   "関数・引数・戻り値",
+  "配列・文字列・ポインタ",
 ];
 
 const starter = `#include <iostream>
@@ -90,6 +92,7 @@ const lessonSeeds: LessonSeed[][] = [
     { title: "総合：数当てゲームのロジック", goal: "入力、条件、反復をつなぎ、終了条件が明確な小課題を作る。", minutes: 50, explanation: "数当てゲームでは、入力値を目標値と比べて、正解なら終了、違えばヒントを出して続けます。今回は再現しやすいよう目標値を固定します。", example: `const int target{7};\nint guess{};\nstd::cin >> guess;\nif (guess == target) std::cout << "correct\\n";`, exampleOutput: "入力に応じて変わる", commonMistake: "正解した後もループを続ける、または不正解でループを終える。", quiz: { question: "正解時にゲームを終えるにはどんな制御が使える？", choices: ["break", "continue", "++"], answer: 0, explanation: "breakはループを終了します。" }, prompt: "目標値7の数当てを作ります。入力を読み、7なら correct、それより小さければ too low、大きければ too high と表示してください。入力は 5 です。", solution: `#include <iostream>\nint main() {\n    const int target{7};\n    int guess{};\n    std::cin >> guess;\n    if (guess == target) std::cout << "correct\\n";\n    else if (guess < target) std::cout << "too low\\n";\n    else std::cout << "too high\\n";\n}`, input: "5\n", hints: ["targetをconst intで7にします。", "guessを入力してtargetと比較します。", "等しい・小さい・大きいの3分岐にします。"], debug: { code: `if (guess < target) std::cout << "correct";\nelse std::cout << "too low";`, fix: `if (guess == target) std::cout << "correct";\nelse if (guess < target) std::cout << "too low";\nelse std::cout << "too high";`, explanation: "正解判定は == です。大きい場合の分岐も必要です。" } },
   ],
   week5LessonSeeds,
+  week6LessonSeeds,
 ];
 
 const exerciseOutputs = [
@@ -98,6 +101,7 @@ const exerciseOutputs = [
   "q=3 r=2", "22", "17", "adult", "8", "cannot divide by zero", "result: 5",
   "even", "B", "pause", "3\n2\n1", "0\n1\n2\n3", "1\n2\n4\n5", "too low",
   "ready", "damage: 18", "11", "alive", "45", "HP: 37\nalive", "80",
+  "7", "16", "Hello, Ada", "text: Hello C++", "42", "4 7 9", "16",
 ];
 
 export const lessons: Lesson[] = lessonSeeds.flatMap((weekLessons, weekIndex) =>

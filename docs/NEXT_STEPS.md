@@ -11,7 +11,7 @@ The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI
 
 ## Learning platform
 
-1. Author and review detailed daily lessons beyond Week 5. Week 6–104 currently provides the weekly plan and daily templates.
+1. Author and review detailed daily lessons beyond Week 6. Week 7–104 currently provides the weekly plan and daily templates.
 2. Add assessments, review scheduling, adaptive planning, projects, portfolio export, and real-evidence analytics from the product brief.
 3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
 4. Expand browser E2E coverage for learner progress, backup/restore, code submission, and error handling; Docker-backed runner integration already runs in CI.

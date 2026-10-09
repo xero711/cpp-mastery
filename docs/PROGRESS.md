@@ -21,9 +21,9 @@
 
 ## Acceptance evidence
 
-Verified: static export, lint, current automated tests, 35 authored C++ reference solutions against 47 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
+Verified: static export, lint, current automated tests, 42 authored C++ reference solutions against 68 public test cases, root and project-prefix asset/link generation, local browser rendering, IndexedDB draft/quiz persistence across reload, honest runner-unavailable behavior, public repository push, and successful GitHub Pages workflow deployments.
 
-Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 5.
+Not yet accepted: learner code compiled and graded through an isolated service, public-page content in a normal browser (Cloudflare challenge blocked this environment), enforced HTTPS for the project Pages site, the full unit/integration/E2E suite from the product brief, and detailed lesson content after Week 6.
 
 ## 2026-10-09 — isolated runner implementation
 
@@ -45,4 +45,12 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - `pnpm test`: passed (3 Vitest files / 9 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 35 reference programs and checked all 47 public cases.
 - Local browser review confirmed Week 5 Day 1 lesson content and that the practice week filter offers Week 5 with seven Week 5 tasks.
 - Commit `32f3595` was deployed successfully by the GitHub Pages workflow ([run 37904617941](https://github.com/xero711/cpp-mastery/actions/runs/37904617941)); lint, application/API tests, static export, artifact upload, and deployment all passed.
-- Weeks 6–104 still have planned weekly topics and daily templates, not complete authored lessons. The isolated runner is implemented and passed Docker integration in GitHub Actions, but no production gVisor service is deployed.
+- At this Week 5 checkpoint, Weeks 6–104 still had planned topics and daily templates but no complete authored lessons. The isolated runner passed Docker integration in GitHub Actions, but no production gVisor service was deployed.
+
+## 2026-10-09 — Week 6 daily lessons
+
+- Authored all seven lessons on `std::array` indexing and traversal, `std::string`, line input with `std::getline`, pointer addresses and dereferencing, pointer traversal, and passing a pointer plus element count to a function.
+- The course now contains 42 complete daily lessons and reference solutions, with 68 public test cases. Lessons explain array bounds, the one-past pointer rule, pointer lifetime, and why a raw pointer does not carry an element count.
+- `pnpm test`: passed (3 Vitest files / 9 tests and 9 runner API tests). `pnpm lint`: passed. `pnpm build`: passed and generated all 743 static pages/routes. `pnpm verify:lessons`: passed; Visual Studio C++ compiled all 42 reference programs and checked all 68 public cases.
+- Local browser review confirmed the Week 6 Day 1 Japanese lesson, C++ example, quiz, debugging task, exercise, public-test count, and editor loaded. The runner-unavailable state remains explicit because no production runner endpoint is configured.
+- Weeks 7–104 still have weekly topics and daily templates, not authored daily lessons. No production gVisor runner is deployed.
