@@ -9,6 +9,12 @@
 
 The current Windows host has no Docker Desktop/CLI or WSL distribution. The GitHub repository currently has no Actions variables or secrets, including `CPP_RUNNER_URL`. The API and sandbox image are implemented; Docker-backed execution is not yet verified on this PC. A provider/account and its billing boundary must be available before a public gVisor runner can be created.
 
+## GitHub Pages custom domain
+
+The static frontend is deployed by GitHub Actions to GitHub Pages. `xero-x.me` is currently attached through the existing `xero711.github.io` user-site setup, while `xero711/cpp-mastery` reports `https_enforced=false`. GitHub's latest DNS health check finds the apex proxied by Cloudflare and not pointed at GitHub Pages, so its Pages certificate is not eligible yet; GitHub rejected an HTTPS-enforcement request because the certificate does not exist.
+
+The domain owner needs to review the Cloudflare DNS records and proxy mode for `xero-x.me` and `www.xero-x.me`, ensuring the custom domain resolves directly through GitHub's documented Pages records and that no conflicting records remain. After GitHub reports the domain is served by Pages and HTTPS-eligible and provisions the certificate, enable HTTPS enforcement for `xero711/cpp-mastery`, then verify `https://xero-x.me/cpp-mastery/` in a normal browser. GitHub's current instructions are [custom-domain DNS setup](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) and [HTTPS troubleshooting](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https). No DNS change was made because the apex domain also serves the existing user-site; changing its routing may affect that site.
+
 ## Learning platform
 
 1. Author and review detailed daily lessons beyond Week 8. Week 9–104 currently provides the weekly plan and daily templates.

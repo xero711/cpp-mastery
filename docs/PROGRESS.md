@@ -148,3 +148,11 @@ Acceptance evidence for this implementation: local browser rendering of the runn
 - Pages workflow [37919220802](https://github.com/xero711/cpp-mastery/actions/runs/37919220802) passed the static export build, backup/restore browser E2E, private-data scan, and deployment of commit `1fe9e88`.
 - Local checks on this checkout passed: lint, 18 Vitest tests, 13 runner API tests, all 743 static routes, 902-asset private-data scan, and static backup/restore E2E. The separate lesson verifier also compiled all 56 reference solutions and checked all 183 public/hidden cases.
 - Still unresolved: production gVisor host/HTTPS endpoint selection, local Docker/WSL setup, and GitHub Pages HTTPS enforcement for the configured domain.
+
+## 2026-10-09 — GitHub Pages custom-domain HTTPS diagnosis
+
+- Reconfirmed the frontend is deployed with the GitHub Pages workflow. The project repository Pages API reports `build_type=workflow`, `html_url=http://xero-x.me/cpp-mastery/`, `cname=null`, and `https_enforced=false`; the default `xero711.github.io` project URL redirects to the custom domain.
+- GitHub's Pages DNS health check for the apex `xero-x.me` reports `is_proxied=true`, `is_cloudflare_ip=true`, `is_pointed_to_github_pages_ip=false`, `is_non_github_pages_ip_present=true`, and `is_https_eligible=false`. It can respond to HTTPS at the Cloudflare edge, but GitHub does not consider the DNS eligible for its Pages certificate. The `www` alias is not currently served by Pages and fails peer certificate verification.
+- A request to enable HTTPS enforcement on `xero711/cpp-mastery` was rejected with `The certificate does not exist yet`; the setting remains disabled. No DNS or Pages domain settings were changed during this diagnosis.
+- GitHub's documented DNS setup requires the apex to resolve to GitHub Pages records and the selected custom domain to be configured on the Pages site. The DNS proxy and any extra or non-Pages records must be reviewed by the domain owner; then wait for GitHub's DNS health check and certificate provisioning before enabling HTTPS enforcement. The proxy challenge and TLS state have not been accepted in a normal browser.
+- GitHub Pages remains the frontend host and the workflow deployment is healthy. Custom-domain HTTPS remains an external DNS/certificate blocker; the public isolated runner also remains unhosted.
