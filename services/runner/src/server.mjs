@@ -113,7 +113,7 @@ async function runSandboxCase(job, config, { signal, dockerBinary, timeoutMs }) 
     "--security-opt", "seccomp=builtin",
     "--user", "65532:65532",
     "--workdir", "/work",
-    "--tmpfs", "/work:rw,nosuid,nodev,size=64m,mode=1777",
+    "--tmpfs", "/work:rw,exec,nosuid,nodev,size=64m,mode=1777",
     "--ulimit", "core=0:0",
     "--ulimit", "nofile=64:64",
     "--env", "HOME=/work",
