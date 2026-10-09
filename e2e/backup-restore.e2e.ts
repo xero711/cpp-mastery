@@ -32,13 +32,17 @@ test("learner backup restores quiz progress without exporting the runner token",
   await page.goto("learn/1/1/");
   await page.getByRole("button", { name: /A コンパイラ/ }).click();
   await expect(page.getByText(/正解/)).toBeVisible();
+  await page.reload();
+  await expect(page.getByText(/正解/)).toBeVisible();
 
   await page.goto("settings/");
   await page.locator('input[type="file"]').setInputFiles(backupPath!);
   await expect(page.getByText("バックアップを復元しました。現在の端末データを置き換えています。")).toBeVisible();
 
   await page.goto("learn/1/1/");
+  await page.reload();
   await expect(page.getByText(/もう一度考えてみよう/)).toBeVisible();
   await page.goto("settings/");
+  await page.reload();
   await expect(page.getByText("このブラウザーに保存済み")).toBeVisible();
 });
