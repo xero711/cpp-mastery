@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, ChevronRight, Cir
 import { useEffect, useMemo, useState } from "react";
 import { curriculumWeeks } from "@/lib/curriculum";
 import { dateInJapan, lessonSlotForDate } from "@/lib/calendar";
-import { readLearnerState, recordSubmission, saveLessonAnswer, saveLessonDraft, saveQuizChoice, type LearnerState } from "@/lib/browser-store";
+import { readRunnerApiToken, readLearnerState, recordSubmission, saveLessonAnswer, saveLessonDraft, saveQuizChoice, type LearnerState } from "@/lib/browser-store";
 import { findLesson } from "@/lib/lessons";
 import { gradeLessonCode, type GradeResult } from "@/lib/runner-client";
 import { CodeEditorPanel } from "@/components/code-editor-panel";
@@ -106,23 +106,27 @@ export function LessonPage({ requestedWeek, requestedDay }: { requestedWeek?: nu
   async function submitCode() {
     if (!lesson || running) return;
     setRunning(true);
-    const graded = await gradeLessonCode(code, lesson, standard);
-    const submission = {
-      id: crypto.randomUUID(),
-      lessonId: lesson.id,
-      source: code,
-      submittedAt: new Date().toISOString(),
-      status: graded.status,
-      score: graded.score,
-      compilerOutput: graded.compilerOutput,
-      stdout: graded.cases[0]?.actual,
-      stderr: graded.cases[0]?.stderr,
-      durationMs: graded.durationMs,
-    } as const;
-    const updated = await recordSubmission(submission);
-    setState(updated);
-    setResults((current) => ({ ...current, [lesson.id]: graded }));
-    setRunning(false);
+    try {
+      const runnerToken = await readRunnerApiToken().catch(() => "");
+      const graded = await gradeLessonCode(code, lesson, standard, runnerToken);
+      const submission = {
+        id: crypto.randomUUID(),
+        lessonId: lesson.id,
+        source: code,
+        submittedAt: new Date().toISOString(),
+        status: graded.status,
+        score: graded.score,
+        compilerOutput: graded.compilerOutput,
+        stdout: graded.cases[0]?.actual,
+        stderr: graded.cases[0]?.stderr,
+        durationMs: graded.durationMs,
+      } as const;
+      const updated = await recordSubmission(submission);
+      setState(updated);
+      setResults((current) => ({ ...current, [lesson.id]: graded }));
+    } finally {
+      setRunning(false);
+    }
   }
 
   if (!ready) return <div className="loading-state"><span className="spinner" />学習データを開いています…</div>;

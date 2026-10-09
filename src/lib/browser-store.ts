@@ -65,7 +65,9 @@ export type LearnerState = {
 
 const databaseName = "cpp-mastery-local";
 const objectStoreName = "learner-state";
+const secretStoreName = "private-secrets";
 const stateKey = "primary";
+const runnerTokenKey = "runner-api-token";
 let databasePromise: Promise<IDBDatabase> | undefined;
 
 function todayInJapan() {
@@ -101,11 +103,14 @@ function openDatabase() {
   }
   if (!databasePromise) {
     databasePromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(databaseName, 1);
+      const request = indexedDB.open(databaseName, 2);
       request.onupgradeneeded = () => {
         const database = request.result;
         if (!database.objectStoreNames.contains(objectStoreName)) {
           database.createObjectStore(objectStoreName);
+        }
+        if (!database.objectStoreNames.contains(secretStoreName)) {
+          database.createObjectStore(secretStoreName);
         }
       };
       request.onsuccess = () => resolve(request.result);
@@ -114,6 +119,40 @@ function openDatabase() {
     });
   }
   return databasePromise;
+}
+
+export async function readRunnerApiToken(): Promise<string> {
+  const database = await openDatabase();
+  const transaction = database.transaction(secretStoreName, "readonly");
+  return new Promise<string>((resolve, reject) => {
+    const request = transaction.objectStore(secretStoreName).get(runnerTokenKey);
+    request.onsuccess = () => resolve(typeof request.result === "string" ? request.result : "");
+    request.onerror = () => reject(request.error ?? new Error("実行ワーカーのトークンを読み込めませんでした。"));
+  });
+}
+
+export async function saveRunnerApiToken(token: string): Promise<void> {
+  const value = token.trim();
+  if (value.length < 32 || value.length > 512) throw new Error("トークンは32〜512文字で入力してください。");
+  const database = await openDatabase();
+  await new Promise<void>((resolve, reject) => {
+    const transaction = database.transaction(secretStoreName, "readwrite");
+    transaction.objectStore(secretStoreName).put(value, runnerTokenKey);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error ?? new Error("実行ワーカーのトークンを保存できませんでした。"));
+    transaction.onabort = () => reject(transaction.error ?? new Error("実行ワーカーのトークン保存が中断されました。"));
+  });
+}
+
+export async function clearRunnerApiToken(): Promise<void> {
+  const database = await openDatabase();
+  await new Promise<void>((resolve, reject) => {
+    const transaction = database.transaction(secretStoreName, "readwrite");
+    transaction.objectStore(secretStoreName).delete(runnerTokenKey);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error ?? new Error("実行ワーカーのトークンを削除できませんでした。"));
+    transaction.onabort = () => reject(transaction.error ?? new Error("実行ワーカーのトークン削除が中断されました。"));
+  });
 }
 
 export async function readLearnerState(): Promise<LearnerState> {

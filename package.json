@@ -9,7 +9,7 @@
     "prebuild": "node scripts/copy-monaco.mjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run",
+    "test": "vitest run && node --test services/runner/test/server.node.mjs",
     "verify:lessons": "scripts\\verify-lessons.cmd"
   },
   "dependencies": {

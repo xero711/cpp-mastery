@@ -2,12 +2,15 @@ import "fake-indexeddb/auto";
 import { describe, expect, it } from "vitest";
 import {
   exportLearnerState,
+  clearRunnerApiToken,
   importLearnerState,
   isLearnerState,
   readLearnerState,
+  readRunnerApiToken,
   recordSubmission,
   saveLessonDraft,
   saveQuizChoice,
+  saveRunnerApiToken,
 } from "../src/lib/browser-store";
 
 describe("browser learner state", () => {
@@ -57,5 +60,18 @@ describe("browser learner state", () => {
       updatedAt: new Date().toISOString(),
     });
     expect(isLearnerState(unsafeLink)).toBe(false);
+  });
+
+  it("keeps the runner token out of learner backups", async () => {
+    const token = "private-runner-token-0123456789-abcdefghijklmnopqrstuvwxyz";
+    await saveRunnerApiToken(token);
+    expect(await readRunnerApiToken()).toBe(token);
+    const backup = await exportLearnerState();
+    expect(backup).not.toContain(token);
+    await importLearnerState(backup);
+    expect(await readRunnerApiToken()).toBe(token);
+    await clearRunnerApiToken();
+    expect(await readRunnerApiToken()).toBe("");
+    await expect(saveRunnerApiToken("short")).rejects.toThrow(/32〜512文字/);
   });
 });

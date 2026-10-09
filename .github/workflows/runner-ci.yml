@@ -1,0 +1,32 @@
+name: Test isolated C++ runner
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/runner/**"
+      - ".github/workflows/runner-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Build pinned C++ sandbox image
+        run: docker build --file services/runner/Dockerfile.sandbox --tag cpp-mastery-sandbox:ci services/runner
+      - name: Test API validation and authentication
+        run: node --test services/runner/test/server.node.mjs
+      - name: Compile and run code in disposable containers
+        run: node services/runner/test/integration.mjs
+        env:
+          RUNNER_DOCKER_RUNTIME: runc

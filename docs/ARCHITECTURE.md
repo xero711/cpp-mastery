@@ -19,20 +19,20 @@ GitHub Pages cannot run a Node.js API, database, compiler, or secret-bearing AI 
 
 1. Static lesson content is shipped with the site.
 2. The browser reads and writes learner state in IndexedDB. No account or cloud sync exists in this phase.
-3. The browser submits source to the configured runner only after an explicit Run/Submit action.
+3. The browser submits source to the configured runner only after an explicit Run/Submit action. The runner URL is a Pages build variable; the bearer token is stored in a separate browser IndexedDB store and is excluded from learner backups.
 4. The runner returns compiler output, program output, and test results as separate fields. Compiler output and test output are authoritative; AI commentary is not used as a score.
 5. The browser records the returned result and lesson completion locally.
 
 ## Runner protocol
 
-`POST {CPP_RUNNER_URL}/v1/execute` accepts JSON `{ source, standard, tests: [{ stdin }] }`, where `standard` is one of `c++17`, `c++20`, or `c++23`. It returns `{ status, compilerOutput, cases: [{ stdout, stderr, exitCode, durationMs, timedOut? }] }`; `status` is `ok`, `compile_error`, or `runner_error`. The server must cap request and output size, validate every field, run each job in a disposable sandbox with no network, non-root identity, read-only root filesystem, CPU/memory/process/time/output limits, and return exactly one case per submitted input. The browser treats malformed or unavailable services as infrastructure errors rather than wrong answers. This repository does not yet ship or claim a production runner. A CORS origin allowlist controls which browser pages can read a response; it does not authenticate requests or prevent direct API calls.
+`POST {CPP_RUNNER_URL}/v1/execute` accepts JSON `{ source, standard, tests: [{ stdin }] }`, where `standard` is one of `c++17`, `c++20`, or `c++23`. It requires `Authorization: Bearer <token>` and returns `{ status, compilerOutput, cases: [{ stdout, stderr, exitCode, durationMs, timedOut, outputLimited }] }`; `status` is `ok`, `compile_error`, or `runner_error`. The separate Node broker and Docker sandbox are implemented in `services/runner/`. The broker validates all fields, enforces request and job limits, and returns exactly one case per submitted input. Each job runs in a disposable, networkless, non-root container with a read-only root filesystem, no host mounts, CPU/memory/process/time/output limits, and no API token or test answers. The browser treats malformed or unavailable services as infrastructure errors rather than wrong answers. The Docker-backed integration suite has not yet passed on an available Docker host.
 
-Docker is a defense layer, not a complete public multi-tenant boundary. Any separately hosted runner needs further hardening and operational review before accepting public submissions.
+Production startup rejects Docker's `runc`, requires gVisor (`runsc`), an immutable sandbox image digest, an exact HTTPS origin allowlist, and a long bearer token. Docker is still a defense layer, not a complete public multi-tenant boundary. A separately hosted runner needs controlled ingress, egress policy, monitoring, and operational review before accepting public submissions. CORS is not authentication and does not prevent direct API calls.
 
 ## Next architecture steps
 
-1. Add a Docker-based local runner and validate it on a machine with Docker Desktop/WSL2.
-2. Deploy the runner to a dedicated, hardened service and configure the Pages build variable only after its origin and CORS policy are known.
+1. Validate the Docker runner with the new GitHub Actions integration job; validate again on Docker Desktop/WSL2.
+2. Deploy the runner to a dedicated, hardened HTTPS host, then configure the Pages build variable only after its origin, gVisor runtime, authentication, and ingress policy are verified.
 3. Add an authenticated API/database only if multi-device sync or multiple learners is required; keep GitHub Pages as the static frontend.
 4. Add a server-side AI provider adapter. Never expose provider keys in the static bundle.
 

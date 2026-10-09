@@ -1,8 +1,18 @@
 # Next steps
 
-1. Implement and validate the separate C++ runner in a Docker-enabled environment; only configure `CPP_RUNNER_URL` after its security boundary and HTTPS deployment are verified.
-2. Add automated unit, integration, and browser E2E coverage, including an actual isolated C++ compile/run; the current local suite covers curriculum, IndexedDB progression/import validation, and runner response grading with mocked responses.
-3. Add assessment and detailed lesson content beyond the first four weeks; Week 5 onward currently has a weekly plan and daily templates only.
-4. Create or connect a GitHub repository, set Pages source to GitHub Actions, push to the default branch, and verify the deployed URL. The workflow and static export are configured, but no remote exists in this checkout.
+## C++ runner
 
-The current directory has no Git remote, so there is no repository destination to publish to in this session.
+1. Confirm `.github/workflows/runner-ci.yml` builds the pinned image and passes real C++17/20/23 compile/run, network, memory, timeout, output-limit, and per-case isolation checks on GitHub's Linux runner; fix any failures before treating the service as verified.
+2. Choose a separately hosted Linux deployment target with Docker and gVisor (`runsc`), HTTPS, private ingress controls, egress policy, monitoring, and an abuse-response plan. Production startup rejects `runc` and mutable sandbox image tags.
+3. Deploy the runner and verify its public HTTPS URL, origin allowlist, bearer authentication, rate limits, sandbox image digest, and real cross-origin compile/run before setting the repository variable `CPP_RUNNER_URL`.
+4. Configure the frontend build and enter the per-user token in Settings only after the service is reachable. The token is stored separately in browser IndexedDB and is excluded from learning backups.
+
+The current Windows host has no Docker CLI, WSL distribution, cloud-provider CLI, or cloud credentials. The API and sandbox image are implemented; Docker-backed execution is not yet verified on this PC or deployed. A provider/account and its billing boundary must be available before a public runner can be created.
+
+## Learning platform
+
+1. Author and review detailed daily lessons beyond Week 4. Week 5–104 currently provides the weekly plan and daily templates.
+2. Add assessments, review scheduling, adaptive planning, projects, portfolio export, and real-evidence analytics from the product brief.
+3. Add AI mentor only through a separate secret-bearing service; it is not implemented.
+4. Expand the test suite with authenticated runner integration in the hosted Docker CI and browser E2E flows for learner progress, backup/restore, code submission, and error handling.
+5. Continue route-by-route accessibility and responsive review on the deployed Pages site. The custom domain currently presents a Cloudflare browser challenge to this automated review environment.

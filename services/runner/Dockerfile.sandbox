@@ -1,0 +1,19 @@
+FROM gcc:16.2.0-trixie@sha256:17043c23ec2ad97fc3beca18da77275d26be5db5cd70ea0a5d73200e21a8e999
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends passwd python3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 65532 runner \
+    && useradd --uid 65532 --gid 65532 --no-create-home --shell /usr/sbin/nologin runner
+
+WORKDIR /opt/runner
+COPY --chown=0:0 worker.py /opt/runner/worker.py
+RUN chmod 0555 /opt/runner/worker.py
+
+USER 65532:65532
+ENV HOME=/work \
+    TMPDIR=/work \
+    PATH=/usr/local/bin:/usr/bin:/bin \
+    LANG=C.UTF-8
+
+ENTRYPOINT ["python3", "-I", "/opt/runner/worker.py"]
